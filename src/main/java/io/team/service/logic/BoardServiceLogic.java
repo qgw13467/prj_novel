@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.team.domain.Board;
+import io.team.domain.User;
 import io.team.mapper.BoardMapper;
 import io.team.service.BoardService;
 
@@ -16,8 +17,12 @@ public class BoardServiceLogic implements BoardService {
 	BoardMapper boardMapper;
 
 	@Override
-	public void register(Board newBoard) {
-		boardMapper.create(newBoard.getBrd_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
+	public void register( Board newBoard) {
+		if(newBoard.getImg_id()==0) {
+			newBoard.setImg_id(1);
+		}
+		
+		boardMapper.create(newBoard.getMem_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
 				newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(),
 				newBoard.getBrd_datetime(), newBoard.getBrd_img(), newBoard.getBrd_file());
 	}
@@ -29,7 +34,11 @@ public class BoardServiceLogic implements BoardService {
 	}
 
 	@Override
-	public void modify(Board newBoard) {
+	public void modify(int brd_id, Board newBoard) {
+		newBoard.setBrd_id(brd_id);
+		if(newBoard.getImg_id()==0) {
+			newBoard.setImg_id(1);
+		}
 		boardMapper.update(newBoard.getBrd_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
 				newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(),
 				newBoard.getBrd_updatetime(), newBoard.getBrd_img(), newBoard.getBrd_file());
@@ -41,9 +50,14 @@ public class BoardServiceLogic implements BoardService {
 	}
 
 	@Override
-	public ArrayList<Board> getBoards(int pagenum) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Board> getBoardList(int pagenum) {
+		
+		return boardMapper.getBoards(pagenum);
+	}
+
+	@Override
+	public int getNextBoard() {
+		return boardMapper.getNextBoard();
 	}
 
 }

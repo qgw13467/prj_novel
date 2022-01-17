@@ -5,31 +5,34 @@
 <mapper namespace="io.team.mapper.UserMapper">
 
 	<insert id="create">
-		insert into user (mem_userid, img_password,
+		insert into user (mem_userid, mem_password,
 		mem_changepwd,mem_email,
-		mem_nick, mem_regist_datetime,mem_icon)
+		mem_nick, mem_regist_datetime,
+		mem_lastlogin_datetime, mem_icon)
 		values
-		(#{mem_userid},#{img_password},#{mem_changepwd},#{mem_email},
-		#{mem_nick},#{mem_regist_datetime},#{mem_icon})
+		(#{mem_userid},#{mem_password},#{mem_changepwd},#{mem_email},
+		#{mem_nick},#{mem_regist_datetime},#{mem_lastlogin_datetime},#{mem_icon})
 	</insert>
 	<select id="read" resultType="io.team.domain.User">
 		SELECT * FROM user where
-		mem_id=#{mem_id};
+		mem_id =
+		#{mem_id};
 	</select>
-	<update id="modify">
+	<update id="lastlogin">
+		update user set 
+		mem_lastlogin_datetime=NOW()
+		where
+		mem_id =#{mem_id};
+	</update>
+	<update id="update">
 		update user set
 		mem_userid = #{mem_userid},
-		mem_password =#{mem_password},
 		mem_changepwd = #{mem_changepwd},
-		mem_email =#{mem_email},
+		mem_email = #{mem_email},
 		mem_nick = #{mem_nick},
-		mem_point
-		=#{mem_point},
+		mem_point = #{mem_point},
 		mem_state = #{mem_state},
-		mem_lastlogin_datetime =
-		#{mem_lastlogin_datetime},
-		mem_following_nvnum =
-		#{mem_following_nvnum},
+		mem_following_nvnum = #{mem_following_nvnum},
 		mem_following_wrnum = #{mem_following_wrnum},
 		mem_followed = #{mem_followed},
 		mem_icon = #{mem_icon}
@@ -46,7 +49,7 @@
 
 	<update id="delete">
 		update user set
-		mem_state = 1,
+		mem_state = 1
 		where mem_id =
 		#{mem_id}
 	</update>
