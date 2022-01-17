@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.team.mapper.BoardMapper">
+
+	<insert id="create">
+		insert into board (mem_id, img_id, mem_nickname,brd_title,
+		brd_contents, brd_state, brd_datetime, brd_img,brd_file)
+		values
+		(#{mem_id},#{img_id},#{mem_nickname},#{brd_title},
+		#{brd_contents},#{brd_state},NOW(),#{brd_img},#{brd_file})
+	</insert>
+	
+	<select id="read" resultType="io.team.domain.Board">
+		SELECT * FROM board where
+		brd_id =
+		#{brd_id};
+	</select>
+
+	<update id="update">
+		update board set
+		img_id = #{img_id},
+		mem_nickname = #{mem_nickname},
+		brd_title = #{brd_title},
+		brd_contents = #{brd_contents},
+		brd_state = #{brd_state},
+		brd_updatetime = NOW(),
+		brd_img = #{brd_img},
+		brd_file = #{brd_file}
+		where
+		brd_id = #{brd_id}
+	</update>
+
+	<update id="delete">
+		update board set
+		brd_state = 1
+		where brd_id =
+		#{brd_id}
+	</update>
+
+</mapper>
