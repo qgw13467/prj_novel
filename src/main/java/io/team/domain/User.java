@@ -1,10 +1,12 @@
 package io.team.domain;
 
 
+import lombok.Builder;
 import lombok.Data;
 
 
 @Data
+@Builder
 public class User {
 	private int mem_id;
 	private String mem_userid;
