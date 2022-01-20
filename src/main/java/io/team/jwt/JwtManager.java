@@ -5,24 +5,35 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.team.domain.User;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Configuration
+@Service
 public class JwtManager {
-	private final String securityKey = "q12095uwaet093q4u5-Q9UWR0T82Q4YT0QE8TH29802Q3UWR-9TQA2T803YHRF-	9Q30YT38"; // TODO 민감정보는 따로 분리하는 것이 좋다
-	private final Long expiredTime = 1000 * 60L * 60L * 3L; // 유효시간 3시간
+	
 
+	
+	private String securityKey="sadf1023894r2039hreiwo1309rhi1-2934ieu2130i2tehf123890h"; // TODO 민감정보는 따로 분리하는 것이 좋다
+	
+	
+	private final Long expiredTime = 1000 * 60L * 60L * 3L; // 유효시간 3시간
+	
 	public String generateJwtToken(User newUser) {
 		Date now = new Date();
-		return Jwts.builder().setSubject(newUser.getMem_userid()) // 보통 username
+		return Jwts.builder()
+				.setSubject(newUser.getMem_userid()) // 보통 username
 				.setHeader(createHeader()).setClaims(createClaims(newUser)) // 클레임, 토큰에 포함될 정보
 				.setExpiration(new Date(now.getTime() + expiredTime)) // 만료일
 				.signWith(SignatureAlgorithm.HS256, securityKey).compact();
 	}
-
+	
 	private Map<String, Object> createHeader() {
 		Map<String, Object> header = new HashMap<>();
 		header.put("typ", "JWT");
@@ -35,6 +46,7 @@ public class JwtManager {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("username", newUser.getMem_userid()); // username
 		claims.put("roles", newUser.getState()); // 인가정보
+		claims.put("nickname", newUser.getMem_nick());
 		return claims;
 	}
 

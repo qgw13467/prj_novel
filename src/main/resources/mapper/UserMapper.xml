@@ -3,7 +3,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.team.mapper.UserMapper">
-
+	<select id="checkIdOverlap" resultType="_int">
+		SELECT COUNT(*) FROM user where
+		mem_userid =
+		#{mem_userid};
+	</select>
+	
 	<insert id="create">
 		insert into user (mem_userid, mem_password,
 		mem_changepwd,mem_email,
@@ -15,11 +20,13 @@
 	</insert>
 	<select id="read" resultType="io.team.domain.User">
 		SELECT * FROM user where
-		mem_id =
-		#{mem_id};
+		mem_userid =
+		#{mem_userid} AND
+		mem_password =
+		#{mem_password}
 	</select>
 	<update id="lastlogin">
-		update user set 
+		update user set
 		mem_lastlogin_datetime=NOW()
 		where
 		mem_id =#{mem_id};
@@ -29,13 +36,16 @@
 		mem_userid = #{mem_userid},
 		mem_changepwd = #{mem_changepwd},
 		mem_email = #{mem_email},
-		mem_nick = #{mem_nick},
+		mem_nick =
+		#{mem_nick},
 		mem_point = #{mem_point},
 		mem_state = #{mem_state},
 		mem_following_nvnum = #{mem_following_nvnum},
-		mem_following_wrnum = #{mem_following_wrnum},
+		mem_following_wrnum =
+		#{mem_following_wrnum},
 		mem_followed = #{mem_followed},
-		mem_icon = #{mem_icon}
+		mem_icon =
+		#{mem_icon}
 		where
 		mem_id = #{mem_id}
 	</update>

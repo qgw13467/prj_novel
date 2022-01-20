@@ -1,6 +1,9 @@
 package io.team.controller;
 
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.ibatis.annotations.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,20 +22,25 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping("/users/{id}")
-	public @ResponseBody User find(@PathVariable int id) {
-		return userService.find(id);
+
+	
+	@GetMapping("/login")
+	public void find(@RequestBody User newUser, HttpServletResponse response) {
+		response.setHeader("Authorize", userService.find(newUser));
 	}
 	
-	@PostMapping("/users")
-	public void register(@RequestBody User newUser) {
-		userService.register(newUser);
+	@PostMapping("/join")
+	public String register(@RequestBody User newUser) {
+		
+		return userService.register(newUser);
 	}
+	
 	
 	@PutMapping("/users/{id}")
 	public void modify(@PathVariable int id,@RequestBody User newUser) {
 		userService.modify(id, newUser);
 	}
+	
 	
 	@DeleteMapping("/users/{id}")
 	public void remove(@PathVariable int id) {

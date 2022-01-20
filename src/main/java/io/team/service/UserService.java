@@ -5,9 +5,9 @@ import io.team.domain.User;
 
 public interface UserService {
 
-	void register(User newUser);
+	String register(User newUser);
 
-	User find(int id);
+	String find(User newUser);
 
 	void modify(int id,User newUser);
 	
