@@ -18,13 +18,13 @@ public interface UserMapper {
 	
 	void lastlogin(int mem_id);
 	
-	void update(int mem_id, String mem_userid, String mem_changepwd, String mem_email,
+	void update(String mem_userid, String mem_password, String mem_email,
 			String mem_nick, int mem_point, int mem_state, int mem_following_nvnum,
 			int mem_following_wrnum, int mem_followed, String mem_icon);
 	
 	void updatepwd(int mem_id,String mem_pasaword);
 	
-	void delete(int mem_id);
+	void delete(String mem_userid, String mem_password);
 
 	ArrayList<User> selectAll();
 

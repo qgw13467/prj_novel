@@ -30,10 +30,8 @@ public class UserServicLogic implements UserService {
 	public String register(User newUser) {
 
 		if (userMapper.checkIdOverlap(newUser.getMem_userid()) != 0) {
-			System.out.println(userMapper.checkIdOverlap(newUser.getMem_userid()));
 			return "msg:ERROR";
 		}
-
 		userMapper.create(newUser.getMem_userid(), newUser.getMem_password(), format_time1, newUser.getMem_email(),
 				newUser.getMem_nick(), format_time1, format_time1, newUser.getMem_icon());
 		return "msg:OK";
@@ -42,19 +40,19 @@ public class UserServicLogic implements UserService {
 	@Override
 	public String find(User newUser) {
 		userMapper.lastlogin(newUser.getMem_id());
-		
-		User user=userMapper.read(newUser.getMem_userid(),newUser.getMem_password());
-		String token = jwtManager.generateJwtToken(user);
-		if(user==null) {
-			return "ERROR";
+		User user;
+		try {
+			user = userMapper.read(newUser.getMem_userid(), newUser.getMem_password());
+			String token = jwtManager.generateJwtToken(user);
+			return token;
+		} catch (Exception e) {
+			return "";
 		}
-		else return token;
-		
 	}
 
 	@Override
-	public void modify(int mem_id, User newUser) {
-		userMapper.update(mem_id, newUser.getMem_userid(), newUser.getMem_changepwd(), newUser.getMem_email(),
+	public void modify( User newUser) {
+		userMapper.update(newUser.getMem_userid(), newUser.getMem_password(), newUser.getMem_email(),
 				newUser.getMem_nick(), newUser.getMem_point(), newUser.getState(), newUser.getMem_following_nvnum(),
 				newUser.getMem_following_wrnum(), newUser.getMem_followed(), newUser.getMem_icon());
 	}
@@ -66,8 +64,8 @@ public class UserServicLogic implements UserService {
 	}
 
 	@Override
-	public void remove(int id) {
-		userMapper.delete(id);
+	public void remove(User newUser) {
+		userMapper.delete(newUser.getMem_userid(),newUser.getMem_password());
 
 	}
 

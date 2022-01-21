@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+
+import io.jsonwebtoken.Claims;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
 
@@ -33,6 +35,7 @@ public class JwtManagerTest {
 		String usernameFromToken = jwtManager.getUsernameFromToken(token);
 		System.out.println(token);
 		System.out.println(usernameFromToken);
+		System.out.println(jwtManager.getClaims(token));
 		assertEquals("hong01", usernameFromToken);
 
 	}

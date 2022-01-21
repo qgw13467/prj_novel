@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.team.domain.User;
 
+import org.apache.ibatis.ognl.ClassCacheInspector;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class JwtManager {
 	private String securityKey="sadf1023894r2039hreiwo1309rhi1-2934ieu2130i2tehf123890h"; // TODO 민감정보는 따로 분리하는 것이 좋다
 	
 	
-	private final Long expiredTime = 1000 * 60L * 60L * 3L; // 유효시간 3시간
+	private final Long expiredTime = 1000 * 60 *30L;
 	
 	public String generateJwtToken(User newUser) {
 		Date now = new Date();
@@ -45,17 +46,21 @@ public class JwtManager {
 	private Map<String, Object> createClaims(User newUser) {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("username", newUser.getMem_userid()); // username
-		claims.put("roles", newUser.getState()); // 인가정보
-		claims.put("nickname", newUser.getMem_nick());
+		claims.put("email", newUser.getMem_email()); // 인가정보
 		return claims;
 	}
 
-	private Claims getClaims(String token) {
+	public Claims getClaims(String token) {
 		return Jwts.parser().setSigningKey(securityKey).parseClaimsJws(token).getBody();
 	}
 
 	public String getUsernameFromToken(String token) {
 		return (String) getClaims(token).get("username");
 	}
+	
+	public String getEmailFromToken(String token) {
+		return (String) getClaims(token).get("email");
+	}
+	
 
 }

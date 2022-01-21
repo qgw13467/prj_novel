@@ -9,11 +9,11 @@ public interface UserService {
 
 	String find(User newUser);
 
-	void modify(int id,User newUser);
+	void modify(User newUser);
 	
 	void modify(int id, String pwd);
 
-	void remove(int id);
+	void remove(User newUser);
 
 
 }

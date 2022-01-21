@@ -33,8 +33,6 @@
 	</update>
 	<update id="update">
 		update user set
-		mem_userid = #{mem_userid},
-		mem_changepwd = #{mem_changepwd},
 		mem_email = #{mem_email},
 		mem_nick =
 		#{mem_nick},
@@ -47,11 +45,13 @@
 		mem_icon =
 		#{mem_icon}
 		where
-		mem_id = #{mem_id}
+		mem_userid = #{mem_userid} and
+		mem_password =#{mem_password}
 	</update>
 	<update id="modifypwd">
 		update user set
-		mem_password =#{mem_password}
+		mem_password =#{mem_password},
+		mem_changepwd = #{mem_changepwd}
 		where
 		mem_id =
 		#{mem_id}
@@ -60,8 +60,10 @@
 	<update id="delete">
 		update user set
 		mem_state = 1
-		where mem_id =
-		#{mem_id}
+		where mem_userid =
+		#{mem_userid} AND
+		mem_password=
+		#{mem_password}
 	</update>
 
 </mapper>
