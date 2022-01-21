@@ -6,7 +6,9 @@
 	<select id="checkIdOverlap" resultType="_int">
 		SELECT COUNT(*) FROM user where
 		mem_userid =
-		#{mem_userid};
+		#{mem_userid} and
+		mem_nick = 
+		#{mem_nick}
 	</select>
 	
 	<insert id="create">

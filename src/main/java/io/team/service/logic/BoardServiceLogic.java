@@ -7,52 +7,85 @@ import org.springframework.stereotype.Service;
 
 import io.team.domain.Board;
 import io.team.domain.User;
+import io.team.jwt.JwtManager;
 import io.team.mapper.BoardMapper;
 import io.team.service.BoardService;
 
 @Service
 public class BoardServiceLogic implements BoardService {
-
+	
+	@Autowired
+	JwtManager jwtManager;
+	
 	@Autowired
 	BoardMapper boardMapper;
 
 	@Override
-	public void register( Board newBoard) {
+	public int register( Board newBoard, String token) {
 		if(newBoard.getImg_id()==0) {
 			newBoard.setImg_id(1);
 		}
 		
-		boardMapper.create(newBoard.getMem_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
-				newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(),
-				newBoard.getBrd_datetime(), newBoard.getBrd_img(), newBoard.getBrd_file());
+		int mem_id = jwtManager.getIdFromToken(token);
+		if(newBoard.getMem_id()==mem_id) {
+			boardMapper.create(newBoard.getMem_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
+					newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(),
+					newBoard.getBrd_datetime(), newBoard.getBrd_img(), newBoard.getBrd_file());
+			return 0;
+		}
+		else {
+			return -1;
+		}
+		
 	}
 
 	@Override
 	public Board find(int id) {
-
+		boardMapper.count_hit(id);
 		return boardMapper.read(id);
 	}
 
 	@Override
-	public void modify(int brd_id, Board newBoard) {
+	public int modify(int brd_id, Board newBoard, String token) {
 		newBoard.setBrd_id(brd_id);
 		if(newBoard.getImg_id()==0) {
 			newBoard.setImg_id(1);
 		}
-		boardMapper.update(newBoard.getBrd_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
-				newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(),
-				newBoard.getBrd_updatetime(), newBoard.getBrd_img(), newBoard.getBrd_file());
+		Board board=boardMapper.read(brd_id);
+		int mem_id = jwtManager.getIdFromToken(token);
+		if(board.getMem_id()==mem_id) {
+			boardMapper.update(newBoard.getBrd_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
+					newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(),
+					newBoard.getBrd_updatetime(), newBoard.getBrd_img(), newBoard.getBrd_file());
+			return 0;
+		}
+		else {
+			return -1;
+		}
+		
 	}
 
 	@Override
-	public void remove(int id) {
-		boardMapper.delete(id);
+	public int remove(int id, String token) {
+		
+		int mem_id = jwtManager.getIdFromToken(token);
+		Board board=boardMapper.read(id);
+		
+		if(board.getMem_id()==mem_id) {
+			
+			boardMapper.delete(id);
+			return 0;
+		}
+		else {
+			return -1;
+		}
+		
 	}
 
 	@Override
 	public ArrayList<Board> getBoardList(int pagenum) {
-		
-		return boardMapper.getBoards(pagenum);
+		int pagecount=10;
+		return boardMapper.getBoards((pagenum - 1) * pagecount, pagecount);
 	}
 
 	@Override

@@ -5,8 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-
-import io.jsonwebtoken.Claims;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
 
@@ -32,7 +30,7 @@ public class JwtManagerTest {
 		User user = User.builder().mem_userid("hong01").mem_password("1234").mem_email("hong@gmail.com").build();
 
 		final String token = jwtManager.generateJwtToken(user);
-		String usernameFromToken = jwtManager.getUsernameFromToken(token);
+		String usernameFromToken = jwtManager.getUserIdFromToken(token);
 		System.out.println(token);
 		System.out.println(usernameFromToken);
 		System.out.println(jwtManager.getClaims(token));

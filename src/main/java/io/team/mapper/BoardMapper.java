@@ -12,7 +12,8 @@ public interface BoardMapper {
 			String brd_datetime, int brd_img, int brd_file);
 
 	Board read(int brd_id);
-
+	int count_hit(int brd_id);
+	
 	void update(int brd_id, int img_id, String mem_nickname, String brd_title, String brd_contents, int brd_state,
 			String brd_updatetime, int brd_img, int brd_file);
 
@@ -20,6 +21,6 @@ public interface BoardMapper {
 
 	int getNextBoard();
 	
-	ArrayList<Board> getBoards(int pagenum);
+	ArrayList<Board> getBoards(int pagenum, int pagecount);
 
 }

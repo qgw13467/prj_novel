@@ -6,13 +6,13 @@ import io.team.domain.Board;
 import io.team.domain.User;
 
 public interface BoardService {
-	void register(Board newBoard);
+	int register(Board newBoard, String token);
 
 	Board find(int id);
 
-	void modify(int brd_id, Board newBoard);
+	int modify(int brd_id, Board newBoard, String token);
 
-	void remove(int id);
+	int remove(int id, String token);
 	
 	int getNextBoard();
 	

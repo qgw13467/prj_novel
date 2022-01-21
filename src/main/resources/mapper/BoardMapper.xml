@@ -4,26 +4,45 @@
 
 <mapper namespace="io.team.mapper.BoardMapper">
 
+	<select id="getBoards" resultType="io.team.domain.Board">
+		SELECT * FROM (SELECT * FROM
+		board WHERE brd_state = 0) b ORDER BY brd_id DESC LIMIT
+		#{pagenum},#{pagecount}
+	</select>
+
 	<insert id="create">
-		insert into board (mem_id, img_id, mem_nickname,brd_title,
-		brd_contents, brd_state, brd_datetime, brd_img,brd_file)
+		insert into board (mem_id, img_id,
+		mem_nickname,brd_title,
+		brd_contents, brd_state, brd_datetime,
+		brd_img,brd_file)
 		values
 		(#{mem_id},#{img_id},#{mem_nickname},#{brd_title},
 		#{brd_contents},#{brd_state},NOW(),#{brd_img},#{brd_file})
 	</insert>
-	
+
 	<select id="read" resultType="io.team.domain.Board">
 		SELECT * FROM board where
 		brd_id =
 		#{brd_id};
 	</select>
 
+	<update id="count_hit">
+		update board set
+		brd_hit=brd_hit+1
+		where
+		brd_id = #{brd_id}
+	</update>
+
+
+
 	<update id="update">
 		update board set
 		img_id = #{img_id},
-		mem_nickname = #{mem_nickname},
+		mem_nickname =
+		#{mem_nickname},
 		brd_title = #{brd_title},
-		brd_contents = #{brd_contents},
+		brd_contents =
+		#{brd_contents},
 		brd_state = #{brd_state},
 		brd_updatetime = NOW(),
 		brd_img = #{brd_img},

@@ -1,5 +1,7 @@
 package io.team.controller;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
 import io.team.service.UserService;
@@ -26,18 +28,27 @@ public class UserController {
 	JwtManager jwtManager;
 
 	
-	@GetMapping("/login")
+	@PostMapping("/login")
 	@ResponseBody
-	public String find(@RequestBody User newUser, HttpServletResponse response) {
-		String token = userService.find(newUser);
+	public HashMap find(@RequestBody User newUser, HttpServletResponse response) {
+		String token = userService.makeToken(newUser);
+		HashMap<String,String> map=userService.find(newUser);
+		if(map==null) {
+			HashMap<String,String> map2=new HashMap<String,String>();
+			map2.put("msg", "ERROR");
+			return map2;
+		}
+		
+		map.put("Authorization", token);
 		response.setHeader("Authorization", token);
-		return token;
+		return map;
 	}
 	
 	@PostMapping("/join")
-	public String register(@RequestBody User newUser) {
-		
-		return userService.register(newUser);
+	public HashMap register(@RequestBody User newUser) {
+		HashMap<String,String> map=new HashMap<String, String>();
+		map.put("msg", userService.register(newUser));
+		return map;
 	}
 	
 	

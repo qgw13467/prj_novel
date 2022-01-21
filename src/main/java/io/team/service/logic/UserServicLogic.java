@@ -2,11 +2,12 @@ package io.team.service.logic;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+
 
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
@@ -29,17 +30,16 @@ public class UserServicLogic implements UserService {
 	@Override
 	public String register(User newUser) {
 
-		if (userMapper.checkIdOverlap(newUser.getMem_userid()) != 0) {
-			return "msg:ERROR";
+		if (userMapper.checkIdOverlap(newUser.getMem_userid(),newUser.getMem_nick()) != 0) {
+			return "ERROR";
 		}
 		userMapper.create(newUser.getMem_userid(), newUser.getMem_password(), format_time1, newUser.getMem_email(),
 				newUser.getMem_nick(), format_time1, format_time1, newUser.getMem_icon());
-		return "msg:OK";
+		return "OK";
 	}
 
 	@Override
-	public String find(User newUser) {
-		userMapper.lastlogin(newUser.getMem_id());
+	public String makeToken(User newUser) {
 		User user;
 		try {
 			user = userMapper.read(newUser.getMem_userid(), newUser.getMem_password());
@@ -48,6 +48,25 @@ public class UserServicLogic implements UserService {
 		} catch (Exception e) {
 			return "";
 		}
+	}
+	
+
+	@Override
+	public HashMap find(User newUser) {
+		userMapper.lastlogin(newUser.getMem_id());
+		HashMap<String,String> map=new HashMap<String, String>();
+		try {
+			User user = userMapper.read(newUser.getMem_userid(), newUser.getMem_password());
+			
+			map.put("mem_nick", user.getMem_nick());
+			map.put("mem_id", Integer.toString(user.getMem_id()));
+			map.put("mem_userid", user.getMem_userid());
+			map.put("mem_icon", user.getMem_icon());
+			return map;
+		}catch (Exception e) {
+			return map;
+		}
+
 	}
 
 	@Override
@@ -68,5 +87,7 @@ public class UserServicLogic implements UserService {
 		userMapper.delete(newUser.getMem_userid(),newUser.getMem_password());
 
 	}
+
+
 
 }

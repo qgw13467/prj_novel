@@ -18,23 +18,19 @@ import java.util.Map;
 @Configuration
 @Service
 public class JwtManager {
-	
 
-	
-	private String securityKey="sadf1023894r2039hreiwo1309rhi1-2934ieu2130i2tehf123890h"; // TODO 민감정보는 따로 분리하는 것이 좋다
-	
-	
-	private final Long expiredTime = 1000 * 60 *30L;
-	
+	private String securityKey = "sadf1023894r2039hreiwo1309rhi1-2934ieu2130i2tehf123890h"; // TODO 민감정보는 따로 분리하는 것이 좋다
+
+	private final Long expiredTime = 1000 * 60 * 2L;
+
 	public String generateJwtToken(User newUser) {
 		Date now = new Date();
-		return Jwts.builder()
-				.setSubject(newUser.getMem_userid()) // 보통 username
+		return Jwts.builder().setSubject(newUser.getMem_userid()) // 보통 username
 				.setHeader(createHeader()).setClaims(createClaims(newUser)) // 클레임, 토큰에 포함될 정보
 				.setExpiration(new Date(now.getTime() + expiredTime)) // 만료일
 				.signWith(SignatureAlgorithm.HS256, securityKey).compact();
 	}
-	
+
 	private Map<String, Object> createHeader() {
 		Map<String, Object> header = new HashMap<>();
 		header.put("typ", "JWT");
@@ -45,8 +41,10 @@ public class JwtManager {
 
 	private Map<String, Object> createClaims(User newUser) {
 		Map<String, Object> claims = new HashMap<>();
-		claims.put("username", newUser.getMem_userid()); // username
-		claims.put("email", newUser.getMem_email()); // 인가정보
+		claims.put("mem_id", newUser.getMem_id());
+		claims.put("mem_userid", newUser.getMem_userid()); // username
+		claims.put("mem_email", newUser.getMem_email());
+		claims.put("mem_nick", newUser.getMem_nick());// 인가정보
 		return claims;
 	}
 
@@ -54,13 +52,19 @@ public class JwtManager {
 		return Jwts.parser().setSigningKey(securityKey).parseClaimsJws(token).getBody();
 	}
 
-	public String getUsernameFromToken(String token) {
-		return (String) getClaims(token).get("username");
+	public int getIdFromToken(String token) {
+		return (int) getClaims(token).get("mem_id");
 	}
-	
+
+	public String getUserIdFromToken(String token) {
+		return (String) getClaims(token).get("mem_userid");
+	}
+
 	public String getEmailFromToken(String token) {
-		return (String) getClaims(token).get("email");
+		return (String) getClaims(token).get("mem_email");
 	}
-	
+	public String getNickFromToken(String token) {
+		return (String) getClaims(token).get("mem_nick");
+	}
 
 }

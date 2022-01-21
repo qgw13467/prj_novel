@@ -9,7 +9,7 @@ import io.team.domain.User;
 @Repository
 public interface UserMapper {
 	
-	int checkIdOverlap(String mem_userid);
+	int checkIdOverlap(String mem_userid, String mem_nick);
 	
 	void create(String mem_userid, String mem_password, String mem_changepwd, String mem_email, String mem_nick,
 			String mem_regist_datetime, String mem_lastlogin_datetime, String mem_icon);
