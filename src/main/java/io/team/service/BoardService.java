@@ -17,4 +17,12 @@ public interface BoardService {
 	int getNextBoard();
 	
 	ArrayList<Board> getBoardList(int pagenum);
+	
+	int like(int id, String token);
+	
+	int dislike(int id, String token);
+	
+	int report(int id, String token);
+	
+	int getPageNum();
 }

@@ -1,6 +1,9 @@
 package io.team.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,19 +18,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.team.domain.Board;
+import io.team.domain.BrdCmt;
 import io.team.service.BoardService;
+import io.team.service.logic.BrdCmtServiceLogic;
 
 @RestController
 public class BoardController {
 
 	@Autowired
+	private	BrdCmtServiceLogic cmtService;
+	
+	@Autowired
 	private BoardService boardService;
 
 	@GetMapping("/boards")
-	public @ResponseBody ArrayList<Board> getAllBoards(@RequestParam(value = "page") String pagenum) {
-
+	public @ResponseBody Map<String, Object> getAllBoards(@RequestParam(value = "page") String pagenum) {
+		
 		ArrayList<Board> boards = boardService.getBoardList(Integer.parseInt(pagenum));
-		return boards;
+		Map<String, Object> result = new HashMap<String, Object>();
+		int page=boardService.getPageNum();
+		result.put("boards", boards);
+		result.put("pagenum", page);
+		return result;
 	}
 
 	@GetMapping("/boards/{id}")
@@ -52,4 +64,39 @@ public class BoardController {
 		String token = req.getHeader("Authorization");
 		return boardService.remove(id, token);
 	}
+	
+	//댓글작성 
+	
+	@GetMapping("/boards/{id}/cmts")
+	public @ResponseBody Map<String, Object> getCmts(@PathVariable int id, @RequestParam(value = "page") String pagenum) {
+		
+		ArrayList<BrdCmt> cmts = cmtService.getCmtList(id, Integer.parseInt(pagenum));
+		ArrayList<BrdCmt> replies = cmtService.getReplyList(cmts);
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		int page=cmtService.getPageNum(id);
+		result.put("comments", cmts);
+		result.put("replies", replies);
+		result.put("pagenum", page);
+		return result;
+	}
+	
+	@PostMapping("/boards/{id}/cmts")
+	public @ResponseBody int writeCmt(@RequestBody BrdCmt newCmt, HttpServletRequest req) {
+		String token = req.getHeader("Authorization");
+		return cmtService.register(newCmt, token);
+	}
+
+	@PutMapping("/boards/{id}/cmts/{brd_cmt_id}")
+	public @ResponseBody int updateCmt(@PathVariable int id, @RequestBody BrdCmt newCmt, HttpServletRequest req) {
+		String token = req.getHeader("Authorization");
+		return cmtService.modify(id, newCmt, token);
+	}
+
+	@DeleteMapping("/boards/{id}/cmts/{brd_cmt_id}")
+	public @ResponseBody int deleteCmt(@PathVariable int id, HttpServletRequest req) {
+		String token = req.getHeader("Authorization");
+		return cmtService.remove(id, token);
+	}
+	
 }

@@ -35,7 +35,7 @@
 
 
 
-	<update id="update">
+	<update id="update" >
 		update board set
 		img_id = #{img_id},
 		mem_nickname =
@@ -57,5 +57,9 @@
 		where brd_id =
 		#{brd_id}
 	</update>
+	
+	<select id="brdcount" resultType="_int">
+		SELECT COUNT(*) FROM board
+	</select>
 
 </mapper>
