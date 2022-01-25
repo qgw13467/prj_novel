@@ -21,7 +21,7 @@ public class JwtManager {
 
 	private String securityKey = "sadf1023894r2039hreiwo1309rhi1-2934ieu2130i2tehf123890h"; // TODO 민감정보는 따로 분리하는 것이 좋다
 
-	private final Long expiredTime = 1000 * 60 * 2L;
+	private final Long expiredTime = 1000 * 60 * 20L;
 
 	public String generateJwtToken(User newUser) {
 		Date now = new Date();

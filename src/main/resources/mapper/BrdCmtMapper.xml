@@ -5,37 +5,43 @@
 <mapper namespace="io.team.mapper.BrdCmtMapper">
 
 	<insert id="create">
-		insert into brd_commet (brd_id, mem_id,
+		insert into brd_comment (brd_id, mem_id,
 		brd_cmt_reply,mem_nickname,
 		brd_cmt_contents, brd_cmt_datetime,
 		brd_cmt_state)
 		values
-		(#{brd_id},#{mem_id},#{mem_nickname},#{brd_cmt_reply},
+		(#{brd_id},#{mem_id},#{brd_cmt_reply},
 		#{mem_nickname},#{brd_cmt_contents},NOW(),#{brd_cmt_state})
 	</insert>
 
 	<select id="read" resultType="io.team.domain.BrdCmt">
-		SELECT * FROM brd_commet where
+		SELECT * FROM brd_comment where
 		brd_cmt_id =
 		#{brd_cmt_id};
 	</select>
 
 	<select id="read_cmts" resultType="io.team.domain.BrdCmt">
 		SELECT * FROM (SELECT * FROM
-		brd_commet WHERE brd_state = 0 AND brd_id = #{brd_id}) b ORDER BY
+		brd_comment WHERE brd_cmt_state = 0 AND brd_id = #{brd_id} AND
+		brd_cmt_reply ='0') b ORDER BY
 		brd_cmt_datetime DESC LIMIT
-		#{brd_id}, #{pagecount};
+		#{pagenum},
+		#{pagecount};
 	</select>
+
+
 
 	<select id="read_reply" resultType="io.team.domain.BrdCmt">
 		SELECT * FROM (SELECT * FROM
-		brd_commet WHERE brd_state = 0 AND brd_cmt_reply = #{brd_cmt_reply}) b
+		brd_comment WHERE brd_cmt_state = 0 AND brd_cmt_reply =
+		#{brd_cmt_reply})
+		b
 		ORDER BY
 		brd_cmt_datetime DESC;
 	</select>
 
 	<update id="update">
-		update brd_commet set
+		update brd_comment set
 		brd_cmt_contents =
 		#{brd_cmt_contents},
 		brd_cmt_state = #{brd_cmt_state},
@@ -45,18 +51,25 @@
 	</update>
 
 	<update id="delete">
-		update brd_commet set
+		update brd_comment set
 		brd_cmt_state = 1
 		where
 		brd_cmt_id =
 		#{brd_cmt_id}
 	</update>
 
-
 	<select id="cmtcount" resultType="_int">
-		SELECT COUNT(*) FROM brd_commet
-		WHERE brd_id=#{brd_id} AND brd_cmt_reply=0;
+		SELECT COUNT(*) FROM
+		brd_comment
+		WHERE brd_id=#{brd_id} AND brd_cmt_reply=0
 	</select>
 
+	<update id="cmt_reply_count">
+		update brd_comment set
+		brd_cmt_replynum =
+		brd_cmt_replynum +1
+		where
+		brd_cmt_id = #{brd_cmt_id}
+	</update>
 
 </mapper>

@@ -24,8 +24,12 @@ public class BrdCmtServiceLogic implements CmtService {
 	@Override
 	public int register(BrdCmt newCmt, String token) {
 		int mem_id = jwtManager.getIdFromToken(token);
+		
+		if(newCmt.getBrd_cmt_reply()!=0) {
+			cmt_reply_count(newCmt.getBrd_cmt_reply());
+		}
+		
 		if (newCmt.getMem_id() == mem_id) {
-
 			int result = brdCmtMapper.create(newCmt.getBrd_id(), newCmt.getMem_id(), newCmt.getBrd_cmt_reply(),
 					newCmt.getMem_nickname(), newCmt.getBrd_cmt_contents(), newCmt.getBrd_cmt_state());
 			return result;
@@ -38,7 +42,8 @@ public class BrdCmtServiceLogic implements CmtService {
 	@Override
 	public ArrayList<BrdCmt> getCmtList(int brd_id, int pagenum) {
 		int pagecount = 10;
-		ArrayList<BrdCmt> result = brdCmtMapper.read_cmts(brd_id, pagenum, pagecount);
+		ArrayList<BrdCmt> result = new ArrayList<BrdCmt>();
+		result = brdCmtMapper.read_cmts(brd_id, pagenum, pagecount);
 		return result;
 	}
 
@@ -63,8 +68,11 @@ public class BrdCmtServiceLogic implements CmtService {
 	@Override
 	public int modify(int cmt_id, BrdCmt newCmt, String token) {
 		int mem_id = jwtManager.getIdFromToken(token);
-		if (newCmt.getMem_id() == mem_id) {
-			int result = brdCmtMapper.update(newCmt.getBrd_cmt_id(), newCmt.getBrd_cmt_contents(),
+		
+		BrdCmt brdCmt = brdCmtMapper.read(cmt_id);
+		
+		if (brdCmt.getMem_id() == mem_id) {
+			int result = brdCmtMapper.update(cmt_id, newCmt.getBrd_cmt_contents(),
 					newCmt.getBrd_cmt_state());
 			return result;
 		} else {
@@ -85,6 +93,13 @@ public class BrdCmtServiceLogic implements CmtService {
 		}
 	}
 
+	@Override
+	public int cmt_reply_count(int brd_cmt_id) {
+		int result = brdCmtMapper.cmt_reply_count(brd_cmt_id);
+		return result;
+		
+	}
+	
 	@Override
 	public int like(int id, String token) {
 		// TODO Auto-generated method stub
@@ -114,5 +129,7 @@ public class BrdCmtServiceLogic implements CmtService {
 			return result;
 		} else return result;
 	}
+
+
 
 }

@@ -25,4 +25,8 @@ public interface CmtService {
 	ArrayList<BrdCmt> getReplyList(ArrayList<BrdCmt> brdCmtList);
 	
 	int getPageNum(int id);
+	
+	int cmt_reply_count(int brd_cmt_id);
+	
+	
 }

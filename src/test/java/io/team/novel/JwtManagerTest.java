@@ -23,7 +23,7 @@ public class JwtManagerTest {
 		jwtManager = new JwtManager();
 	}
 
-	@Test
+	
 	@DisplayName("토큰 생성 및 복호화 테스트")
 	void tokenTest() { // given
 
