@@ -1,6 +1,7 @@
 package io.team.controller;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,15 +54,38 @@ public class UserController {
 	
 	
 	@PutMapping("/users")
-	public void modify(@RequestBody User newUser,HttpServletRequest req ) {
+	public Map<String, Object> modify(@RequestBody User newUser,HttpServletRequest req ) {
 		
-		userService.modify(newUser);
+		String token = req.getHeader("Authorization");
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		
+		try {
+			result.put("msg", userService.modify(newUser, token));
+			return result;
+		}
+		catch (Exception e){
+			result.put("msg", "ERROR");
+			return result;
+		}
+		
 	}
 	
 	
 	@DeleteMapping("/users")
-	public void remove(@RequestBody User newUser) {
-		userService.remove(newUser);
+	public Map<String, Object> remove(@RequestBody User newUser,HttpServletRequest req) {
+
+		String token = req.getHeader("Authorization");
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result.put("msg", userService.remove(newUser, token));
+			return result;
+		}
+		catch (Exception e){
+			result.put("msg", "ERROR");
+			return result;
+		}
+		
 	}
 	
 	@GetMapping("/login/{token}")

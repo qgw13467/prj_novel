@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.team.mapper.FileMapper">
+	<insert id="uploadFile">
+		INSERT INTO img_name (mem_id, img_originname,
+		img_filename, img_url, img_datetime)
+		VALUES(#{mem_id},#{img_originname}, #{img_filename}, #{img_url},
+		NOW())
+	</insert>
+
+	<select id="findByFilename" resultType="_int">
+		SELECT img_id FROM
+		img_name WHERE img_filename= #{img_filename}
+	</select>
+
+	<select id="findUrlById" resultType="string">
+		SELECT img_url FROM img_name
+		WHERE
+		img_id = #{img_id};
+	</select>
+</mapper>

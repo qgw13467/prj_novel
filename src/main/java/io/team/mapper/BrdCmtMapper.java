@@ -2,8 +2,11 @@ package io.team.mapper;
 
 import java.util.ArrayList;
 
+import org.springframework.stereotype.Repository;
+
 import io.team.domain.BrdCmt;
 
+@Repository
 public interface BrdCmtMapper {
 	int create(int brd_id, int mem_id, int brd_cmt_reply, String mem_nickname,
 			String brd_cmt_contents, int brd_cmt_state);

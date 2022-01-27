@@ -18,12 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.team.domain.Board;
 import io.team.domain.BrdCmt;
+import io.team.jwt.JwtManager;
 import io.team.service.BoardService;
 import io.team.service.logic.BrdCmtServiceLogic;
+
+
 
 @RestController
 public class BoardController {
 
+	@Autowired
+	private JwtManager jwtManager;
+	
 	@Autowired
 	private BrdCmtServiceLogic cmtService;
 
@@ -48,57 +54,124 @@ public class BoardController {
 	}
 
 	@PostMapping("/boards")
-	public @ResponseBody int write(@RequestBody Board newBoard, HttpServletRequest req) {
+	public @ResponseBody Map<String, Object> write(@RequestBody Board newBoard, HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
-		return boardService.register(newBoard, token);
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result.put("msg", boardService.register(newBoard, token));
+			return result;
+		}
+		catch (Exception e){
+			result.put("msg", "ERROR");
+			return result;
+		}
 	}
 
 	@PutMapping("/boards/{id}")
-	public @ResponseBody int update(@PathVariable int id, @RequestBody Board newBoard, HttpServletRequest req) {
+	public @ResponseBody Map<String, Object> update(@PathVariable int id, @RequestBody Board newBoard, HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
-		return boardService.modify(id, newBoard, token);
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result.put("msg", boardService.modify(id, newBoard, token));
+			return result;
+		}
+		catch (Exception e){
+			result.put("msg", "ERROR");
+			return result;
+		}
 	}
 
 	@DeleteMapping("/boards/{id}")
-	public @ResponseBody int delete(@PathVariable int id, HttpServletRequest req) {
+	public @ResponseBody Map<String, Object> delete(@PathVariable int id, HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
-		return boardService.remove(id, token);
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result.put("msg", boardService.remove(id, token));
+			return result;
+		}
+		catch (Exception e){
+			result.put("msg", "ERROR");
+			return result;
+		}
 	}
 
-	// 댓글
+	// 댓글작성
 	
 	@GetMapping("/boards/{id}/cmts")
 	public @ResponseBody Map<String, Object> getCmts(@PathVariable int id,
 			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum) {
 
 		ArrayList<BrdCmt> cmts = cmtService.getCmtList(id, Integer.parseInt(pagenum));
-		ArrayList<BrdCmt> replies = cmtService.getReplyList(cmts);
-
+		
+		System.out.println(pagenum);
+		System.out.println(cmts);
 		Map<String, Object> result = new HashMap<String, Object>();
 		int page = cmtService.getPageNum(id);
-		result.put("comments", cmts);
-		result.put("replies", replies);
+		
+		ArrayList<ArrayList<BrdCmt>> cmtsArray=new ArrayList<ArrayList<BrdCmt>>();
+		
+		for(BrdCmt cmt:cmts) {
+			ArrayList<BrdCmt> tempArrayList=new ArrayList<BrdCmt>();
+			tempArrayList.add(cmt);
+			ArrayList<BrdCmt> replies = cmtService.read_replies(cmt.getBrd_cmt_id());
+			tempArrayList.addAll(replies);
+			cmtsArray.add(tempArrayList);
+		}
+		
+		result.put("comments", cmtsArray);	
 		result.put("pagenum", page);
+		
 		return result;
 	}
 
 	@PostMapping("/boards/{id}/cmts")
-	public @ResponseBody int writeCmt(@PathVariable int id, @RequestBody BrdCmt newCmt, HttpServletRequest req) {
+	public @ResponseBody Map<String, Object> writeCmt(@PathVariable int id, @RequestBody BrdCmt newCmt, HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
-		return cmtService.register(newCmt, token);
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result.put("msg", cmtService.register(newCmt, token));
+			return result;
+		}
+		catch (Exception e){
+			result.put("msg", "ERROR");
+			return result;
+		}
 	}
 
 	@PutMapping("/boards/{id}/cmts/{brd_cmt_id}")
-	public @ResponseBody int updateCmt(@PathVariable int brd_cmt_id, @RequestBody BrdCmt newCmt,
+	public @ResponseBody Map<String, Object> updateCmt(@PathVariable int brd_cmt_id, @RequestBody BrdCmt newCmt,
 			HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
-		return cmtService.modify(brd_cmt_id, newCmt, token);
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result.put("msg", cmtService.modify(brd_cmt_id, newCmt, token));
+			return result;
+		}
+		catch (Exception e){
+			result.put("msg", "ERROR");
+			return result;
+		}
 	}
 
 	@DeleteMapping("/boards/{id}/cmts/{brd_cmt_id}")
-	public @ResponseBody int deleteCmt(@PathVariable int brd_cmt_id, HttpServletRequest req) {
+	public @ResponseBody Map<String, Object> deleteCmt(@PathVariable int brd_cmt_id, HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
-		return cmtService.remove(brd_cmt_id, token);
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result.put("msg", cmtService.remove(brd_cmt_id, token));
+			return result;
+		}
+		catch (Exception e){
+			result.put("msg", "ERROR");
+			return result;
+		}
+	}
+	
+	@GetMapping("/test")
+	public @ResponseBody String read() {
+		return jwtManager.getSecret();
 	}
 
 }

@@ -4,11 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.team.domain.User;
-
-import org.apache.ibatis.ognl.ClassCacheInspector;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -18,10 +15,12 @@ import java.util.Map;
 @Configuration
 @Service
 public class JwtManager {
-
-	private String securityKey = "sadf1023894r2039hreiwo1309rhi1-2934ieu2130i2tehf123890h"; // TODO 민감정보는 따로 분리하는 것이 좋다
-
-	private final Long expiredTime = 1000 * 60 * 20L;
+	
+	@Value("${JWT.SECRET}")
+	private String securityKey; // TODO 민감정보는 따로 분리하는 것이 좋다
+	
+ 
+	private final Long expiredTime = 1000 * 60 * 5L;
 
 	public String generateJwtToken(User newUser) {
 		Date now = new Date();
@@ -65,6 +64,10 @@ public class JwtManager {
 	}
 	public String getNickFromToken(String token) {
 		return (String) getClaims(token).get("mem_nick");
+	}
+	
+	public String getSecret() {
+		return this.securityKey;
 	}
 
 }

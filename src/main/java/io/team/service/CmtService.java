@@ -20,9 +20,7 @@ public interface CmtService {
 	
 	ArrayList<BrdCmt> getCmtList(int id, int pagenum);
 	
-	ArrayList<BrdCmt> read_reply(int brd_cmt_id);
-
-	ArrayList<BrdCmt> getReplyList(ArrayList<BrdCmt> brdCmtList);
+	ArrayList<BrdCmt> read_replies(int cmt_id);
 	
 	int getPageNum(int id);
 	

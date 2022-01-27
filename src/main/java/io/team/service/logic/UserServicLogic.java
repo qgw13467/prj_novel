@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-
+import io.team.domain.Board;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
 import io.team.mapper.UserMapper;
@@ -30,7 +30,7 @@ public class UserServicLogic implements UserService {
 	@Override
 	public String register(User newUser) {
 
-		if (userMapper.checkIdOverlap(newUser.getMem_userid(),newUser.getMem_nick()) != 0) {
+		if (userMapper.checkIdOverlap(newUser.getMem_userid(), newUser.getMem_nick()) != 0) {
 			return "ERROR";
 		}
 		userMapper.create(newUser.getMem_userid(), newUser.getMem_password(), format_time1, newUser.getMem_email(),
@@ -49,43 +49,46 @@ public class UserServicLogic implements UserService {
 			return "";
 		}
 	}
-	
 
 	@Override
 	public HashMap find(User newUser) {
 		userMapper.lastlogin(newUser.getMem_id());
-		HashMap<String,String> map=new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<String, String>();
 		try {
 			User user = userMapper.read(newUser.getMem_userid(), newUser.getMem_password());
-			
+
 			map.put("mem_nick", user.getMem_nick());
 			map.put("mem_id", Integer.toString(user.getMem_id()));
 			map.put("mem_userid", user.getMem_userid());
 			map.put("mem_icon", user.getMem_icon());
 			return map;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			return map;
 		}
 
 	}
-
+	
+	
+	
 	@Override
-	public void modify( User newUser) {
-		userMapper.update(newUser.getMem_userid(), newUser.getMem_password(), newUser.getMem_email(),
+	public int modify(User newUser, String token) {
+		
+		
+		int result = userMapper.update(newUser.getMem_userid(), newUser.getMem_password(), newUser.getMem_email(),
 				newUser.getMem_nick(), newUser.getMem_point(), newUser.getState(), newUser.getMem_following_nvnum(),
 				newUser.getMem_following_wrnum(), newUser.getMem_followed(), newUser.getMem_icon());
+		return result;
 	}
 
 	@Override
-	public void modify(int id, String pwd) {
-		userMapper.updatepwd(id, pwd);
-
+	public int modify(int id, String pwd, String token) {
+		return userMapper.updatepwd(id, pwd);
 	}
 
 	@Override
-	public void remove(User newUser) {
-		userMapper.delete(newUser.getMem_userid(),newUser.getMem_password());
-
+	public int remove(User newUser, String token) {
+		int result = userMapper.delete(newUser.getMem_userid(), newUser.getMem_password());
+		return result;
 	}
 
 

@@ -28,10 +28,10 @@ public class BoardServiceLogic implements BoardService {
 
 		int mem_id = jwtManager.getIdFromToken(token);
 		if (newBoard.getMem_id() == mem_id) {
-			boardMapper.create(newBoard.getMem_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
+			int result = boardMapper.create(newBoard.getMem_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
 					newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(),
 					newBoard.getBrd_datetime(), newBoard.getBrd_img(), newBoard.getBrd_file());
-			return 0;
+			return result;
 		} else {
 			return -1;
 		}
@@ -52,10 +52,11 @@ public class BoardServiceLogic implements BoardService {
 		Board board = boardMapper.read(brd_id);
 		int mem_id = jwtManager.getIdFromToken(token);
 		if (board.getMem_id() == mem_id) {
-			boardMapper.update(newBoard.getBrd_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
+			int result = boardMapper.update(newBoard.getBrd_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
 					newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(), newBoard.getBrd_img(),
 					newBoard.getBrd_file());
-			return 0;
+
+			return result;
 
 		} else {
 			return -1;
@@ -70,9 +71,10 @@ public class BoardServiceLogic implements BoardService {
 
 		if (board.getMem_id() == mem_id) {
 
-			boardMapper.delete(id);
-			return 0;
+			return boardMapper.delete(id);
+
 		} else {
+
 			return -1;
 		}
 
@@ -96,7 +98,7 @@ public class BoardServiceLogic implements BoardService {
 		int result = brdNum / pagecount;
 
 		if (brdNum % pagecount != 0) {
-			result = result / pagecount + 1;
+			result = brdNum / pagecount + 1;
 			return result;
 		} else
 			return result;

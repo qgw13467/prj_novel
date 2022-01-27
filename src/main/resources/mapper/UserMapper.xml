@@ -4,13 +4,14 @@
 
 <mapper namespace="io.team.mapper.UserMapper">
 	<select id="checkIdOverlap" resultType="_int">
-		SELECT COUNT(*) FROM user where
+		SELECT COUNT(*) FROM user
+		where
 		mem_userid =
 		#{mem_userid} and
-		mem_nick = 
+		mem_nick =
 		#{mem_nick}
 	</select>
-	
+
 	<insert id="create">
 		insert into user (mem_userid, mem_password,
 		mem_changepwd,mem_email,
@@ -22,10 +23,16 @@
 	</insert>
 	<select id="read" resultType="io.team.domain.User">
 		SELECT * FROM user where
-		mem_userid =
+		mem_userid
+		=
 		#{mem_userid} AND
 		mem_password =
 		#{mem_password}
+	</select>
+
+	<select id="findById" resultType="io.team.domain.User">
+		SELECT * FROM user where
+		mem_userid = #{mem_userid} 
 	</select>
 	<update id="lastlogin">
 		update user set
@@ -48,7 +55,8 @@
 		#{mem_icon}
 		where
 		mem_userid = #{mem_userid} and
-		mem_password =#{mem_password}
+		mem_password
+		=#{mem_password}
 	</update>
 	<update id="modifypwd">
 		update user set

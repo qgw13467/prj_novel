@@ -42,25 +42,12 @@ public class BrdCmtServiceLogic implements CmtService {
 	@Override
 	public ArrayList<BrdCmt> getCmtList(int brd_id, int pagenum) {
 		int pagecount = 10;
-		ArrayList<BrdCmt> result = new ArrayList<BrdCmt>();
-		result = brdCmtMapper.read_cmts(brd_id, pagenum, pagecount);
-		return result;
+		return brdCmtMapper.read_cmts(brd_id, (pagenum - 1) * pagecount, pagecount);
 	}
 
-	@Override
-	public ArrayList<BrdCmt> getReplyList(ArrayList<BrdCmt> brdCmtList) {
-
-		ArrayList<BrdCmt> result = new ArrayList<BrdCmt>();
-		for(BrdCmt brdCmt:brdCmtList) {
-			ArrayList<BrdCmt> temp= new ArrayList<BrdCmt>();
-			temp=read_reply(brdCmt.getBrd_cmt_id());
-			result.addAll(temp);
-		}
-		return result;
-	}
 
 	@Override
-	public ArrayList<BrdCmt> read_reply(int brd_cmt_reply) {
+	public ArrayList<BrdCmt> read_replies(int brd_cmt_reply) {
 		ArrayList<BrdCmt> result = brdCmtMapper.read_reply(brd_cmt_reply);
 		return result;
 	}
@@ -101,6 +88,18 @@ public class BrdCmtServiceLogic implements CmtService {
 	}
 	
 	@Override
+	public int getPageNum(int brd_id) {
+		int pagecount = 10;
+		int brdNum = brdCmtMapper.cmtcount(brd_id);
+		int result = brdNum / pagecount;
+		
+		if (brdNum % pagecount != 0) {
+			result = brdNum / pagecount + 1;
+			return result;
+		} else return result;
+	}
+	
+	@Override
 	public int like(int id, String token) {
 		// TODO Auto-generated method stub
 		return 0;
@@ -118,17 +117,7 @@ public class BrdCmtServiceLogic implements CmtService {
 		return 0;
 	}
 
-	@Override
-	public int getPageNum(int brd_id) {
-		int pagecount = 10;
-		int brdNum = brdCmtMapper.cmtcount(brd_id);
-		int result = brdNum / pagecount;
-		
-		if (brdNum % pagecount != 0) {
-			result = result / pagecount + 1;
-			return result;
-		} else return result;
-	}
+
 
 
 

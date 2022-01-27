@@ -4,7 +4,7 @@
 
 <mapper namespace="io.team.mapper.BrdCmtMapper">
 
-	<insert id="create">
+	<insert id="uploadFile">
 		insert into brd_comment (brd_id, mem_id,
 		brd_cmt_reply,mem_nickname,
 		brd_cmt_contents, brd_cmt_datetime,
@@ -21,14 +21,11 @@
 	</select>
 
 	<select id="read_cmts" resultType="io.team.domain.BrdCmt">
-		SELECT * FROM (SELECT * FROM
-		brd_comment WHERE brd_cmt_state = 0 AND brd_id = #{brd_id} AND
-		brd_cmt_reply ='0') b ORDER BY
+	SELECT * FROM (SELECT * FROM
+		brd_comment WHERE brd_cmt_state = 0 AND brd_id = #{brd_id} AND brd_cmt_reply ='0') b ORDER BY
 		brd_cmt_datetime DESC LIMIT
-		#{pagenum},
-		#{pagecount};
+		#{pagenum}, #{pagecount};
 	</select>
-
 
 
 	<select id="read_reply" resultType="io.team.domain.BrdCmt">
