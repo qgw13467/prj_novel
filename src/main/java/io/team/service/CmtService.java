@@ -1,14 +1,14 @@
 package io.team.service;
 
 import java.util.ArrayList;
+import org.springframework.stereotype.Repository;
 
-import io.team.domain.BrdCmt;
 
-public interface CmtService {
+public interface CmtService<T> {
 	
-	int register(BrdCmt newCmt, String token);
+	int register(T newCmt, String token);
 
-	int modify(int cmt_id, BrdCmt newCmt, String token);
+	int modify(int cmt_id, T newCmt, String token);
 
 	int remove(int id, String token);
 	
@@ -18,9 +18,9 @@ public interface CmtService {
 	
 	int report(int id, String token);
 	
-	ArrayList<BrdCmt> getCmtList(int id, int pagenum);
+	ArrayList<T> getCmtList(int id, int pagenum);
 	
-	ArrayList<BrdCmt> read_replies(int cmt_id);
+	ArrayList<T> read_replies(int cmt_id);
 	
 	int getPageNum(int id);
 	

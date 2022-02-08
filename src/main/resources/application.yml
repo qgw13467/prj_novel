@@ -1,18 +1,40 @@
-sever:
+server:
   port: 8080
-  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      location: d:\\temp\\spring_uploaded_files
 
 
-spring:
+spring: 
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://noveldatabase.cmgwmuioofp3.ap-northeast-2.rds.amazonaws.com:3306/novel
+    url: jdbc:mariadb://noveldb.cmgwmuioofp3.ap-northeast-2.rds.amazonaws.com:3306/novel
     username: admin
-    password: 123456789
+    password: a1s2d3f4g5
+    
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 
-jwt:
+JWT:
   ISSUER: TEST
-  SECRET: SeCrEt1938yh0r8ehgi0923hnr0qiuaShInG
+  SECRET: SeCrEt1938yh0r8ehgi0923hnr0qiu123e12r51028
+  
+  
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAUX4ZADFPUKVDE4TY
+      secretKey: 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
+    s3:
+      bucket: prj-novel
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

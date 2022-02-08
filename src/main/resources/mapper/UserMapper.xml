@@ -7,7 +7,7 @@
 		SELECT COUNT(*) FROM user
 		where
 		mem_userid =
-		#{mem_userid} and
+		#{mem_userid} OR
 		mem_nick =
 		#{mem_nick}
 	</select>

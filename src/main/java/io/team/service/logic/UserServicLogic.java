@@ -67,17 +67,15 @@ public class UserServicLogic implements UserService {
 		}
 
 	}
-	
-	
-	
+
 	@Override
 	public int modify(User newUser, String token) {
-		
-		
+
 		int result = userMapper.update(newUser.getMem_userid(), newUser.getMem_password(), newUser.getMem_email(),
 				newUser.getMem_nick(), newUser.getMem_point(), newUser.getState(), newUser.getMem_following_nvnum(),
 				newUser.getMem_following_wrnum(), newUser.getMem_followed(), newUser.getMem_icon());
 		return result;
+
 	}
 
 	@Override
@@ -90,7 +88,5 @@ public class UserServicLogic implements UserService {
 		int result = userMapper.delete(newUser.getMem_userid(), newUser.getMem_password());
 		return result;
 	}
-
-
 
 }

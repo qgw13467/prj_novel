@@ -11,7 +11,7 @@ import io.team.service.CmtService;
 
 
 @Service
-public class BrdCmtServiceLogic implements CmtService {
+public class BrdCmtServiceLogic implements CmtService<BrdCmt> {
 
 	@Autowired
 	JwtManager jwtManager;

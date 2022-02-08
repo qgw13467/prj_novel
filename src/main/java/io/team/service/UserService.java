@@ -1,8 +1,9 @@
 package io.team.service;
 
 import java.util.HashMap;
-
+import org.springframework.stereotype.Repository;
 import io.team.domain.User;
+
 
 public interface UserService {
 

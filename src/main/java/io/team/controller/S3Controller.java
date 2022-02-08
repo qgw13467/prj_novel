@@ -33,13 +33,18 @@ public class S3Controller {
 	@PostMapping("/upload")
     public @ResponseBody Map<String, Object> upload(@RequestParam("images") MultipartFile multipartFile, HttpServletRequest req) throws IOException {
 		String token = req.getHeader("Authorization");
-		
-		int img_id= s3Service.upload(multipartFile,  multipartFile.getOriginalFilename(), token);
-		
-		
 		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("img_id", img_id);
-        return result;
+		
+		try {
+			int img_id= s3Service.upload(multipartFile,  multipartFile.getOriginalFilename(), token);
+			result.put("msg", img_id);
+			return result;
+		}
+		catch (Exception e){
+			result.put("msg", "ERROR");
+			return result;
+		}
+
     }
 
 	@GetMapping("/imgs/{id}")

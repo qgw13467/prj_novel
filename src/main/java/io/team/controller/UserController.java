@@ -59,7 +59,6 @@ public class UserController {
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		
-		
 		try {
 			result.put("msg", userService.modify(newUser, token));
 			return result;

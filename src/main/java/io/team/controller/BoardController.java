@@ -19,27 +19,25 @@ import org.springframework.web.bind.annotation.RestController;
 import io.team.domain.Board;
 import io.team.domain.BrdCmt;
 import io.team.jwt.JwtManager;
-import io.team.service.BoardService;
+import io.team.service.WriteService;
+import io.team.service.logic.BoardServiceLogic;
 import io.team.service.logic.BrdCmtServiceLogic;
 
 
 
 @RestController
 public class BoardController {
-
-	@Autowired
-	private JwtManager jwtManager;
 	
 	@Autowired
 	private BrdCmtServiceLogic cmtService;
 
 	@Autowired
-	private BoardService boardService;
+	private BoardServiceLogic boardService;
 
 	@GetMapping("/boards")
 	public @ResponseBody Map<String, Object> getAllBoards(@RequestParam(value = "page", required=false, defaultValue = "1") String pagenum) {
 		
-		ArrayList<Board> boards = boardService.getBoardList(Integer.parseInt(pagenum));
+		ArrayList<Board> boards = boardService.getList(Integer.parseInt(pagenum));
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		int page=boardService.getPageNum();
@@ -50,7 +48,7 @@ public class BoardController {
 
 	@GetMapping("/boards/{id}")
 	public @ResponseBody Board read(@PathVariable int id) {
-		return boardService.find(id);
+		return (Board)boardService.find(id);
 	}
 
 	@PostMapping("/boards")
@@ -131,11 +129,14 @@ public class BoardController {
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+			
+			newCmt.setBrd_id(id);
 			result.put("msg", cmtService.register(newCmt, token));
 			return result;
 		}
 		catch (Exception e){
 			result.put("msg", "ERROR");
+			System.out.println(e);
 			return result;
 		}
 	}
@@ -169,9 +170,5 @@ public class BoardController {
 		}
 	}
 	
-	@GetMapping("/test")
-	public @ResponseBody String read() {
-		return jwtManager.getSecret();
-	}
 
 }

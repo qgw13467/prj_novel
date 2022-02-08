@@ -9,10 +9,10 @@ import io.team.domain.Board;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
 import io.team.mapper.BoardMapper;
-import io.team.service.BoardService;
+import io.team.service.WriteService;
 
 @Service
-public class BoardServiceLogic implements BoardService {
+public class BoardServiceLogic implements WriteService<Board> {
 
 	@Autowired
 	JwtManager jwtManager;
@@ -46,6 +46,7 @@ public class BoardServiceLogic implements BoardService {
 	@Override
 	public int modify(int brd_id, Board newBoard, String token) {
 		newBoard.setBrd_id(brd_id);
+		
 		if (newBoard.getImg_id() == 0) {
 			newBoard.setImg_id(1);
 		}
@@ -81,15 +82,12 @@ public class BoardServiceLogic implements BoardService {
 	}
 
 	@Override
-	public ArrayList<Board> getBoardList(int pagenum) {
+	public ArrayList<Board> getList(int pagenum) {
 		int pagecount = 10;
+		
 		return boardMapper.getBoards((pagenum - 1) * pagecount, pagecount);
 	}
 
-	@Override
-	public int getNextBoard() {
-		return boardMapper.getNextBoard();
-	}
 
 	@Override
 	public int getPageNum() {
@@ -105,13 +103,13 @@ public class BoardServiceLogic implements BoardService {
 
 	}
 
-	@Override
+	
 	public int like(int id, String token) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
+	
 	public int dislike(int id, String token) {
 		// TODO Auto-generated method stub
 		return 0;
