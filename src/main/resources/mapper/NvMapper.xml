@@ -2,15 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="io.team.mapper.NovelMapper">
+<mapper namespace="io.team.mapper.NvMapper">
 
-	<insert id="create">
-		insert into novel (mem_id, img_id,
+	<insert id="create" parameterType="io.team.domain.Novel" useGeneratedKeys="true" keyProperty="nv_id">
+		INSERT INTO novel
+		(mem_id,
+		img_id,
 		nv_writer,nv_title,
-		nv_contents, nv_state, nv_datetime)
+		nv_contents,
+		nv_state, nv_datetime)
 		values
 		(#{mem_id},#{img_id},#{nv_writer},#{nv_title},
 		#{nv_contents},#{nv_state},NOW())
+
 	</insert>
 
 	<select id="read" resultType="io.team.domain.Novel">
@@ -24,10 +28,11 @@
 		novel
 		SET
 		img_id = #{img_id},
-		nv_writer = #{nv_writer},
+		nv_writer =
+		#{nv_writer},
 		nv_title = #{nv_title},
 		nv_contents = #{nv_contents},
-		nv_state =  #{nv_state},
+		nv_state = #{nv_state},
 		nv_updatetime = NOW()
 		WHERE
 		nv_id = #{nv_id}

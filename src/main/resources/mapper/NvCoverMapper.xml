@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.team.mapper.NvCoverMapper">
+	<insert id="create" parameterType="io.team.domain.NovelCover" useGeneratedKeys="true" keyProperty="nvc_id">
+		insert into novel_cover ( nv_id,
+		img_id,nvc_title)
+		values
+		(#{nv_id},#{img_id},#{nvc_title})
+	</insert>
+
+	<select id="findByTitle" resultType="io.team.domain.NovelCover">
+		SELECT * FROM novel_cover
+		where
+		nvc_title =
+		#{nvc_title};
+	</select>
+
+	<select id="findByNvid" resultType="io.team.domain.NovelCover">
+		SELECT * FROM novel_cover
+		where
+		nvc_id =
+		#{nvc_id};
+	</select>
+
+	<update id="update">
+		update novel_cover set
+		img_id=#{img_id},
+		nvc_title=#{nvc_title}
+		where
+		nvc_id =
+		#{nvc_id}
+	</update>
+		
+	<update id="count_hit">
+		update novel_cover set
+		nvc_hit = nvc_hit+1
+		where
+		nvc_id = #{nvc_id}
+	</update>	
+</mapper>

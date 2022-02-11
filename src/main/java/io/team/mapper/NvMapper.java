@@ -1,14 +1,13 @@
 package io.team.mapper;
 
 import java.util.ArrayList;
-
 import org.springframework.stereotype.Repository;
-
 import io.team.domain.Novel;
 
 @Repository
-public interface NovelMapper {
-	int create(int mem_id, int img_id, String nv_writer, String nv_title, String nv_contents, int nv_state);
+public interface NvMapper {
+	
+	int create(Novel novel);
 
 	Novel read(int nv_id);
 

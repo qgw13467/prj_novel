@@ -2,9 +2,6 @@ package io.team.service;
 
 import java.util.ArrayList;
 
-import org.springframework.stereotype.Repository;
-
-
 
 public interface WriteService<T> {
 	int register(T obj, String token);

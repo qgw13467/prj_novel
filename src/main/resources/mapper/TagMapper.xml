@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.team.mapper.TagMapper">
+	<insert id="create">
+		insert into novel_tag ( tag_id, nv_id)
+		values
+		(#{tag_id},#{nv_id})
+	</insert>
+
+	<select id="findByTagid" resultType="io.team.mapper.TagMapper">
+		SELECT * FROM novel_link
+		where
+		tag_id =
+		#{tag_id};
+	</select>
+	
+	<select id="findBtTageName" resultType="io.team.mapper.TagMapper">
+		SELECT * FROM novel_link
+		where
+		tag_name =
+		#{tag_name};
+	</select>
+
+</mapper>

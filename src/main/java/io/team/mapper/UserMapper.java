@@ -30,7 +30,7 @@ public interface UserMapper {
 
 	ArrayList<User> selectAll();
 
-	int chageNickname(int id);
+	int chageNickname(int id, String mem_nick);
 
 	int chagePwd(int id);
 

@@ -17,6 +17,13 @@ spring:
     url: jdbc:mariadb://noveldb.cmgwmuioofp3.ap-northeast-2.rds.amazonaws.com:3306/novel
     username: admin
     password: a1s2d3f4g5
+  jpa :
+    properties :
+      hibernate : 
+          format_sql :true
+    show-sql : true
+    hibernate :
+      ddl-auto : validate
     
 
 mybatis:
@@ -25,7 +32,13 @@ mybatis:
 JWT:
   ISSUER: TEST
   SECRET: SeCrEt1938yh0r8ehgi0923hnr0qiu123e12r51028
-  
+
+springdoc: 
+  swagger-ui: 
+    path: /test/api-docs.html # swagger ui html 파일 경로 설정, 컨트롤러에서 해당 경로를 호출하면 자동 생성된 swagger 페이지가 보인다. 
+    paths-to-match: /** # 매칭 기본 URL 설정
+
+
   
 cloud:
   aws:
