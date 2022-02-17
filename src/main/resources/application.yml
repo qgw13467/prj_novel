@@ -1,10 +1,7 @@
 server:
   port: 8080
   servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-      location: d:\\temp\\spring_uploaded_files
+    context-path: /
 
 
 spring: 
@@ -18,12 +15,18 @@ spring:
     username: admin
     password: a1s2d3f4g5
   jpa :
+    open-in-view: false
     properties :
       hibernate : 
           format_sql :true
     show-sql : true
     hibernate :
       ddl-auto : validate
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
     
 
 mybatis:
@@ -33,10 +36,8 @@ JWT:
   ISSUER: TEST
   SECRET: SeCrEt1938yh0r8ehgi0923hnr0qiu123e12r51028
 
-springdoc: 
-  swagger-ui: 
-    path: /test/api-docs.html # swagger ui html 파일 경로 설정, 컨트롤러에서 해당 경로를 호출하면 자동 생성된 swagger 페이지가 보인다. 
-    paths-to-match: /** # 매칭 기본 URL 설정
+
+
 
 
   

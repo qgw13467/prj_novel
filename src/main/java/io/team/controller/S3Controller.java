@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import io.swagger.annotations.Api;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.S3Servicelogic;
 import lombok.RequiredArgsConstructor;

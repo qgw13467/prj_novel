@@ -10,6 +10,8 @@ public interface NvMapper {
 	int create(Novel novel);
 
 	Novel read(int nv_id);
+	
+	Novel readInfo(int nv_id);
 
 	int update(int nv_id, int img_id, String nv_writer, String nv_title, String nv_contents, int nv_state);
 

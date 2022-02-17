@@ -1,6 +1,7 @@
 package io.team.service.logic;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import io.team.domain.NovelCover;
+import io.team.jwt.JwtManager;
 import io.team.mapper.NvCoverMapper;
 import io.team.service.WriteService;
 
@@ -17,15 +19,21 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 	@Autowired
 	NvCoverMapper nvCoverMapper;
 
+	
 	@Override
 	public int register(NovelCover novelCover, String token) {
 		if (novelCover.getImg_id() == 0) {
 			novelCover.setImg_id(1);
 		}
+		if (novelCover.getNvid() == 0) {
+			novelCover.setNvid(1);
+		}
 
 		try {
 			int result = 0;
-			System.out.println();
+			NovelCover tempNvCover = nvCoverMapper.save(novelCover);
+			result= tempNvCover.getNvcid();
+			
 			return result;
 		} catch (Exception e) {
 			return -1;
@@ -39,14 +47,27 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 	
 	@Override
 	public NovelCover find(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		NovelCover tempCover = nvCoverMapper.findByNvcid(id);
+		return tempCover;
+	}
+	
+
+	public List<NovelCover> findByNvId(int id) {
+		List<NovelCover> tempCover = nvCoverMapper.findByNvid(id);
+		return tempCover;
 	}
 
 	@Override
 	public int modify(int id, NovelCover obj, String token) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		try {
+			NovelCover tempCover = nvCoverMapper.save(obj);
+			return tempCover.getNvcid();
+		}catch (Exception e) {
+			return -1;
+		}
+		
+
 	}
 
 	@Override

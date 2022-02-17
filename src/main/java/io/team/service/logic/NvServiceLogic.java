@@ -1,11 +1,14 @@
 package io.team.service.logic;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import io.team.domain.Novel;
+import io.team.domain.NovelCover;
+import io.team.domain.NovelLink;
 import io.team.jwt.JwtManager;
-import io.team.mapper.NvAllNodeMapper;
 import io.team.mapper.NvCoverMapper;
 import io.team.mapper.NvLinkMapper;
 import io.team.mapper.NvMapper;
@@ -18,9 +21,6 @@ public class NvServiceLogic implements WriteService<Novel> {
 
 	@Autowired
 	JwtManager jwtManager;
-	
-	@Autowired
-	NvAllNodeMapper nvAllNodeMapper;
 	
 	@Autowired
 	NvCoverMapper nvCoverMapper;
@@ -46,17 +46,17 @@ public class NvServiceLogic implements WriteService<Novel> {
 
 		int mem_id = jwtManager.getIdFromToken(token);
 		if (newNovel.getMem_id() == mem_id) {
-			int result = 0;
-			result += novelMapper.create(newNovel);
 			
-			return result;
+			novelMapper.create(newNovel);
+			
+			return newNovel.getNv_id();
 		} else {
 			return -1;
 		}
 	}
 	
 
-	public int register(Novel newNovel, String token,int parent) {
+	public int register(Novel newNovel, String token,int parent, int titleId) {
 		if (newNovel.getImg_id() == 0) {
 			newNovel.setImg_id(1);
 		}
@@ -65,13 +65,15 @@ public class NvServiceLogic implements WriteService<Novel> {
 		int mem_id = jwtManager.getIdFromToken(token);
 		
 		if (newNovel.getMem_id() == mem_id) {
-			int result=0;
-			result += novelMapper.create(newNovel);
-			result *= 10;
-			result += nvLinkMapper.create(parent, newNovel.getNv_id(), mem_id);
-			result *= 10;
-			result += nvAllNodeMapper.create(nvAllNodeMapper.findByDescendantNode(parent), newNovel.getNv_id(), mem_id);
-			return result;
+			int newNovelId = novelMapper.create(newNovel);
+			
+			NovelCover novelCover = nvCoverMapper.findByNvcid(titleId);
+			NovelLink novelLink= new NovelLink();
+			novelLink.setNvlparents(parent);
+			novelLink.setNvl_childnode(newNovel.getNv_id());
+			novelLink.setNvid(novelCover.getNvid());
+			nvLinkMapper.save(novelLink);
+			return 1;
 		} else {
 			return -1;
 		}
@@ -79,9 +81,24 @@ public class NvServiceLogic implements WriteService<Novel> {
 
 	@Override
 	public Novel find(int id) {
-		novelMapper.count_hit(id);
 		return novelMapper.read(id);
 	}
+	
+	public Novel findInfo(int id) {
+		return novelMapper.read(id);
+	}
+	
+	public int countCheck(int id) {
+		return novelMapper.count_hit(id);
+	}
+	
+	
+	public ArrayList<NovelLink> findLinks(int nv_id) {
+		return nvLinkMapper.findByNvid(nv_id);
+	}
+	
+	
+	
 
 	@Override
 	public int modify(int id, Novel newNovel, String token) {

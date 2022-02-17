@@ -1,9 +1,12 @@
 package io.team.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.hibernate.annotations.ColumnDefault;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,11 +20,16 @@ public class NovelCover {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int nvc_id;
+	@Column(name="nvc_id")
+	private int nvcid;
 	
-	private int nv_id;
+	@Column(name="nv_id")
+	private int nvid;
 	private int img_id;
 	private String nvc_title;
 	private int nvc_hit;
 	private int nvc_reviewpoint;
+	
+	@ColumnDefault("0")
+	private int nvc_reviewcount;
 }

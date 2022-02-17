@@ -17,7 +17,7 @@
 		#{nvc_title};
 	</select>
 
-	<select id="findByNvid" resultType="io.team.domain.NovelCover">
+	<select id="findByNvcid" resultType="io.team.domain.NovelCover">
 		SELECT * FROM novel_cover
 		where
 		nvc_id =

@@ -4,7 +4,8 @@
 
 <mapper namespace="io.team.mapper.NvMapper">
 
-	<insert id="create" parameterType="io.team.domain.Novel" useGeneratedKeys="true" keyProperty="nv_id">
+	<insert id="create" parameterType="io.team.domain.Novel"
+		useGeneratedKeys="true" keyProperty="nv_id">
 		INSERT INTO novel
 		(mem_id,
 		img_id,
@@ -19,6 +20,13 @@
 
 	<select id="read" resultType="io.team.domain.Novel">
 		SELECT * FROM novel where
+		nv_id =
+		#{nv_id};
+	</select>
+
+	<select id="readInfo" resultType="io.team.domain.Novel">
+		SELECT nv_id, mem_id, img_id, nv_writer, nv_title, nv_hit, nv_comment_count, nv_reviewpoint, nv_reviewcount, nv_datetime
+		FROM novel where
 		nv_id =
 		#{nv_id};
 	</select>

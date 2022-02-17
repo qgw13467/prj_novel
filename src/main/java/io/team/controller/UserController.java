@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import io.jsonwebtoken.Claims;
+import io.swagger.annotations.Api;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
 import io.team.service.UserService;

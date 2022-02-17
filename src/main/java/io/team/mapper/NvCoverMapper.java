@@ -12,9 +12,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NvCoverMapper extends JpaRepository<NovelCover, Integer> {
 	
-	public List<NovelCover> findById(int nvc_id);
-
-	
+	NovelCover findByNvcid(int nvc_id);
+	List<NovelCover> findByNvid(int nv_id);
 	
 	
 	
@@ -29,6 +28,6 @@ public interface NvCoverMapper extends JpaRepository<NovelCover, Integer> {
 	 * int update(int nv_id, int img_id, String nvc_title);
 	 * 
 	 * int count_hit(int nv_id)
-	 */;
+	 */
 	
 }
