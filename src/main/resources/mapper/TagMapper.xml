@@ -4,23 +4,25 @@
 
 <mapper namespace="io.team.mapper.TagMapper">
 	<insert id="create">
-		insert into novel_tag ( tag_id, nv_id)
+		insert into tag ( tag_hash, tag_name)
 		values
-		(#{tag_id},#{nv_id})
+		(#{tag_hash},#{tag_name})
 	</insert>
 
-	<select id="findByTagid" resultType="io.team.mapper.TagMapper">
-		SELECT * FROM novel_link
+	<select id="findByTagHash" resultType="String">
+		SELECT tag_name FROM tag
 		where
-		tag_id =
-		#{tag_id};
+		tag_hash =
+		#{tag_hash}
+		LIMIT 1;
 	</select>
 	
-	<select id="findBtTageName" resultType="io.team.mapper.TagMapper">
-		SELECT * FROM novel_link
+	<select id="findByTageName" resultType="String">
+		SELECT tag_hash FROM tag
 		where
 		tag_name =
-		#{tag_name};
+		#{tag_name} 
+		LIMIT 1;
 	</select>
 
 </mapper>

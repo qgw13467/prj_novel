@@ -102,9 +102,6 @@ public class BoardController {
 			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum) {
 
 		ArrayList<BrdCmt> cmts = cmtService.getCmtList(id, Integer.parseInt(pagenum));
-		
-		System.out.println(pagenum);
-		System.out.println(cmts);
 		Map<String, Object> result = new HashMap<String, Object>();
 		int page = cmtService.getPageNum(id);
 		

@@ -8,12 +8,12 @@
 		useGeneratedKeys="true" keyProperty="nv_id">
 		INSERT INTO novel
 		(mem_id,
-		img_id,
+		img_url,
 		nv_writer,nv_title,
 		nv_contents,
 		nv_state, nv_datetime)
 		values
-		(#{mem_id},#{img_id},#{nv_writer},#{nv_title},
+		(#{mem_id},#{img_url},#{nv_writer},#{nv_title},
 		#{nv_contents},#{nv_state},NOW())
 
 	</insert>
@@ -25,7 +25,8 @@
 	</select>
 
 	<select id="readInfo" resultType="io.team.domain.Novel">
-		SELECT nv_id, mem_id, img_id, nv_writer, nv_title, nv_hit, nv_comment_count, nv_reviewpoint, nv_reviewcount, nv_datetime
+		SELECT nv_id, mem_id, img_url, nv_writer, nv_title, nv_hit, nv_comment_count, 
+		nv_reviewpoint, nv_reviewcount, nv_datetime, nv_point
 		FROM novel where
 		nv_id =
 		#{nv_id};
@@ -35,7 +36,7 @@
 		UPDATE
 		novel
 		SET
-		img_id = #{img_id},
+		img_url = #{img_url},
 		nv_writer =
 		#{nv_writer},
 		nv_title = #{nv_title},
@@ -77,6 +78,15 @@
 		nv_reviewpoint= nv_reviewpoint +
 		#{point},
 		nv_reviewcount= nv_reviewcount +1
+		where
+		nv_id = #{nv_id}
+	</update>
+	
+		<update id="deletReview">
+		update novel set
+		nv_reviewpoint= nv_reviewpoint -
+		#{point},
+		nv_reviewcount= nv_reviewcount - 1
 		where
 		nv_id = #{nv_id}
 	</update>

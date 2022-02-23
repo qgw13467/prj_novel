@@ -22,13 +22,11 @@ public class BoardServiceLogic implements WriteService<Board> {
 
 	@Override
 	public int register(Board newBoard, String token) {
-		if (newBoard.getImg_id() == 0) {
-			newBoard.setImg_id(1);
-		}
+
 
 		int mem_id = jwtManager.getIdFromToken(token);
 		if (newBoard.getMem_id() == mem_id) {
-			int result = boardMapper.create(newBoard.getMem_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
+			int result = boardMapper.create(newBoard.getMem_id(), newBoard.getImg_url(), newBoard.getMem_nickname(),
 					newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(),
 					newBoard.getBrd_datetime(), newBoard.getBrd_img(), newBoard.getBrd_file());
 			return result;
@@ -47,13 +45,11 @@ public class BoardServiceLogic implements WriteService<Board> {
 	public int modify(int brd_id, Board newBoard, String token) {
 		newBoard.setBrd_id(brd_id);
 		
-		if (newBoard.getImg_id() == 0) {
-			newBoard.setImg_id(1);
-		}
+
 		Board board = boardMapper.read(brd_id);
 		int mem_id = jwtManager.getIdFromToken(token);
 		if (board.getMem_id() == mem_id) {
-			int result = boardMapper.update(newBoard.getBrd_id(), newBoard.getImg_id(), newBoard.getMem_nickname(),
+			int result = boardMapper.update(newBoard.getBrd_id(), newBoard.getImg_url(), newBoard.getMem_nickname(),
 					newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(), newBoard.getBrd_img(),
 					newBoard.getBrd_file());
 

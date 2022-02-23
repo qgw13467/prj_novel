@@ -13,7 +13,7 @@ public interface NvMapper {
 	
 	Novel readInfo(int nv_id);
 
-	int update(int nv_id, int img_id, String nv_writer, String nv_title, String nv_contents, int nv_state);
+	int update(int nv_id, String img_url, String nv_writer, String nv_title, String nv_contents, int nv_state);
 
 	int delete(int nv_id);
 
@@ -24,6 +24,8 @@ public interface NvMapper {
 	int nvcount();
 //////////////////////
 	int review(int nv_id, int point);
+	
+	int deletReview(int nv_id, int point);
 
 	int getNextNovel();
 

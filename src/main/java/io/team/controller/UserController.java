@@ -17,39 +17,57 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.annotations.Api;
 import io.team.domain.User;
+import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.service.UserService;
+import io.team.service.logic.PointServiceLogic;
+import io.team.service.logic.UserServicLogic;
 
 @RestController
 public class UserController {
 	@Autowired
-	private UserService userService;
+	private UserServicLogic userServicLogic;
 	@Autowired
 	JwtManager jwtManager;
-
+	
+	@Autowired
+	PointServiceLogic pointServiceLogic;
 	
 	@PostMapping("/login")
 	@ResponseBody
 	public HashMap find(@RequestBody User newUser, HttpServletResponse response) {
-		String token = userService.makeToken(newUser);
-		HashMap<String,String> map=userService.find(newUser);
-		if(map==null) {
-			HashMap<String,String> map2=new HashMap<String,String>();
-			map2.put("msg", "ERROR");
-			return map2;
+		HashMap<String,String> map = new HashMap<>();
+		try {
+			String token = userServicLogic.makeToken(newUser);
+			map=userServicLogic.find(newUser);
+			int attendance_point = 100;
+			int check = pointServiceLogic.attend(Integer.parseInt(map.get("mem_id")), PointPurpose.ATTENDANCE, attendance_point, map.get("mem_lastlogin_datetime"));
+
+			if(check == 1) {
+				map.put("attendance point", ""+attendance_point);
+				
+			}
+			else {
+				map.put("attendance point", "0");
+			}
+			map.put("Authorization", token);
+			response.setHeader("Authorization", token);
+			return map;
+		}catch (Exception e) {
+			e.printStackTrace();
+			map.put("msg", "ERROR");
+			return map;
 		}
 		
-		map.put("Authorization", token);
-		response.setHeader("Authorization", token);
-		return map;
 	}
 	
 	@PostMapping("/join")
 	public HashMap register(@RequestBody User newUser) {
 		HashMap<String,String> map=new HashMap<String, String>();
-		map.put("msg", userService.register(newUser));
+		map.put("msg", userServicLogic.register(newUser));
 		return map;
 	}
 	
@@ -61,7 +79,7 @@ public class UserController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		
 		try {
-			result.put("msg", userService.modify(newUser, token));
+			result.put("msg", userServicLogic.modify(newUser, token));
 			return result;
 		}
 		catch (Exception e){
@@ -78,7 +96,7 @@ public class UserController {
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result.put("msg", userService.remove(newUser, token));
+			result.put("msg", userServicLogic.remove(newUser, token));
 			return result;
 		}
 		catch (Exception e){

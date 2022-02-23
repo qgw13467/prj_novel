@@ -1,9 +1,14 @@
 package io.team.mapper;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import io.team.domain.NovelCover;
+import io.team.domain.Review;
 
-public interface ReviewMapper extends JpaRepository<NovelCover, Integer>{
+@Repository
+public interface ReviewMapper extends JpaRepository<Review, Integer>{
+
+	Review findByNvidAndMemid(int nvid, int memid);
 
 }

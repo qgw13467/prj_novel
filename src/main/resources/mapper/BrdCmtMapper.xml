@@ -7,11 +7,11 @@
 	<insert id="create">
 		insert into brd_comment (brd_id, mem_id,
 		brd_cmt_reply,mem_nickname,
-		brd_cmt_contents, brd_cmt_datetime,
+		brd_cmt_contents, brd_cmt_datetime,brd_cmt_updatetime,
 		brd_cmt_state)
 		values
 		(#{brd_id},#{mem_id},#{brd_cmt_reply},
-		#{mem_nickname},#{brd_cmt_contents},NOW(),#{brd_cmt_state})
+		#{mem_nickname},#{brd_cmt_contents},NOW(),NOW(),#{brd_cmt_state})
 	</insert>
 
 	<select id="read" resultType="io.team.domain.BrdCmt">
@@ -23,10 +23,12 @@
 	<select id="read_cmts" resultType="io.team.domain.BrdCmt">
 		SELECT * FROM (SELECT * FROM
 		brd_comment WHERE brd_cmt_state = 0 AND brd_id =
-		#{brd_id} AND brd_cmt_reply ='0') b ORDER BY
+		#{brd_id} AND
+		brd_cmt_reply ='0') b ORDER BY
 		brd_cmt_datetime DESC
 		LIMIT
-		#{pagenum}, #{pagecount};
+		#{pagenum},
+		#{pagecount};
 	</select>
 
 

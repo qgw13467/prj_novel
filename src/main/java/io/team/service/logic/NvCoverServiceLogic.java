@@ -22,9 +22,7 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 	
 	@Override
 	public int register(NovelCover novelCover, String token) {
-		if (novelCover.getImg_id() == 0) {
-			novelCover.setImg_id(1);
-		}
+
 		if (novelCover.getNvid() == 0) {
 			novelCover.setNvid(1);
 		}
@@ -43,6 +41,10 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 	
 	public Page<NovelCover> findAll(Pageable pageable) {
 		return nvCoverMapper.findAll(pageable);
+	}
+	
+	public Page<NovelCover> findAll(List<Integer> novelCovers, Pageable pageable) {
+		return nvCoverMapper.findAllByNvcidIn(novelCovers, pageable);
 	}
 	
 	@Override

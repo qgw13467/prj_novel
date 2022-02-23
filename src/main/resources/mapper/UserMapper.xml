@@ -15,11 +15,12 @@
 	<insert id="create">
 		insert into user (mem_userid, mem_password,
 		mem_changepwd,mem_email,
-		mem_nick, mem_regist_datetime,
+		mem_nick, mem_point, mem_regist_datetime,
 		mem_lastlogin_datetime, mem_icon)
 		values
 		(#{mem_userid},#{mem_password},#{mem_changepwd},#{mem_email},
-		#{mem_nick},#{mem_regist_datetime},#{mem_lastlogin_datetime},#{mem_icon})
+		#{mem_nick}, 500,
+		#{mem_regist_datetime},#{mem_lastlogin_datetime},#{mem_icon})
 	</insert>
 	<select id="read" resultType="io.team.domain.User">
 		SELECT * FROM user where
@@ -32,8 +33,14 @@
 
 	<select id="findById" resultType="io.team.domain.User">
 		SELECT * FROM user where
-		mem_userid = #{mem_userid} 
+		mem_userid = #{mem_userid} LIMIT 1
 	</select>
+	
+	<select id="findByMemid" resultType="io.team.domain.User">
+		SELECT * FROM user where
+		mem_id = #{mem_id} LIMIT 1
+	</select>
+	
 	<update id="lastlogin">
 		update user set
 		mem_lastlogin_datetime=NOW()
@@ -74,6 +81,13 @@
 		#{mem_userid} AND
 		mem_password=
 		#{mem_password}
+	</update>
+
+	<update id="changePoint">
+		update user set
+		mem_point = mem_point + #{point}
+		where
+		mem_id = #{mem_id}
 	</update>
 
 </mapper>

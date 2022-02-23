@@ -61,11 +61,21 @@ public class UserServicLogic implements UserService {
 			map.put("mem_id", Integer.toString(user.getMem_id()));
 			map.put("mem_userid", user.getMem_userid());
 			map.put("mem_icon", user.getMem_icon());
+			map.put("mem_lastlogin_datetime", user.getMem_lastlogin_datetime());
 			return map;
 		} catch (Exception e) {
 			return map;
 		}
-
+	}
+	
+	public User findByMemid(int mem_id) {
+		
+		try {
+			User user = userMapper.findByMemid(mem_id);
+			return user;
+		} catch (Exception e) {
+			return new User();
+		}
 	}
 
 	@Override
@@ -87,6 +97,27 @@ public class UserServicLogic implements UserService {
 	public int remove(User newUser, String token) {
 		int result = userMapper.delete(newUser.getMem_userid(), newUser.getMem_password());
 		return result;
+	}
+	
+	public int lastlogin(int mem_id) {
+		int result = -1;
+		try {
+			result= userMapper.lastlogin(mem_id);
+			return result;
+		}catch (Exception e) {
+			return result;
+		}
+
+	}
+	
+	public int changePoint(int mem_id, int point) {
+		int result = -1;
+		try {
+			result= userMapper.changePoint(mem_id, point);
+			return result;
+		}catch (Exception e) {
+			return result;
+		}
 	}
 
 }

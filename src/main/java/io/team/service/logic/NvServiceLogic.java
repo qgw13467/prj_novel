@@ -40,9 +40,7 @@ public class NvServiceLogic implements WriteService<Novel> {
 	
 	@Override
 	public int register(Novel newNovel, String token) {
-		if (newNovel.getImg_id() == 0) {
-			newNovel.setImg_id(1);
-		}
+
 
 		int mem_id = jwtManager.getIdFromToken(token);
 		if (newNovel.getMem_id() == mem_id) {
@@ -57,10 +55,7 @@ public class NvServiceLogic implements WriteService<Novel> {
 	
 
 	public int register(Novel newNovel, String token,int parent, int titleId) {
-		if (newNovel.getImg_id() == 0) {
-			newNovel.setImg_id(1);
-		}
-		
+
 		
 		int mem_id = jwtManager.getIdFromToken(token);
 		
@@ -104,13 +99,11 @@ public class NvServiceLogic implements WriteService<Novel> {
 	public int modify(int id, Novel newNovel, String token) {
 		newNovel.setNv_id(id);
 
-		if (newNovel.getImg_id() == 0) {
-			newNovel.setImg_id(1);
-		}
+
 		Novel novel = novelMapper.read(id);
 		int mem_id = jwtManager.getIdFromToken(token);
 		if (novel.getMem_id() == mem_id) {
-			int result = novelMapper.update(newNovel.getNv_id(), newNovel.getImg_id(), newNovel.getNv_writer(),
+			int result = novelMapper.update(newNovel.getNv_id(), newNovel.getImg_url(), newNovel.getNv_writer(),
 					newNovel.getNv_title(), newNovel.getNv_contents(), newNovel.getNv_state());
 
 			return result;
@@ -141,9 +134,12 @@ public class NvServiceLogic implements WriteService<Novel> {
 		return novelMapper.getNovels((pagenum - 1) * pagecount, pagecount);
 	}
 
-	public int review(int id, int point, String token) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int review(int id, int point) {
+		return novelMapper.review(id, point);
+	}
+	
+	public int deleteReview(int id, int point) {
+		return novelMapper.review(id, point);
 	}
 
 	@Override

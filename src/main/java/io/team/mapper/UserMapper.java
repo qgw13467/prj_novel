@@ -18,7 +18,11 @@ public interface UserMapper {
 	
 	User findById(String mem_userid);
 	
+	User findByMemid(int mem_id);
+	
 	int lastlogin(int mem_id);
+	
+	int changePoint(int mem_id, int point);
 	
 	int update(String mem_userid, String mem_password, String mem_email,
 			String mem_nick, int mem_point, int mem_state, int mem_following_nvnum,

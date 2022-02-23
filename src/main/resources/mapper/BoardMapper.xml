@@ -11,12 +11,12 @@
 	</select>
 
 	<insert id="create">
-		insert into board (mem_id, img_id,
+		insert into board (mem_id, img_url,
 		mem_nickname,brd_title,
 		brd_contents, brd_state, brd_datetime,
 		brd_img,brd_file)
 		values
-		(#{mem_id},#{img_id},#{mem_nickname},#{brd_title},
+		(#{mem_id},#{img_url},#{mem_nickname},#{brd_title},
 		#{brd_contents},#{brd_state},NOW(),#{brd_img},#{brd_file})
 	</insert>
 
@@ -37,7 +37,7 @@
 
 	<update id="update" >
 		update board set
-		img_id = #{img_id},
+		img_url = #{img_url},
 		mem_nickname =
 		#{mem_nickname},
 		brd_title = #{brd_title},

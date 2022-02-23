@@ -4,22 +4,22 @@
 
 <mapper namespace="io.team.mapper.NvTagMapper">
 	<insert id="create">
-		insert into novel_tag ( tag_id, nv_id)
+		insert into novel_tag ( tag_hash, nvc_id)
 		values
-		(#{tag_id},#{nv_id})
+		(#{tag_hash},#{nvc_id})
 	</insert>
 
-	<select id="findByTagid" resultType="io.team.mapper.NvTagMapper">
-		SELECT * FROM novel_link
+	<select id="findByTagHash" resultType="int">
+		SELECT nvc_id FROM novel_tag
 		where
-		tag_id =
-		#{tag_id};
+		tag_hash =
+		#{tag_hash};
 	</select>
 	
-	<select id="findByNvid" resultType="io.team.mapper.NvTagMapper">
-		SELECT * FROM novel_link
+	<select id="findByNvcid" resultType="int">
+		SELECT tag_hash FROM novel_tag
 		where
-		nv_id =
-		#{nv_id};
+		nvc_id =
+		#{nvc_id};
 	</select>
 </mapper>

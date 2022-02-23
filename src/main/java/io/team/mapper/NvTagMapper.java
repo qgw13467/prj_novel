@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NvTagMapper {
 	
-	int create(int tag_id, int nv_id);
+	int create(long tag_hash, int nvc_id);
 	
-	ArrayList<Integer> findByTagid(int tag_id);
+	ArrayList<Integer> findByTagHash(long tag_hash);
 	
-	ArrayList<Integer> findByNvid(int nv_id);
+	ArrayList<Integer> findByNvcid(int nvc_id);
 }

@@ -18,7 +18,7 @@ public class Novel {
 	
 	private int nv_id;
 	private int mem_id;
-	private int img_id;
+	private String img_url;
 	private String nv_writer;
 	private String nv_title;
 	private String nv_contents;
@@ -29,7 +29,7 @@ public class Novel {
 	private int nv_state;
 	private String nv_datetime;
 	private String nv_updatetime;
-	
+	private int nv_point;
 	
 	public Novel(int nv_id){
 		this.nv_id=nv_id;
@@ -38,7 +38,7 @@ public class Novel {
 
 	public Novel(HashMap<String, String> map){
 		this.mem_id= Integer.parseInt(map.get("mem_id"));
-		this.img_id= Integer.parseInt(map.get("img_id"));
+		this.img_url= map.get("img_url");
 		this.nv_writer= (String)map.get("nv_writer");
 		this.nv_title= (String)map.get("nv_title");
 		this.nv_contents= (String)map.get("nv_contents");
