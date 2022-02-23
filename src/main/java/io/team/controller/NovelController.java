@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.team.domain.BrdCmt;
 import io.team.domain.Novel;
 import io.team.domain.NovelCmt;
@@ -51,56 +52,59 @@ public class NovelController {
 
 		ArrayList<Novel> boards = nvServiceLogic.getList(Integer.parseInt(pagenum));
 		int page = nvServiceLogic.getPageNum();
-		
+
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("boards", boards);
 		result.put("pagenum", page);
-		
+
 		return result;
 	}
 
 	@GetMapping("/novels/detail/{titleId}")
-	public ResponseEntity read(@PathVariable int titleId, @RequestParam(value = "nv_id") int nv_id, HttpServletRequest req) {
-		
+	public ResponseEntity read(@PathVariable int titleId, @RequestParam(value = "nv_id") int nv_id,
+			HttpServletRequest req) {
+
 		String token = req.getHeader("Authorization");
 		NovelCover novelCover = nvCoverServiceLogic.find(titleId);
-		
+
 		int hitcount = novelCover.getNvc_hit();
 		novelCover.setNvc_hit(hitcount + 1);
-		
+
 		nvCoverServiceLogic.modify(titleId, novelCover, null);
 		nvServiceLogic.countCheck(nv_id);
 		Novel novel = new Novel();
-		
+
 		try {
 			Map<String, Object> result = new HashMap<String, Object>();
-			
+
 			novel = nvServiceLogic.find(nv_id);
-			int check = pointServiceLogic.readNovel(PointPurpose.READNOVEL, novel.getNv_point(), nv_id, novel.getMem_id(), token);
+			int check = pointServiceLogic.readNovel(PointPurpose.READNOVEL, novel.getNv_point(), nv_id,
+					novel.getMem_id(), token);
 			switch (check) {
 			case -1:
 				result.put("msg", "point lack");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			case -2:
-				result.put("msg", "JWT expiration");
-				return new ResponseEntity<>(result, HttpStatus.OK);
-			case -3:
-				result.put("msg", "ERROR");
-				return new ResponseEntity<>(result, HttpStatus.OK);
+				throw new Exception();
 			default:
 				break;
 			}
 			return new ResponseEntity<>(novel, HttpStatus.OK);
-		}catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<>(novel, HttpStatus.OK);
+		} catch (ExpiredJwtException e) {
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put("msg", "ERROR");
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
-		
+
 	}
 
 	@SuppressWarnings("finally")
 	@PostMapping("/novels/detail/{titleId}")
-	public @ResponseBody Map<String, Object> write(@PathVariable int titleId, @RequestBody HashMap<String, Object> map,
+	public ResponseEntity write(@PathVariable int titleId, @RequestBody HashMap<String, Object> map,
 			HttpServletRequest req) {
 
 		String token = req.getHeader("Authorization");
@@ -108,10 +112,14 @@ public class NovelController {
 
 		HashMap<String, String> hashMap = (HashMap<String, String>) map.get("novel");
 		Novel novel = new Novel(hashMap);
+		if (novel.getNv_point() == 0) {
+			novel.setNv_point(10);
+		}
 		System.out.println(novel);
-		Map<String, Object> result = new HashMap<String, Object>();
 
+		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+
 			if (Integer.parseInt((String) map.get("parent")) == 0) { // 1화를 처음작성하면 표지생성
 				int nv_id = nvServiceLogic.register(novel, token);
 
@@ -130,13 +138,18 @@ public class NovelController {
 
 			}
 
+		} catch (ExpiredJwtException e) {
+			e.printStackTrace();
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("msg", "ERROR");
-			return result;
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		} finally {
 			pointServiceLogic.writeNovel(novel.getMem_id(), PointPurpose.WRITENOVEL, 50, token);
-			return result;
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 
 	}

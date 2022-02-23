@@ -76,9 +76,9 @@ public class PointServiceLogic {
 
 	// 소설 읽을시 포인트  포인트 없을 때, 포인트 없을 때 소설 넘어감, 구매한 물건 다시 구매됨
 	public int readNovel(PointPurpose pointPurpose, int pnt_spend, int nv_id, int writer_id, String token) {
-
+		int checkMem_id = jwtManager.getIdFromToken(token);
 		try {
-			int checkMem_id = jwtManager.getIdFromToken(token);
+			
 
 			if (!purchaseListRepository.existsByMemidAndNvid(checkMem_id, nv_id)) {
 				PurchaseList newpurchaseList = new PurchaseList(checkMem_id, nv_id);
@@ -95,10 +95,8 @@ public class PointServiceLogic {
 			}
 			
 			return 1;
-		} catch (ExpiredJwtException e) {
-			return -2;
 		} catch (Exception e) {
-			return -3;
+			return -2;
 		}
 	}
 

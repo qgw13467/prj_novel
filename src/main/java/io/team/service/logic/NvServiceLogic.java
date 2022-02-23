@@ -41,22 +41,19 @@ public class NvServiceLogic implements WriteService<Novel> {
 	@Override
 	public int register(Novel newNovel, String token) {
 
-
 		int mem_id = jwtManager.getIdFromToken(token);
+		
 		if (newNovel.getMem_id() == mem_id) {
 			
 			novelMapper.create(newNovel);
-			
 			return newNovel.getNv_id();
 		} else {
 			return -1;
 		}
 	}
 	
+	public int register(Novel newNovel, String token, int parent, int titleId) {
 
-	public int register(Novel newNovel, String token,int parent, int titleId) {
-
-		
 		int mem_id = jwtManager.getIdFromToken(token);
 		
 		if (newNovel.getMem_id() == mem_id) {
@@ -74,6 +71,7 @@ public class NvServiceLogic implements WriteService<Novel> {
 		}
 	}
 
+	
 	@Override
 	public Novel find(int id) {
 		return novelMapper.read(id);

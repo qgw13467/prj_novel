@@ -43,6 +43,7 @@ public class Novel {
 		this.nv_title= (String)map.get("nv_title");
 		this.nv_contents= (String)map.get("nv_contents");
 		this.nv_state= Integer.parseInt(map.get("nv_state"));
+		this.nv_point = Integer.parseInt(map.get("nv_point"));
 	}
 
 
