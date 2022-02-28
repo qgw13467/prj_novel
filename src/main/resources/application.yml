@@ -2,7 +2,10 @@ server:
   port: 8080
   servlet:
     context-path: /
-
+  ssl:
+    key-store: keystore.p12
+    key-store-type: PKCS12
+    key-store-password: 789741
 
 spring: 
   servlet:

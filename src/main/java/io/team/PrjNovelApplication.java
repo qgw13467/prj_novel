@@ -8,12 +8,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-
+//exclude = SecurityAutoConfiguration.class
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @MapperScan(basePackages = "io.team.mapper")
 @EnableWebMvc
 public class PrjNovelApplication {
-
 
 	public static void main(String[] args) {
 		SpringApplication.run(PrjNovelApplication.class, args);

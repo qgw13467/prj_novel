@@ -1,10 +1,11 @@
 package config;
-
-import org.apache.catalina.filters.CorsFilter;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+
 
 @Configuration
 public class CorsConfig {
@@ -18,7 +19,7 @@ public class CorsConfig {
 		config.addAllowedHeader("*");	//모든 header에 응답 허용
 		config.addAllowedMethod("*");	//모든 메소드 요청을 허용
 		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter();
+		return new CorsFilter(source);
 		
 	}
 }

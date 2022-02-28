@@ -7,8 +7,6 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-
-import io.team.domain.Board;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
 import io.team.mapper.UserMapper;
@@ -22,6 +20,8 @@ public class UserServicLogic implements UserService {
 
 	@Autowired
 	UserMapper userMapper;
+	
+
 
 	SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	Calendar time = Calendar.getInstance();
@@ -42,6 +42,7 @@ public class UserServicLogic implements UserService {
 	public String makeToken(User newUser) {
 		User user;
 		try {
+			
 			user = userMapper.read(newUser.getMem_userid(), newUser.getMem_password());
 			String token = jwtManager.generateJwtToken(user);
 			return token;
@@ -80,7 +81,6 @@ public class UserServicLogic implements UserService {
 
 	@Override
 	public int modify(User newUser, String token) {
-
 		int result = userMapper.update(newUser.getMem_userid(), newUser.getMem_password(), newUser.getMem_email(),
 				newUser.getMem_nick(), newUser.getMem_point(), newUser.getState(), newUser.getMem_following_nvnum(),
 				newUser.getMem_following_wrnum(), newUser.getMem_followed(), newUser.getMem_icon());

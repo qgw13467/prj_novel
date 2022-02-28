@@ -34,7 +34,16 @@ public class BoardController {
 
 	@Autowired
 	private BoardServiceLogic boardService;
+	
+	@GetMapping("/test")
+	public @ResponseBody Map<String, Object> getAllBoards() {
+			
+		Map<String, Object> result = new HashMap<String, Object>();
 
+		result.put("test", "tsetsdf");
+		return result;
+	}
+	
 	@GetMapping("/boards")
 	public @ResponseBody Map<String, Object> getAllBoards(@RequestParam(value = "page", required=false, defaultValue = "1") String pagenum) {
 		
