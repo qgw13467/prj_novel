@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class S3Servicelogic {
 	
-	private final AmazonS3 s3Client;
+	private final AmazonS3Client  amazonS3Client;
 	
 	@Autowired
 	FileMapper fileMapper;
@@ -62,9 +63,9 @@ public class S3Servicelogic {
 	// S3로 업로드
 	private String putS3(File uploadFile, String fileName) {
 
-		s3Client.putObject(
+		amazonS3Client.putObject(
 				new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
-		return s3Client.getUrl(bucket, fileName).toString();
+		return amazonS3Client.getUrl(bucket, fileName).toString();
 	}
 
 	// 로컬에 저장된 이미지 지우기

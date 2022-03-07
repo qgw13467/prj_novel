@@ -35,7 +35,7 @@ public class BoardController {
 	@Autowired
 	private BoardServiceLogic boardService;
 	
-	@GetMapping("/test")
+	@GetMapping("/user/test")
 	public @ResponseBody Map<String, Object> getAllBoards() {
 			
 		Map<String, Object> result = new HashMap<String, Object>();

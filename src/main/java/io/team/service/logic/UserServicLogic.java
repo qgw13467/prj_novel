@@ -12,7 +12,7 @@ import io.team.jwt.JwtManager;
 import io.team.mapper.UserMapper;
 import io.team.service.UserService;
 
-@Repository
+
 @Service
 public class UserServicLogic implements UserService {
 	@Autowired
@@ -20,6 +20,7 @@ public class UserServicLogic implements UserService {
 
 	@Autowired
 	UserMapper userMapper;
+	
 	
 
 
@@ -73,6 +74,16 @@ public class UserServicLogic implements UserService {
 		
 		try {
 			User user = userMapper.findByMemid(mem_id);
+			return user;
+		} catch (Exception e) {
+			return new User();
+		}
+	}
+	
+	public User findByUserid(String userid) {
+		
+		try {
+			User user = userMapper.findById(userid);
 			return user;
 		} catch (Exception e) {
 			return new User();
