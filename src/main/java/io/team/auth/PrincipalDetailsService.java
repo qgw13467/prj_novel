@@ -18,8 +18,8 @@ public class PrincipalDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userServicLogic.findByUserid(username);
-		System.out.println("check ; loadUserByUsername");
-		System.out.println(user);
+//		System.out.println("check ; loadUserByUsername");
+//		System.out.println(user);
 		return new PrincipalDetails(user);
 	}
 

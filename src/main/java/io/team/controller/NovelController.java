@@ -2,8 +2,7 @@ package io.team.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.jsonwebtoken.ExpiredJwtException;
-import io.team.domain.BrdCmt;
 import io.team.domain.Novel;
 import io.team.domain.NovelCmt;
 import io.team.domain.NovelCover;
 import io.team.domain.Enum.PointPurpose;
-import io.team.mapper.NvMapper;
 import io.team.service.logic.NvCmtServiceLogic;
 import io.team.service.logic.NvCoverServiceLogic;
 import io.team.service.logic.NvServiceLogic;

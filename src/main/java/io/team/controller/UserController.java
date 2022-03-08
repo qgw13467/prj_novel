@@ -49,6 +49,7 @@ public class UserController {
 	public HashMap find(@RequestBody User newUser, HttpServletResponse response) {
 		HashMap<String,String> map = new HashMap<>();
 		try {
+			System.out.println("login");
 			String token = userServicLogic.makeToken(newUser);
 			map=userServicLogic.find(newUser);
 			int attendance_point = 100;
