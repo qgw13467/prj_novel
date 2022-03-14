@@ -85,6 +85,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		User user;
 		try {
 			user = userMapper.read(principalDetails.getUsername(), principalDetails.getPassword());
+			String state = " { \"msg\" : \"OK\" }";
 			
 			map = userServicLogic.find(user);
 			int attendance_point = 100;
@@ -108,8 +109,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			response.addCookie(new Cookie("mem_id", URLEncoder.encode(Integer.toString(user.getMem_id()), "utf-8")));
 			response.addCookie(new Cookie("mem_userid", URLEncoder.encode(user.getMem_userid(), "utf-8")));
 			response.addCookie(new Cookie("mem_icon", URLEncoder.encode(user.getMem_icon(), "utf-8")));
+			String date = URLEncoder.encode(user.getMem_lastlogin_datetime(), "utf-8");
 			response.addCookie(
-					new Cookie("mem_lastlogin_datetime", URLEncoder.encode(user.getMem_lastlogin_datetime(), "utf-8")));
+					new Cookie("mem_lastlogin_datetime", date.substring(0,23)));
 
 			response.addHeader("mem_nick", user.getMem_nick());
 			response.addHeader("mem_id", Integer.toString(user.getMem_id()));
@@ -117,6 +119,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			response.addHeader("mem_icon", user.getMem_icon());
 			response.addHeader("mem_lastlogin_datetime", user.getMem_lastlogin_datetime());
 			
+			
+			response.getWriter().print(state);
 			response.addHeader("Authorization", token);
 		} catch (Exception e) {
 			e.printStackTrace();

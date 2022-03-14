@@ -12,6 +12,7 @@ import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.mapper.PointRepository;
 import io.team.mapper.PurchaseListRepository;
+import io.team.service.logic.novel.NvServiceLogic;
 
 @Service
 public class PointServiceLogic {
@@ -75,8 +76,8 @@ public class PointServiceLogic {
 	}
 
 	// 소설 읽을시 포인트  포인트 없을 때, 포인트 없을 때 소설 넘어감, 구매한 물건 다시 구매됨
-	public int readNovel(PointPurpose pointPurpose, int pnt_spend, int nv_id, int writer_id, String token) {
-		int checkMem_id = jwtManager.getIdFromToken(token);
+	public int readNovel(PointPurpose pointPurpose, int pnt_spend, int nv_id, int writer_id, int checkMem_id) {
+		
 		try {
 			
 

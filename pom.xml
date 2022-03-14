@@ -105,7 +105,12 @@
 			<version>3.0.0</version>
 		</dependency>
 
-
+		<!--firebase -->
+		<dependency>
+			<groupId>com.google.firebase</groupId>
+			<artifactId>firebase-admin</artifactId>
+			<version>6.5.0</version>
+		</dependency>
 
 		<!-- s3등 -->
 		<dependency>

@@ -1,4 +1,4 @@
-package io.team.service.logic;
+package io.team.service.logic.novel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 	@Autowired
 	NvCoverMapper nvCoverMapper;
 
-	
+	//새 소설커버 등록
 	@Override
 	public int register(NovelCover novelCover, String token) {
 
@@ -39,6 +39,7 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 		}
 	}
 	
+	//페이지로 목록가져오기
 	public Page<NovelCover> findAll(Pageable pageable) {
 		return nvCoverMapper.findAll(pageable);
 	}
@@ -47,18 +48,19 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 		return nvCoverMapper.findAllByNvcidIn(novelCovers, pageable);
 	}
 	
+	//id로 소설커버 찾기
 	@Override
 	public NovelCover find(int id) {
 		NovelCover tempCover = nvCoverMapper.findByNvcid(id);
 		return tempCover;
 	}
 	
-
 	public List<NovelCover> findByNvId(int id) {
 		List<NovelCover> tempCover = nvCoverMapper.findByNvid(id);
 		return tempCover;
 	}
 
+	//수정
 	@Override
 	public int modify(int id, NovelCover obj, String token) {
 		

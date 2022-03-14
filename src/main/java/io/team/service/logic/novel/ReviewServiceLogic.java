@@ -1,4 +1,4 @@
-package io.team.service.logic;
+package io.team.service.logic.novel;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

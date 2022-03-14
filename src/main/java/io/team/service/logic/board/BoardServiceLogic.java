@@ -1,4 +1,4 @@
-package io.team.service.logic;
+package io.team.service.logic.board;
 
 import java.util.ArrayList;
 

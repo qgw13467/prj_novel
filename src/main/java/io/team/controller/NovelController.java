@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,26 +20,31 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.team.domain.Novel;
 import io.team.domain.NovelCmt;
 import io.team.domain.NovelCover;
+import io.team.domain.NovelLink;
 import io.team.domain.Enum.PointPurpose;
-import io.team.service.logic.NvCmtServiceLogic;
-import io.team.service.logic.NvCoverServiceLogic;
-import io.team.service.logic.NvServiceLogic;
+import io.team.jwt.JwtManager;
 import io.team.service.logic.PointServiceLogic;
+import io.team.service.logic.SubscribeNvService;
+import io.team.service.logic.novel.NvCmtServiceLogic;
+import io.team.service.logic.novel.NvCoverServiceLogic;
+import io.team.service.logic.novel.NvServiceLogic;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 public class NovelController {
 
-	@Autowired
-	private NvServiceLogic nvServiceLogic;
+	private final NvServiceLogic nvServiceLogic;
 
-	@Autowired
-	private NvCoverServiceLogic nvCoverServiceLogic;
+	private final NvCoverServiceLogic nvCoverServiceLogic;
 
-	@Autowired
-	private NvCmtServiceLogic nvCmtServiceLogic;
+	private final NvCmtServiceLogic nvCmtServiceLogic;
 
-	@Autowired
-	PointServiceLogic pointServiceLogic;
+	private final PointServiceLogic pointServiceLogic;
+
+	private final SubscribeNvService subscribeNvService;
+
+	private final JwtManager jwtManager;
 
 	@GetMapping("/novels/detail")
 	public @ResponseBody Map<String, Object> getAllNovels(
@@ -71,11 +75,15 @@ public class NovelController {
 		Novel novel = new Novel();
 
 		try {
+
 			Map<String, Object> result = new HashMap<String, Object>();
 
 			novel = nvServiceLogic.find(nv_id);
+			int checkMem_id = jwtManager.getIdFromToken(token);
+			
 			int check = pointServiceLogic.readNovel(PointPurpose.READNOVEL, novel.getNv_point(), nv_id,
-					novel.getMem_id(), token);
+					novel.getMem_id(), checkMem_id);
+
 			switch (check) {
 			case -1:
 				result.put("msg", "point lack");
@@ -85,11 +93,14 @@ public class NovelController {
 			default:
 				break;
 			}
+
 			return new ResponseEntity<>(novel, HttpStatus.OK);
+
 		} catch (ExpiredJwtException e) {
 			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
+
 		} catch (Exception e) {
 			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("msg", "ERROR");
@@ -107,15 +118,14 @@ public class NovelController {
 		int check = 0;
 
 		HashMap<String, String> hashMap = (HashMap<String, String>) map.get("novel");
-		Novel novel = new Novel(hashMap);
-		if (novel.getNv_point() == 0) {
-			novel.setNv_point(10);
+		if (!hashMap.containsKey("nv_point")) {
+			hashMap.put("nv_point", "10");
 		}
-		System.out.println(novel);
+		Novel novel = new Novel(hashMap);
 
 		Map<String, Object> result = new HashMap<String, Object>();
-		try {
 
+		try {
 			if (Integer.parseInt((String) map.get("parent")) == 0) { // 1화를 처음작성하면 표지생성
 				int nv_id = nvServiceLogic.register(novel, token);
 
@@ -124,14 +134,12 @@ public class NovelController {
 				}
 				NovelCover novelCover = nvCoverServiceLogic.find(titleId);
 				novelCover.setNvid(nv_id);
-				System.out.println(novelCover);
 				check += nvCoverServiceLogic.modify(titleId, novelCover, token);
 				result.put("msg", check);
 
 			} else { // 1화가 아니면 부모자식테이블, 모든에피소드테이블에 등록
 				check += nvServiceLogic.register(novel, token, Integer.parseInt((String) map.get("parent")), titleId);
 				result.put("msg", check);
-
 			}
 
 		} catch (ExpiredJwtException e) {
@@ -144,10 +152,14 @@ public class NovelController {
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} finally {
+
+			//
+			// subscribeNvService.pushSubscribeNv(check);
+			//
 			pointServiceLogic.writeNovel(novel.getMem_id(), PointPurpose.WRITENOVEL, 50, token);
 			return new ResponseEntity<>(result, HttpStatus.OK);
-		}
 
+		}
 	}
 
 	@PutMapping("/novels/detail/{titleId}")
@@ -157,6 +169,9 @@ public class NovelController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result.put("msg", nvServiceLogic.modify(nv_id, newNovel, token));
+			return result;
+		} catch (ExpiredJwtException e) {
+			result.put("msg", "JWT expiration");
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -172,6 +187,9 @@ public class NovelController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result.put("msg", nvServiceLogic.remove(titleId, token));
+			return result;
+		} catch (ExpiredJwtException e) {
+			result.put("msg", "JWT expiration");
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -219,6 +237,9 @@ public class NovelController {
 			newCmt.setNv_id(nv_id);
 			result.put("msg", nvCmtServiceLogic.register(newCmt, token));
 			return result;
+		} catch (ExpiredJwtException e) {
+			result.put("msg", "JWT expiration");
+			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("msg", "ERROR");
@@ -234,6 +255,9 @@ public class NovelController {
 		try {
 			result.put("msg", nvCmtServiceLogic.modify(nv_cmt_id, newCmt, token));
 			return result;
+		} catch (ExpiredJwtException e) {
+			result.put("msg", "JWT expiration");
+			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("msg", "ERROR");
@@ -247,6 +271,9 @@ public class NovelController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result.put("msg", nvCmtServiceLogic.remove(nv_cmt_id, token));
+			return result;
+		} catch (ExpiredJwtException e) {
+			result.put("msg", "JWT expiration");
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();

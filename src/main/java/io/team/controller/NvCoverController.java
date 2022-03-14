@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;
 import io.team.domain.NovelLink;
-import io.team.service.logic.NvCoverServiceLogic;
-import io.team.service.logic.NvServiceLogic;
-import io.team.service.logic.NvtagServiecLogic;
+import io.team.service.logic.novel.NvCoverServiceLogic;
+import io.team.service.logic.novel.NvServiceLogic;
+import io.team.service.logic.novel.NvtagServiecLogic;
 
 @RestController
 public class NvCoverController {

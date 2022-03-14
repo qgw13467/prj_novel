@@ -1,4 +1,4 @@
-package io.team.service.logic;
+package io.team.service.logic.novel;
 
 import java.util.ArrayList;
 import java.util.List;

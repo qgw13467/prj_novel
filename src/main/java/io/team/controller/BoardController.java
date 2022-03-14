@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.jsonwebtoken.ExpiredJwtException;
 import io.team.domain.Board;
 import io.team.domain.BrdCmt;
-import io.team.service.logic.BoardServiceLogic;
-import io.team.service.logic.BrdCmtServiceLogic;
+import io.team.service.logic.board.BoardServiceLogic;
+import io.team.service.logic.board.BrdCmtServiceLogic;
 
 
 
@@ -65,7 +69,11 @@ public class BoardController {
 		try {
 			result.put("msg", boardService.register(newBoard, token));
 			return result;
-		}
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return result;
+		} 
 		catch (Exception e){
 			result.put("msg", "ERROR");
 			return result;
@@ -79,7 +87,11 @@ public class BoardController {
 		try {
 			result.put("msg", boardService.modify(id, newBoard, token));
 			return result;
-		}
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return result;
+		} 
 		catch (Exception e){
 			result.put("msg", "ERROR");
 			return result;
@@ -93,7 +105,11 @@ public class BoardController {
 		try {
 			result.put("msg", boardService.remove(id, token));
 			return result;
-		}
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return result;
+		} 
 		catch (Exception e){
 			result.put("msg", "ERROR");
 			return result;

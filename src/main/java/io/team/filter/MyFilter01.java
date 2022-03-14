@@ -10,6 +10,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+
+import io.jsonwebtoken.JwtException;
+
 public class MyFilter01 implements Filter{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -19,7 +23,16 @@ public class MyFilter01 implements Filter{
 		HttpServletResponse res = (HttpServletResponse)response;
 		
 		String headerAuthString = req.getHeader("Authorization");
-		System.out.println(headerAuthString);
-		chain.doFilter(req, res);
+        try {
+            chain.doFilter(req, res); // go to 'JwtAuthenticationFilter'
+        } catch (JwtException ex) {
+            setErrorResponse(HttpStatus.UNAUTHORIZED, res, ex);
+        }
 	}
+	
+    public void setErrorResponse(HttpStatus status, HttpServletResponse res, Throwable ex) throws IOException {
+        res.setStatus(status.value());
+        res.setContentType("application/json; charset=UTF-8");
+        res.getWriter().write(ex.getMessage());
+    }
 }
