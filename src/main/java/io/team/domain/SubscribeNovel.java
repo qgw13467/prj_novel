@@ -25,14 +25,16 @@ public class SubscribeNovel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "subnv_id")
-	private int subnv_id;
+	private int subnvid;
 	
 	@Column(name = "mem_id")
-	private int mem_id;
+	private int memid;
 
 	@Column(name = "nvc_id")
-	private int nvc_id;
+	private int nvcid;
 
+	private String token;
+	
 	@Column(name = "subnv_datetime")
 	@CreationTimestamp
 	private LocalDateTime subnvDatetime = LocalDateTime.now();

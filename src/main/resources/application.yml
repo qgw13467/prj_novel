@@ -38,12 +38,7 @@ mybatis:
 JWT:
   ISSUER: TEST
   SECRET: SeCrEt1938yh0r8ehgi0923hnr0qiu123e12r51028
-
-
-
-
-
-  
+ 
 cloud:
   aws:
     credentials:
@@ -55,3 +50,7 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+      
+firebase:
+  path: \\home\\ubuntu\\novel-5653a-firebase-adminsdk-z0ogn-2ee7d9dda5.json
+  path2 : src/main/resources/firebase/novel-5653a-firebase-adminsdk-z0ogn-2ee7d9dda5.json

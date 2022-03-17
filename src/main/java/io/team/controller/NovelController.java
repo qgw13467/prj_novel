@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +22,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.team.domain.Novel;
 import io.team.domain.NovelCmt;
 import io.team.domain.NovelCover;
-import io.team.domain.NovelLink;
 import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.PointServiceLogic;
@@ -46,6 +47,7 @@ public class NovelController {
 
 	private final JwtManager jwtManager;
 
+
 	@GetMapping("/novels/detail")
 	public @ResponseBody Map<String, Object> getAllNovels(
 			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum) {
@@ -61,7 +63,7 @@ public class NovelController {
 	}
 
 	@GetMapping("/novels/detail/{titleId}")
-	public ResponseEntity read(@PathVariable int titleId, @RequestParam(value = "nv_id") int nv_id,
+	public ResponseEntity<?> read(@PathVariable int titleId, @RequestParam(value = "nv_id") int nv_id,
 			HttpServletRequest req) {
 
 		String token = req.getHeader("Authorization");
@@ -80,7 +82,7 @@ public class NovelController {
 
 			novel = nvServiceLogic.find(nv_id);
 			int checkMem_id = jwtManager.getIdFromToken(token);
-			
+
 			int check = pointServiceLogic.readNovel(PointPurpose.READNOVEL, novel.getNv_point(), nv_id,
 					novel.getMem_id(), checkMem_id);
 
@@ -111,8 +113,8 @@ public class NovelController {
 
 	@SuppressWarnings("finally")
 	@PostMapping("/novels/detail/{titleId}")
-	public ResponseEntity write(@PathVariable int titleId, @RequestBody HashMap<String, Object> map,
-			HttpServletRequest req) {
+	public ResponseEntity<?> write(@PathVariable int titleId, @RequestBody HashMap<String, Object> map,
+			HttpServletRequest req, HttpServletResponse res) {
 
 		String token = req.getHeader("Authorization");
 		int check = 0;
@@ -142,6 +144,12 @@ public class NovelController {
 				result.put("msg", check);
 			}
 
+			// 소설 작성시 구독 사용자에게 푸시알림
+			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
+			String title = "구독 알림";
+			String contents = "구독하신 소설 "+novelCover.getNvc_title()+ "의 최신화가 나왔습니다";
+			subscribeNvService.pushSubscribeNv(res, titleId, title, contents);
+
 		} catch (ExpiredJwtException e) {
 			e.printStackTrace();
 			result.put("msg", "JWT expiration");
@@ -153,9 +161,6 @@ public class NovelController {
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} finally {
 
-			//
-			// subscribeNvService.pushSubscribeNv(check);
-			//
 			pointServiceLogic.writeNovel(novel.getMem_id(), PointPurpose.WRITENOVEL, 50, token);
 			return new ResponseEntity<>(result, HttpStatus.OK);
 
