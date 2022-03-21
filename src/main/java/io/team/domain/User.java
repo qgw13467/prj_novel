@@ -1,11 +1,6 @@
 package io.team.domain;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,4 +30,5 @@ public class User {
 	private int mem_followed;
 	private String mem_icon;
 	private int mem_is_admin;
+	private String token;
 }

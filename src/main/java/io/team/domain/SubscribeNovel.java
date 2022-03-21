@@ -33,7 +33,6 @@ public class SubscribeNovel {
 	@Column(name = "nvc_id")
 	private int nvcid;
 
-	private String token;
 	
 	@Column(name = "subnv_datetime")
 	@CreationTimestamp

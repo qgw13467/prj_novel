@@ -1,7 +1,7 @@
 package io.team.service.logic.novel;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,7 @@ import io.team.mapper.NvLinkMapper;
 import io.team.mapper.NvMapper;
 import io.team.mapper.NvTagMapper;
 import io.team.mapper.TagMapper;
+import io.team.mapper.UserMapper;
 import io.team.service.WriteService;
 
 @Service
@@ -37,6 +38,7 @@ public class NvServiceLogic implements WriteService<Novel> {
 	@Autowired
 	TagMapper tagMapper;
 	
+
 	
 	@Override
 	public int register(Novel newNovel, String token) {
@@ -110,6 +112,8 @@ public class NvServiceLogic implements WriteService<Novel> {
 			return -1;
 		}
 	}
+	
+
 
 	@Override
 	public int remove(int id, String token) {

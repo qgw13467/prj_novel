@@ -18,6 +18,8 @@ public interface UserMapper {
 	
 	User findById(String mem_userid);
 	
+	ArrayList<String> findTokenByMemid(ArrayList<Integer> item);
+	
 	User findByMemid(int mem_id);
 	
 	int lastlogin(int mem_id);
@@ -27,6 +29,8 @@ public interface UserMapper {
 	int update(String mem_userid, String mem_password, String mem_email,
 			String mem_nick, int mem_point, int mem_state, int mem_following_nvnum,
 			int mem_following_wrnum, int mem_followed, String mem_icon);
+	
+	int updateToken(String token, int mem_id);
 	
 	int updatepwd(int mem_id,String mem_pasaword);
 	

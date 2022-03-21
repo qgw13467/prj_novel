@@ -149,6 +149,8 @@ public class NovelController {
 			String title = "구독 알림";
 			String contents = "구독하신 소설 "+novelCover.getNvc_title()+ "의 최신화가 나왔습니다";
 			subscribeNvService.pushSubscribeNv(res, titleId, title, contents);
+			
+			
 
 		} catch (ExpiredJwtException e) {
 			e.printStackTrace();

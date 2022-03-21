@@ -5,11 +5,14 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.aop.aspectj.AspectJMethodBeforeAdvice;
 import org.springframework.stereotype.Service;
 
-
+import io.team.domain.NovelCover;
 import io.team.domain.SubscribeNovel;
+import io.team.domain.User;
 import io.team.mapper.SubNvRepository;
+import io.team.service.logic.novel.NvCoverServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -17,26 +20,31 @@ import lombok.RequiredArgsConstructor;
 public class SubscribeNvService {
 
 	private final SubNvRepository subNvRepository;
-
+	
+	private final NvCoverServiceLogic nvCoverServiceLogic;
+	
 	private final FcmService fcmService;
-
-
-	public int subscribeNv(int mem_id, int nvc_id, String token) {
+	
+	private final UserServicLogic userServicLogic;
+	
+	public int subscribeNv(int mem_id, int nvc_id) {
 
 		try {
-			SubscribeNovel subscribeNovel = SubscribeNovel.builder().memid(mem_id).nvcid(nvc_id).token(token).build();
+			SubscribeNovel subscribeNovel = SubscribeNovel.builder().memid(mem_id).nvcid(nvc_id).build();
 
 			SubscribeNovel temp = new SubscribeNovel();
 			temp = subNvRepository.findFirstByMemidAndNvcid(mem_id, nvc_id);
-			System.out.println(temp);
+			
 			if (temp == null) {
 				subNvRepository.save(subscribeNovel);
-			} else if (temp.getToken().equals(subscribeNovel.getToken())) {
-				return 1;
-			} else {
-				temp.setToken(subscribeNovel.getToken());
-				subNvRepository.save(temp);
-			}
+			} 
+			
+//			else if (temp.getToken().equals(subscribeNovel.getToken())) {
+//				return 1;
+//			} else {
+//				temp.setToken(subscribeNovel.getToken());
+//				subNvRepository.save(temp);
+//			}
 
 			return 1;
 		} catch (Exception e) {
@@ -44,15 +52,39 @@ public class SubscribeNvService {
 			return -1;
 		}
 	}
+	
+	
+	public ArrayList<NovelCover> getSubList(int mem_id) {
+		
+		ArrayList<NovelCover> novelCovers = new ArrayList<>();
+		ArrayList<SubscribeNovel> subscribeNovels = new ArrayList<>();
+		
+		subscribeNovels = subNvRepository.findNvcidByMemid(mem_id);
+		
+		for (SubscribeNovel subscribeNovel : subscribeNovels) {
+			NovelCover novelCover= nvCoverServiceLogic.find(subscribeNovel.getNvcid());
+			novelCovers.add(novelCover);
+		}
+		
+		return novelCovers;
+	}
 
+	public int deleteSubscribe(int mem_id, int nvc_id) {
+		SubscribeNovel subscribeNovel = subNvRepository.findByMemidAndNvcid(mem_id, nvc_id);
+		subNvRepository.delete(subscribeNovel);
+		return 1;
+	}
+
+	
+	//소설커버아이디, 제목, 내용입력시 구독자에게 푸시알림
 	public int pushSubscribeNv(HttpServletResponse res, int nvc_id, String title, String contents) {
-		ArrayList<SubscribeNovel> tokens = new ArrayList<>();
+		ArrayList<SubscribeNovel> subscribeNovels = new ArrayList<>();
 		
 		try {
-			tokens = subNvRepository.findTokenByNvcid(nvc_id);
-			for (SubscribeNovel subscribeNovel : tokens) {
-				fcmService.send_FCMtoken(subscribeNovel.getToken(), title, contents);
-				//fcmService2.send_FCM(res, subscribeNovel.getToken(), title, contents);
+			subscribeNovels = subNvRepository.findMemidByNvcid(nvc_id);
+			for (SubscribeNovel subscribeNovel : subscribeNovels) {
+				User user = userServicLogic.findByMemid(subscribeNovel.getMemid());
+				fcmService.send_FCMtoken(user.getToken(), title, contents);
 				
 			}
 			
@@ -65,4 +97,5 @@ public class SubscribeNvService {
 	}
 
 
+	
 }
