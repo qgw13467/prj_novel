@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,28 +19,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;
 import io.team.domain.NovelLink;
+import io.team.jwt.JwtManager;
+import io.team.service.logic.SubscribeNvService;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import io.team.service.logic.novel.NvServiceLogic;
 import io.team.service.logic.novel.NvtagServiecLogic;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 public class NvCoverController {
 	
-	@Autowired
-	NvCoverServiceLogic nvCoverServiceLogic;
 	
-	@Autowired
-	NvServiceLogic nvServiceLogic;
+	private final NvCoverServiceLogic nvCoverServiceLogic;
 
-	@Autowired
-	NvtagServiecLogic nvtagServiecLogic;
+	private final NvServiceLogic nvServiceLogic;
+
+	private final NvtagServiecLogic nvtagServiecLogic;
 	
+	private final SubscribeNvService subscribeNvService;
 	
+	private final JwtManager jwtManager;
 	@GetMapping("/novels/genre")
-    public ResponseEntity findByGenre(@RequestParam(value = "genre") String genre, Pageable pageable) {
+    public ResponseEntity<?> findByGenre(@RequestParam(value = "genre") String genre, Pageable pageable) {
 		
 		ArrayList<Integer> nvcList = nvtagServiecLogic.findByTagName(genre);
 		
@@ -65,12 +69,46 @@ public class NvCoverController {
     }
 	
 	@GetMapping("/novels")
-    public ResponseEntity findAllNvCover(Pageable pageable) {
+    public ResponseEntity<?> findAllNvCover(Pageable pageable, HttpServletRequest req) {
+		
+		int mem_id = 0;
+		String token = req.getHeader("Authorization");
+		ArrayList<NovelCover> subNvCovers = new ArrayList<>();
 		Page<NovelCover> novelCover = nvCoverServiceLogic.findAll(pageable);
+		ArrayList<String> subscribe = new ArrayList<>();
 		ArrayList<ArrayList<String>> tags = new ArrayList<ArrayList<String>>();
+		
+		//토큰이 있을경우 memid를 구하고 만료확인
+		if(token!=null) {
+			try {
+				mem_id = jwtManager.getIdFromToken(token);
+				subNvCovers = subscribeNvService.getSubList(mem_id);
+			} catch (ExpiredJwtException e) {
+				Map<String, Object> result = new HashMap<String, Object>();
+				result.put("msg", "JWT expiration");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+		}
+		
+
 		for (NovelCover novelcvs : novelCover) {
 			ArrayList<String> tempList = nvtagServiecLogic.findByNvcId(novelcvs.getNvcid());
 			tags.add(tempList);
+			if(mem_id != 0) {
+				int checkSub = 0;
+				for (NovelCover nvc : subNvCovers) {
+					if(novelcvs.getNvcid() == nvc.getNvcid()) {
+						subscribe.add("check");
+						checkSub=1;
+						break;
+					}
+				}	
+				if(checkSub == 0) {
+					subscribe.add("uncheck");
+				}
+				
+			}
+			
 		}
 		HashMap<String, Object> result=new HashMap<>();
 		result.put("tags", tags);
@@ -80,11 +118,14 @@ public class NvCoverController {
 		result.put("totalPages", novelCover.getTotalPages());
 		result.put("size", novelCover.getSize());
 		result.put("numberOfElements", novelCover.getNumberOfElements());
+		if(mem_id != 0) {
+			result.put("subscribe", subscribe);
+		}
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
 	@GetMapping("/novels/{id}")
-    public ResponseEntity findByNvCover(@PathVariable int id, Pageable pageable) {
+    public ResponseEntity<?> findByNvCover(@PathVariable int id, Pageable pageable) {
 		
 		NovelCover novelCover= nvCoverServiceLogic.find(id);
 		int hitcount = novelCover.getNvc_hit();
@@ -98,10 +139,10 @@ public class NvCoverController {
 		
 		ArrayList<NovelLink> novelLinks = nvServiceLogic.findLinks(novelCover.getNvid());
 		ArrayList<Novel> novelList=new ArrayList<>(); 
-		HashMap<Integer, Novel> novelMap=new HashMap<>();
+		
 		for (NovelLink novelLink : novelLinks) {
 			node.add(novelLink.getNvlparents());
-			node.add(novelLink.getNvl_childnode());
+			node.add(novelLink.getNvlchildnode());
 		}
 		
 		for (Integer key : node) {
@@ -114,8 +155,8 @@ public class NvCoverController {
 			ArrayList<Integer> tempList = new ArrayList<>();
 			for (NovelLink novelLink : novelLinks) {
 				if(novelLink.getNvlparents()==parent) {
-					tempList.add(novelLink.getNvl_childnode());
-					queue.add(novelLink.getNvl_childnode());
+					tempList.add(novelLink.getNvlchildnode());
+					queue.add(novelLink.getNvlchildnode());
 					
 				}
 			}

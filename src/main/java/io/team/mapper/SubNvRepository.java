@@ -15,7 +15,7 @@ public interface SubNvRepository extends JpaRepository<SubscribeNovel, Integer>{
 	
 	SubscribeNovel findFirstByMemidAndNvcid(int memid, int nvcid);
 	
-	ArrayList<SubscribeNovel> findMemidByNvcid(int nvcid);
+	ArrayList<SubscribeNovel> findByNvcid(int nvcid);
 	
 	ArrayList<SubscribeNovel> findByMemidIn(List<Integer> memids);
 	

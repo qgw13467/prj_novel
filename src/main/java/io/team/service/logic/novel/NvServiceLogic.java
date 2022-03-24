@@ -64,7 +64,7 @@ public class NvServiceLogic implements WriteService<Novel> {
 			NovelCover novelCover = nvCoverMapper.findByNvcid(titleId);
 			NovelLink novelLink= new NovelLink();
 			novelLink.setNvlparents(parent);
-			novelLink.setNvl_childnode(newNovel.getNv_id());
+			novelLink.setNvlchildnode(newNovel.getNv_id());
 			novelLink.setNvid(novelCover.getNvid());
 			nvLinkMapper.save(novelLink);
 			return 1;
@@ -80,7 +80,7 @@ public class NvServiceLogic implements WriteService<Novel> {
 	}
 	
 	public Novel findInfo(int id) {
-		return novelMapper.read(id);
+		return novelMapper.readInfo(id);
 	}
 	
 	public int countCheck(int id) {
@@ -92,6 +92,18 @@ public class NvServiceLogic implements WriteService<Novel> {
 		return nvLinkMapper.findByNvid(nv_id);
 	}
 	
+	public int findFirstNvid(int nv_id) {
+		
+		int result = 0;
+		NovelLink novelLink = nvLinkMapper.findByNvlchildnode(nv_id);
+		if(novelLink == null) {
+			result = nv_id;
+		}else {
+			result = novelLink.getNvid();
+		}
+
+		return result;
+	}
 	
 	
 

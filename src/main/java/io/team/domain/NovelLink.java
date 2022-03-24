@@ -22,7 +22,8 @@ public class NovelLink {
 	
 	@Column(name="nvl_parents")
 	private int nvlparents;
-	private int nvl_childnode;
+	@Column(name="nvl_childnode")
+	private int nvlchildnode;
 	@Column(name="nv_id")
 	private int nvid;
 }

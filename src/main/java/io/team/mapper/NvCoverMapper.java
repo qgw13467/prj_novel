@@ -16,7 +16,7 @@ public interface NvCoverMapper extends JpaRepository<NovelCover, Integer> {
 	
 	NovelCover findByNvcid(int nvc_id);
 	
-	List<NovelCover> findByNvid(int nv_id);
+	NovelCover findFirstByNvid(int nv_id);
 	
 	List<NovelCover> findAllByNvcidIn(List<Integer> nvc_id);
 	

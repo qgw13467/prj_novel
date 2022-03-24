@@ -19,4 +19,6 @@ public interface NvLinkMapper extends JpaRepository<NovelLink, Integer>{
 	
 	ArrayList<NovelLink> findByNvid(int nv_id);
 
+	NovelLink findByNvlchildnode(int nvlchildnode);
+	
 }

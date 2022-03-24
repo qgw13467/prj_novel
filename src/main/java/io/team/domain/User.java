@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User {
 	
-
 	private int mem_id;
 	private String mem_userid;
 	private String mem_password;

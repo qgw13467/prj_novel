@@ -55,6 +55,10 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 		return tempCover;
 	}
 	
+	public NovelCover findByNvid(int id) {
+		NovelCover tempCover = nvCoverMapper.findFirstByNvid(id);
+		return tempCover;
+	}
 
 	//수정
 	@Override

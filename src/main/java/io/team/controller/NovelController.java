@@ -111,7 +111,6 @@ public class NovelController {
 
 	}
 
-	@SuppressWarnings("finally")
 	@PostMapping("/novels/detail/{titleId}")
 	public ResponseEntity<?> write(@PathVariable int titleId, @RequestBody HashMap<String, Object> map,
 			HttpServletRequest req, HttpServletResponse res) {
@@ -151,6 +150,9 @@ public class NovelController {
 			subscribeNvService.pushSubscribeNv(res, titleId, title, contents);
 			
 			
+			pointServiceLogic.writeNovel(novel.getMem_id(), PointPurpose.WRITENOVEL, 50, token);
+			return new ResponseEntity<>(result, HttpStatus.OK);
+			
 
 		} catch (ExpiredJwtException e) {
 			e.printStackTrace();
@@ -161,12 +163,9 @@ public class NovelController {
 			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
-		} finally {
-
-			pointServiceLogic.writeNovel(novel.getMem_id(), PointPurpose.WRITENOVEL, 50, token);
-			return new ResponseEntity<>(result, HttpStatus.OK);
-
 		}
+
+	
 	}
 
 	@PutMapping("/novels/detail/{titleId}")

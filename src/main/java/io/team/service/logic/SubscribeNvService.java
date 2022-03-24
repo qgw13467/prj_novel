@@ -81,9 +81,12 @@ public class SubscribeNvService {
 		ArrayList<SubscribeNovel> subscribeNovels = new ArrayList<>();
 		
 		try {
-			subscribeNovels = subNvRepository.findMemidByNvcid(nvc_id);
+			subscribeNovels = subNvRepository.findByNvcid(nvc_id);
+			
 			for (SubscribeNovel subscribeNovel : subscribeNovels) {
 				User user = userServicLogic.findByMemid(subscribeNovel.getMemid());
+
+				if(user.getToken().equals("")) continue;
 				fcmService.send_FCMtoken(user.getToken(), title, contents);
 				
 			}

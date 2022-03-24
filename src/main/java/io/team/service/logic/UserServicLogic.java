@@ -9,17 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
+import io.team.mapper.PurchaseListRepository;
 import io.team.mapper.UserMapper;
 import io.team.service.UserService;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class UserServicLogic implements UserService {
-	@Autowired
-	JwtManager jwtManager;
+	
+	private final JwtManager jwtManager;
 
-	@Autowired
-	UserMapper userMapper;
-
+	private final UserMapper userMapper;
+	
+	private final PurchaseListRepository purchaseListRepository;
+	
+	
 	SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	Calendar time = Calendar.getInstance();
 	String format_time1 = format1.format(time.getTime());

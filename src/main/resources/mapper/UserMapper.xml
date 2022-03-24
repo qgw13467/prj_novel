@@ -36,10 +36,11 @@
 		mem_userid = #{mem_userid} LIMIT 1
 	</select>
 
-	<select id="findByMemid" resultType="list">
+	<select id="findByMemid" resultType="io.team.domain.User">
 		SELECT * FROM user where
 		mem_id = #{mem_id} LIMIT 1
 	</select>
+	
 
 	<select id="findTokenByMemid" resultType="String">
 		SELECT token FROM user
