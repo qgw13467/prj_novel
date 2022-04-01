@@ -20,6 +20,9 @@ public class PrincipalDetailsService implements UserDetailsService {
 		User user = userServicLogic.findByUserid(username);
 //		System.out.println("check ; loadUserByUsername");
 //		System.out.println(user);
+		if(user != null) {
+			return new PrincipalDetails(user);
+		}
 		return new PrincipalDetails(user);
 	}
 

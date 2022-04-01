@@ -11,7 +11,9 @@ import javax.websocket.server.PathParam;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +22,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import io.jsonwebtoken.ExpiredJwtException;
+import io.team.auth.PrincipalDetails;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;
 import io.team.domain.NovelLink;
@@ -55,36 +59,34 @@ public class UserController {
 	
 	private final NvCoverServiceLogic nvCoverServiceLogic;
 	
-	private final FcmService fmFcmService;
 	
-	@PostMapping("/login")
-	@ResponseBody
-	public HashMap find(@RequestBody User newUser, HttpServletResponse response) {
-		HashMap<String,String> map = new HashMap<>();
-		try {
-			System.out.println("login");
-			String token = userServicLogic.makeToken(newUser);
-			map=userServicLogic.find(newUser);
-			int attendance_point = 100;
-			int check = pointServiceLogic.attend(Integer.parseInt(map.get("mem_id")), PointPurpose.ATTENDANCE, attendance_point, map.get("mem_lastlogin_datetime"));
-
-			if(check == 1) {
-				map.put("attendance point", ""+attendance_point);
-				
-			}
-			else {
-				map.put("attendance point", "0");
-			}
-			map.put("Authorization", token);
-			response.setHeader("Authorization", token);
-			return map;
-		}catch (Exception e) {
-			e.printStackTrace();
-			map.put("msg", "ERROR");
-			return map;
-		}
-		
-	}
+//	@PostMapping("/login")
+//	@ResponseBody
+//	public HashMap find(@RequestBody User newUser, HttpServletResponse response) {
+//		HashMap<String,String> map = new HashMap<>();
+//		try {
+//			String token = userServicLogic.makeToken(newUser);
+//			map=userServicLogic.find(newUser);
+//			int attendance_point = 100;
+//			int check = pointServiceLogic.attend(Integer.parseInt(map.get("mem_id")), PointPurpose.ATTENDANCE, attendance_point, map.get("mem_lastlogin_datetime"));
+//
+//			if(check == 1) {
+//				map.put("attendance point", ""+attendance_point);
+//				
+//			}
+//			else {
+//				map.put("attendance point", "0");
+//			}
+//			map.put("Authorization", token);
+//			response.setHeader("Authorization", token);
+//			return map;
+//		}catch (Exception e) {
+//			e.printStackTrace();
+//			map.put("msg", "ERROR");
+//			return map;
+//		}
+//		
+//	}
 	
 	@PostMapping("/join")
 	public HashMap register(@RequestBody User newUser) {
@@ -224,12 +226,10 @@ public class UserController {
 		
 	}
 	
-	@GetMapping("/test")
-	public void test(HttpServletRequest req) {
-		
-		User user = userServicLogic.findByMemid(10);
-		System.out.println(user);
-		fmFcmService.send_FCMtoken(user.getToken(), "테스트", "내용");
+	@GetMapping("/test/login")
+	public void test(Authentication authentication) {
+		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
+		System.out.println(oAuth2User.getAuthorities());
 		
 	}	
 

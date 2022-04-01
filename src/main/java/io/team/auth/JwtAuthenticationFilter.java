@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
 	
-	// 로그인 요청하면 로그인 시호를 위해 실행되는 함수
+	// 로그인 요청하면 로그인 시도를 위해 실행되는 함수
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
@@ -61,7 +61,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
 			// authentication 객체가 session영역에 저장됨-> 로그인됨
-
 			PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
 			// authentication 객체가 session영역에 저장해햐 하고 그 방법으로 return 하면됨
@@ -81,25 +80,28 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			Authentication authResult) throws IOException, ServletException {
 		
 		HashMap<String, String> map = new HashMap<>();
+		HashMap<String, String> result = new HashMap<>();
 		PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
 		User user;
 		try {
-			user = userMapper.read(principalDetails.getUsername(), principalDetails.getPassword());
-			String state = " { \"msg\" : \"OK\" }";
 			
+			user = userMapper.read(principalDetails.getUsername(), principalDetails.getPassword());
 			map = userServicLogic.find(user);
+
+			result.put("\"msg\"","\"OK\"");
 			int attendance_point = 100;
-			int check = pointServiceLogic.attend(Integer.parseInt(map.get("mem_id")), PointPurpose.ATTENDANCE,
-					attendance_point, map.get("mem_lastlogin_datetime"));
-
-			if (check == 1) {
-				response.addCookie(new Cookie("attendance_point", "" + (attendance_point+user.getMem_point()) ));
-
-			} else {
-				response.addCookie(new Cookie("attendance_point",  "0"));
+			int check = pointServiceLogic.attend(Integer.parseInt(map.get("mem_id")), PointPurpose.ATTENDANCE, attendance_point, map.get("mem_lastlogin_datetime"));
+			
+			System.out.println(check);
+			if(check == 1) {
+				result.put("\"attendance point\"", ""+attendance_point);
+				
+			}
+			else {
+				result.put("\"attendance point\"", "0");
 			}
 
-			
+			userServicLogic.lastlogin(user.getMem_id());
 			String token = jwtManager.generateJwtToken(user);
 //			System.out.println(token);
 			response.setCharacterEncoding("UTF-8");
@@ -120,7 +122,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			response.addHeader("mem_lastlogin_datetime", user.getMem_lastlogin_datetime());
 			
 			
-			response.getWriter().print(state);
+			response.getWriter().print(result);
 			response.addHeader("Authorization", token);
 		} catch (Exception e) {
 			e.printStackTrace();

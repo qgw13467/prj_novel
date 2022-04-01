@@ -8,6 +8,18 @@ server:
     key-store-password: 789741
 
 spring: 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1042421259759-kfl3kh6j5vdml7n9iu3fj5nrhmfb6huj.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+            - email
+            - profile 
+  profiles:
+    include: google
   servlet:
     multipart:
       max-file-size: 30MB
@@ -29,11 +41,12 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
+          enabled: true
     
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+
 
 JWT:
   ISSUER: TEST
@@ -54,3 +67,4 @@ cloud:
 firebase:
   path: \\home\\ubuntu\\novel-5653a-firebase-adminsdk-z0ogn-2ee7d9dda5.json
   path2 : src/main/resources/firebase/novel-5653a-firebase-adminsdk-z0ogn-2ee7d9dda5.json
+

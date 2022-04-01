@@ -55,7 +55,6 @@ public class UserServicLogic implements UserService {
 
 	@Override
 	public HashMap find(User newUser) {
-		userMapper.lastlogin(newUser.getMem_id());
 		HashMap<String, String> map = new HashMap<String, String>();
 		try {
 			User user = userMapper.read(newUser.getMem_userid(), newUser.getMem_password());

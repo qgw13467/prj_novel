@@ -37,10 +37,9 @@ public class PointServiceLogic {
 	public int attend(int mem_id, PointPurpose pointPurpose, int pnt_spend, String mem_lastlogin_datetime) {
 
 		try {
-			mem_lastlogin_datetime = mem_lastlogin_datetime.substring(8, 10);
+			mem_lastlogin_datetime = mem_lastlogin_datetime.substring(0, 10);
 			String nowDate = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss").format(new Date());
-			nowDate = nowDate.substring(8, 10);
-
+			nowDate = nowDate.substring(0, 10);
 			if (!mem_lastlogin_datetime.equals(nowDate)) {
 				Point newPoint = new Point(mem_id, pointPurpose, pnt_spend);
 				pointRepository.save(newPoint);
