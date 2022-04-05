@@ -92,7 +92,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			int attendance_point = 100;
 			int check = pointServiceLogic.attend(Integer.parseInt(map.get("mem_id")), PointPurpose.ATTENDANCE, attendance_point, map.get("mem_lastlogin_datetime"));
 			
-			System.out.println(check);
 			if(check == 1) {
 				result.put("\"attendance point\"", ""+attendance_point);
 				
@@ -111,15 +110,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			response.addCookie(new Cookie("mem_id", URLEncoder.encode(Integer.toString(user.getMem_id()), "utf-8")));
 			response.addCookie(new Cookie("mem_userid", URLEncoder.encode(user.getMem_userid(), "utf-8")));
 			response.addCookie(new Cookie("mem_icon", URLEncoder.encode(user.getMem_icon(), "utf-8")));
+			response.addCookie(new Cookie("mem_point", URLEncoder.encode(Integer.toString(user.getMem_point()), "utf-8")));
 			String date = URLEncoder.encode(user.getMem_lastlogin_datetime(), "utf-8");
 			response.addCookie(
 					new Cookie("mem_lastlogin_datetime", date.substring(0,23)));
-
-			response.addHeader("mem_nick", user.getMem_nick());
-			response.addHeader("mem_id", Integer.toString(user.getMem_id()));
-			response.addHeader("mem_userid", user.getMem_userid());
-			response.addHeader("mem_icon", user.getMem_icon());
-			response.addHeader("mem_lastlogin_datetime", user.getMem_lastlogin_datetime());
 			
 			
 			response.getWriter().print(result);

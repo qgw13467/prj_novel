@@ -1,18 +1,16 @@
 package io.team.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
-
 import io.team.auth.JwtAuthenticationFilter;
 import io.team.filter.MyFilter01;
-import io.team.handler.OAuth2SuccessHandler;
+import io.team.handler.OAuth2AuthenticationFailureHanlder;
+import io.team.handler.OAuth2AuthenticationSuccessHandler;
 import io.team.jwt.JwtManager;
 import io.team.mapper.UserMapper;
 import io.team.service.Oauth2UserService;
@@ -31,9 +29,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private final PointServiceLogic pointServiceLogic;
 	private final UserServicLogic userServicLogic;
 	private final Oauth2UserService oauth2UserService;
-	private final OAuth2SuccessHandler oAuth2SuccessHandler;
-
-
+	private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+	private final OAuth2AuthenticationFailureHanlder oAuth2AuthenticationFailureHanlder;
+	
+	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/user/*");
@@ -53,10 +52,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/google").authenticated()
 				.anyRequest().permitAll()
 				.and().oauth2Login()
-				//.defaultSuccessUrl("/")
-				.successHandler(oAuth2SuccessHandler)
 				.userInfoEndpoint()
-				.userService(oauth2UserService);
+				.userService(oauth2UserService)
+				.and()
+				//.failureHandler(oAuth2AuthenticationFailureHanlder)
+				.successHandler(oAuth2AuthenticationSuccessHandler);
+				
+				
 	}
 
 
