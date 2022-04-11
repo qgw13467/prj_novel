@@ -26,6 +26,8 @@ public interface UserMapper {
 	
 	int changePoint(int mem_id, int point);
 	
+	int getPoint(int mem_id);
+	
 	int update(String mem_userid, String mem_password, String mem_email,
 			String mem_nick, int mem_point, int mem_state, int mem_following_nvnum,
 			int mem_following_wrnum, int mem_followed, String mem_icon);

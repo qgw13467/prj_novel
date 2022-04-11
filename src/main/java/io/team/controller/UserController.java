@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,19 +18,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.jsonwebtoken.ExpiredJwtException;
-import io.team.auth.PrincipalDetails;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;
 import io.team.domain.NovelLink;
 import io.team.domain.PurchaseList;
 import io.team.domain.User;
-import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
-import io.team.service.logic.FcmService;
+import io.team.mapper.UserMapper;
 import io.team.service.logic.PointServiceLogic;
 import io.team.service.logic.UserServicLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
@@ -215,6 +209,31 @@ public class UserController {
 			
 			 		
 			return new ResponseEntity<>(novels, HttpStatus.OK);
+		}catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (Exception e){
+			result.put("msg", "ERROR");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
+		
+	}
+	
+	@GetMapping("/users/point")
+	public ResponseEntity<?> getPoint(HttpServletRequest req ) {
+		
+		String token = req.getHeader("Authorization");
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		try {
+			int mem_id = jwtManager.getIdFromToken(token);
+			
+			int point = userServicLogic.getPoint(mem_id);
+			result.put("point", point);
+			
+			 		
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		}catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");

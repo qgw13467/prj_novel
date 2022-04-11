@@ -40,7 +40,7 @@
 		SELECT * FROM user where
 		mem_id = #{mem_id} LIMIT 1
 	</select>
-	
+
 
 	<select id="findTokenByMemid" resultType="String">
 		SELECT token FROM user
@@ -58,7 +58,8 @@
 		update user set
 		token = #{token}
 		where
-		mem_id =#{mem_id};
+		mem_id
+		=#{mem_id};
 	</update>
 
 	<update id="update">
@@ -104,4 +105,9 @@
 		mem_id = #{mem_id}
 	</update>
 
+	<select id="getPoint" resultType="Integer" >
+		SELECT mem_point FROM user
+		where
+		mem_id = #{mem_id} LIMIT 1
+	</select>
 </mapper>

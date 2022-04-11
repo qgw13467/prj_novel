@@ -48,8 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.csrf().disable() // csrf 사용 안 함 == REST API 사용하기 때문에
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT인증사용하므로 세션 사용 함
 				.and().formLogin().disable().authorizeRequests()
-				.antMatchers("/user/test").hasRole("ADMIN")
-				.antMatchers("/google").authenticated()
+//				.antMatchers("/user/test").hasRole("ADMIN")
+//				.antMatchers("/google").authenticated()
 				.anyRequest().permitAll()
 				.and().oauth2Login()
 				.userInfoEndpoint()

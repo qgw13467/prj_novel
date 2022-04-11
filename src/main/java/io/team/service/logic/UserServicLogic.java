@@ -145,5 +145,16 @@ public class UserServicLogic implements UserService {
 			return result;
 		}
 	}
+	
+	public int getPoint(int mem_id) {
+		int result = -1;
+		try {
+			result = userMapper.getPoint(mem_id);
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return result;
+		}
+	}
 
 }
