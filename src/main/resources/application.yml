@@ -41,8 +41,19 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
-    
+          enabled: true
+  
+  
+spring.kafka.bootstrap-servers: localhost:9092
+spring.kafka.consumer.group-id: FcmMsg
+spring.kafka.consumer.enable-auto-commit: true
+spring.kafka.consumer.auto-offset-reset: earliest
+spring.kafka.producer.key-serializer: org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.consumer.key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.producer.value-serializer: org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.consumer.value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.max-poll-records: 1000
+spring.kafka.template.default-topic: FcmMsg
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

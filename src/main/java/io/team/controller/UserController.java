@@ -187,14 +187,24 @@ public class UserController {
 			
 			ArrayList<Integer> puchaseNvId = new ArrayList<>();
 			ArrayList<Novel> novels = new ArrayList<>();
+			ArrayList<Novel> resultNovels = new ArrayList<>();
 			ArrayList<NovelLink> novelLinks = new ArrayList<>();
 			ArrayList<PurchaseList> purchaseLists = purchaseService.getPurchaseList(mem_id);
+			
+			System.out.println(purchaseLists);
 			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
 			novelLinks = nvServiceLogic.findLinks(novelCover.getNvid());
+			System.out.println(novelLinks);
 			novels.add(nvServiceLogic.findInfo(novelCover.getNvid()));
+			System.out.println(novels);
+			
 			
 			for (PurchaseList purchaseList : purchaseLists) {
+				if(purchaseList.getNvid()==novelCover.getNvid()) {
+					puchaseNvId.add(purchaseList.getNvid());
+				}
 				for (NovelLink novelLink : novelLinks) {
+//					
 					if(novelLink.getNvlchildnode() == purchaseList.getNvid()) {
 
 						puchaseNvId.add(purchaseList.getNvid());
@@ -203,12 +213,10 @@ public class UserController {
 			}
 			
 			for (Integer integer : puchaseNvId) {
-				novels.add(nvServiceLogic.findInfo(integer));
+				resultNovels.add(nvServiceLogic.findInfo(integer));
 			}
-			
-			
 			 		
-			return new ResponseEntity<>(novels, HttpStatus.OK);
+			return new ResponseEntity<>(resultNovels, HttpStatus.OK);
 		}catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");

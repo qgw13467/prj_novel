@@ -7,8 +7,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +49,8 @@ public class NovelController {
 	private final SubscribeNvService subscribeNvService;
 
 	private final JwtManager jwtManager;
-
+	
+	private final KafkaTemplate<String, String> kafkaTemplate;
 
 	@GetMapping("/novels/detail")
 	public @ResponseBody Map<String, Object> getAllNovels(
@@ -144,10 +148,21 @@ public class NovelController {
 			}
 
 			// 소설 작성시 구독 사용자에게 푸시알림
+			
 			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
 			String title = "구독 알림";
 			String contents = "구독하신 소설 "+novelCover.getNvc_title()+ "의 최신화가 나왔습니다";
-			subscribeNvService.pushSubscribeNv(res, titleId, title, contents);
+			
+			HashMap<String, String> msg = new HashMap<>();
+			msg.put("titleId", Integer.toString(titleId));
+			msg.put("title", title);
+			msg.put("contents", contents);
+			JSONObject json =  new JSONObject(msg);
+			
+
+			kafkaTemplate.send("FcmMsg", json.toJSONString());
+			//subscribeNvService.pushSubscribeNv(titleId, title, contents);
+			//
 			
 			
 			pointServiceLogic.writeNovel(novel.getMem_id(), PointPurpose.WRITENOVEL, 50, token);
