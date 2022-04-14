@@ -43,7 +43,6 @@ spring:
         locator:
           enabled: true
   
-  
 spring.kafka.bootstrap-servers: localhost:9092
 spring.kafka.consumer.group-id: FcmMsg
 spring.kafka.consumer.enable-auto-commit: true

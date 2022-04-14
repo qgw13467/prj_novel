@@ -29,6 +29,7 @@ import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.PointServiceLogic;
 import io.team.service.logic.SubscribeNvService;
+import io.team.service.logic.kafka.KafkaProducer;
 import io.team.service.logic.novel.NvCmtServiceLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import io.team.service.logic.novel.NvServiceLogic;
@@ -46,11 +47,9 @@ public class NovelController {
 
 	private final PointServiceLogic pointServiceLogic;
 
-	private final SubscribeNvService subscribeNvService;
-
 	private final JwtManager jwtManager;
 	
-	private final KafkaTemplate<String, String> kafkaTemplate;
+	private final KafkaProducer kafkaProducer; 
 
 	@GetMapping("/novels/detail")
 	public @ResponseBody Map<String, Object> getAllNovels(
@@ -160,7 +159,7 @@ public class NovelController {
 			JSONObject json =  new JSONObject(msg);
 			
 
-			kafkaTemplate.send("FcmMsg", json.toJSONString());
+			kafkaProducer.sendMessage(json.toJSONString());
 			//subscribeNvService.pushSubscribeNv(titleId, title, contents);
 			//
 			

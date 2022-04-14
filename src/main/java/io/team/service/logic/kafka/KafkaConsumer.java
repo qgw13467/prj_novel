@@ -21,7 +21,7 @@ public class KafkaConsumer {
     public void consume(String message) throws IOException {
     	ObjectMapper mapper = new ObjectMapper();
     	Map<String, String> map = mapper.readValue(message, Map.class);
-    	
+
     	subscribeNvService.pushSubscribeNv(Integer.parseInt(map.get("titleId")), map.get("title"), map.get("contents"));
         System.out.println(map);
     

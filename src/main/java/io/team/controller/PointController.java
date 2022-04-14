@@ -23,12 +23,11 @@ public class PointController {
 	PointServiceLogic pointServiceLogic;
 	
 	@PostMapping("/review/{titleId}")
-	public ResponseEntity review(@PathVariable int titleId, @RequestParam(value = "nv_id") int nv_id,
+	public ResponseEntity<?> review(@PathVariable int titleId, @RequestParam(value = "nv_id") int nv_id,
 			@RequestBody Review review, HttpServletRequest req) {
 		HashMap<String, Object> result = new HashMap<>();
 		String token = req.getHeader("Authorization");
 
-		
 		try {
 			
 			return new ResponseEntity<>(result, HttpStatus.OK);

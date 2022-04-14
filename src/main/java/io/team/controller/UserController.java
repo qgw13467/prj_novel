@@ -28,6 +28,7 @@ import io.team.domain.User;
 import io.team.jwt.JwtManager;
 import io.team.mapper.UserMapper;
 import io.team.service.logic.PointServiceLogic;
+import io.team.service.logic.SubscribeNvService;
 import io.team.service.logic.UserServicLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import io.team.service.logic.novel.NvServiceLogic;
@@ -53,7 +54,7 @@ public class UserController {
 	
 	private final NvCoverServiceLogic nvCoverServiceLogic;
 	
-	
+	private final SubscribeNvService subscribeNvService;
 //	@PostMapping("/login")
 //	@ResponseBody
 //	public HashMap find(@RequestBody User newUser, HttpServletResponse response) {
@@ -253,11 +254,5 @@ public class UserController {
 		
 	}
 	
-	@GetMapping("/test/login")
-	public void test(Authentication authentication) {
-		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
-		System.out.println(oAuth2User.getAuthorities());
-		
-	}	
 
 }
