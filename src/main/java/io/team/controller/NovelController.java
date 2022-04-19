@@ -53,9 +53,10 @@ public class NovelController {
 
 	@GetMapping("/novels/detail")
 	public @ResponseBody Map<String, Object> getAllNovels(
-			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum) {
+			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum,
+			@RequestParam(value = "rownum", required = false, defaultValue = "10") String rownum) {
 
-		ArrayList<Novel> boards = nvServiceLogic.getList(Integer.parseInt(pagenum));
+		ArrayList<Novel> boards = nvServiceLogic.getList(Integer.parseInt(pagenum), Integer.parseInt(rownum));
 		int page = nvServiceLogic.getPageNum();
 
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -72,8 +73,8 @@ public class NovelController {
 		String token = req.getHeader("Authorization");
 		NovelCover novelCover = nvCoverServiceLogic.find(titleId);
 
-		int hitcount = novelCover.getNvc_hit();
-		novelCover.setNvc_hit(hitcount + 1);
+		int hitcount = novelCover.getNvcHit();
+		novelCover.setNvcHit(hitcount + 1);
 
 		nvCoverServiceLogic.modify(titleId, novelCover, null);
 		nvServiceLogic.countCheck(nv_id);
@@ -150,7 +151,7 @@ public class NovelController {
 			
 			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
 			String title = "구독 알림";
-			String contents = "구독하신 소설 "+novelCover.getNvc_title()+ "의 최신화가 나왔습니다";
+			String contents = "구독하신 소설 "+novelCover.getNvcTitle()+ "의 최신화가 나왔습니다";
 			
 			HashMap<String, String> msg = new HashMap<>();
 			msg.put("titleId", Integer.toString(titleId));

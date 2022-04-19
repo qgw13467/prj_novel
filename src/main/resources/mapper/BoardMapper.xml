@@ -4,11 +4,6 @@
 
 <mapper namespace="io.team.mapper.BoardMapper">
 
-	<select id="getBoards" resultType="io.team.domain.Board">
-		SELECT * FROM (SELECT * FROM
-		board WHERE brd_state = 0) b ORDER BY brd_id DESC LIMIT
-		#{pagenum},#{pagecount}
-	</select>
 
 	<insert id="create">
 		insert into board (mem_id, img_url,
@@ -21,21 +16,20 @@
 	</insert>
 
 	<select id="read" resultType="io.team.domain.Board">
-		SELECT * FROM board where
+		SELECT * FROM board WHERE
 		brd_id =
-		#{brd_id};
+		#{brd_id} AND brd_state = 0;
 	</select>
 
 	<update id="count_hit">
 		update board set
 		brd_hit=brd_hit+1
 		where
-		brd_id = #{brd_id}
+		brd_id =
+		#{brd_id}
 	</update>
 
-
-
-	<update id="update" >
+	<update id="update">
 		update board set
 		img_url = #{img_url},
 		mem_nickname =
@@ -57,9 +51,89 @@
 		where brd_id =
 		#{brd_id}
 	</update>
-	
+
+
+
+	<select id="getBoards" resultType="io.team.domain.Board">
+		SELECT * FROM (SELECT * FROM
+		board WHERE brd_state = 0) b ORDER BY brd_id DESC LIMIT
+		#{pagenum},#{rownum}
+	</select>
+
 	<select id="brdcount" resultType="_int">
 		SELECT COUNT(*) FROM board
 	</select>
 
+
+
+	<select id="findByTitleContain" resultType="io.team.domain.Board">
+		SELECT * FROM board
+		WHERE
+		brd_title LIKE CONCAT('%',#{keyword},'%')
+		AND
+		brd_state = 0
+		ORDER BY brd_id
+		LIMIT
+		#{pagenum},#{rownum};
+	</select>
+
+	<select id="getTitleContainCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM board
+		WHERE
+		brd_title LIKE CONCAT('%',#{keyword},'%')
+		AND
+		brd_state = 0;
+	</select>
+	
+	
+	
+	<select id="findByContentsContain" resultType="io.team.domain.Board">
+		SELECT * FROM board
+		WHERE
+		brd_contents LIKE CONCAT('%',#{keyword},'%')
+		AND
+		brd_state = 0
+		ORDER BY brd_id
+		LIMIT
+		#{pagenum},#{rownum};
+	</select>
+
+	<select id="getContentsContainCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM board
+		WHERE
+		brd_contents LIKE CONCAT('%',#{keyword},'%')
+		AND
+		brd_state = 0;
+	</select>
+	
+	<update id="like">
+		update board SET
+		brd_like = brd_like + 1
+		where
+		brd_id = #{brd_id}
+	</update>
+	
+	<update id="likeMinus">
+		update board SET
+		brd_like = brd_like - 1
+		where
+		brd_id = #{brd_id}
+	</update>
+	
+	<update id="dislike">
+		update board SET
+		brd_dislike = brd_dislike + 1
+		where
+		brd_id = #{brd_id}
+	</update>
+	
+	<update id="dislikeMinus">
+		update board SET
+		brd_dislike = brd_dislike - 1
+		where
+		brd_id = #{brd_id}
+	</update>
+	
 </mapper>

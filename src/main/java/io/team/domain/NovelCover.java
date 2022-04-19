@@ -27,17 +27,17 @@ public class NovelCover {
 	
 	@Column(name="nv_id")
 	private int nvid;
-	private String img_url;
-	private String nvc_title;
-	private String nvc_contents;
-	private int nvc_hit;
-	private int nvc_reviewpoint;
-	private int nvc_reviewcount;
+	private String imgUrl;
+	private String nvcTitle;
+	private String nvcContents;
+	private int nvcHit;
+	private int nvcReviewpoint;
+	private int nvcReviewcount;
 
 	
 	public NovelCover (HashMap<String, String> map) {
-		this.img_url=map.get("img_url");
-		this.nvc_title=map.get("nvc_title");
-		this.nvc_contents=map.get("nvc_content");
+		this.imgUrl=map.get("img_url");
+		this.nvcTitle=map.get("nvc_title");
+		this.nvcContents=map.get("nvc_content");
 	}
 }

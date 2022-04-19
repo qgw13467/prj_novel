@@ -3,9 +3,10 @@ package io.team.service.logic.novel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import io.team.Repository.ReviewMapper;
 import io.team.domain.Review;
 import io.team.jwt.JwtManager;
-import io.team.mapper.ReviewMapper;
 
 @Service
 public class ReviewServiceLogic {

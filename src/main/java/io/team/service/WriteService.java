@@ -12,7 +12,7 @@ public interface WriteService<T> {
 
 	int remove(int id, String token);
 	
-	ArrayList<T> getList(int pagenum);
+	ArrayList<T> getList(int pagenum, int rownum);
 	
 	int report(int id, String token);
 	

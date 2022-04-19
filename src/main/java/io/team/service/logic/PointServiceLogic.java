@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.team.Repository.PointRepository;
+import io.team.Repository.PurchaseListRepository;
 import io.team.domain.Point;
 import io.team.domain.PurchaseList;
 import io.team.domain.User;
 import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
-import io.team.mapper.PointRepository;
-import io.team.mapper.PurchaseListRepository;
 import io.team.service.logic.novel.NvServiceLogic;
 
 @Service
@@ -78,7 +78,10 @@ public class PointServiceLogic {
 	public int readNovel(PointPurpose pointPurpose, int pnt_spend, int nv_id, int writer_id, int checkMem_id) {
 		
 		try {
-			
+			User user = userServicLogic.findByMemid(checkMem_id);
+			if (user.getMem_point() < pnt_spend) {
+				return -1;
+			}
 
 			if (!purchaseListRepository.existsByMemidAndNvid(checkMem_id, nv_id)) {
 				PurchaseList newpurchaseList = new PurchaseList(checkMem_id, nv_id);
@@ -89,10 +92,7 @@ public class PointServiceLogic {
 				userServicLogic.changePoint(writer_id, newPoint.getPnt_spend());
 			}
 
-			User user = userServicLogic.findByMemid(checkMem_id);
-			if (user.getMem_point() < pnt_spend) {
-				return -1;
-			}
+
 			
 			return 1;
 		} catch (Exception e) {

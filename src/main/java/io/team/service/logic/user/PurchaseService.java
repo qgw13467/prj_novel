@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 
+import io.team.Repository.PurchaseListRepository;
 import io.team.domain.PurchaseList;
-import io.team.mapper.PurchaseListRepository;
 import io.team.service.logic.UserServicLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import lombok.RequiredArgsConstructor;

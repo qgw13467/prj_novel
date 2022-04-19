@@ -128,8 +128,8 @@ public class NvCoverController {
     public ResponseEntity<?> findByNvCover(@PathVariable int id, Pageable pageable) {
 		
 		NovelCover novelCover= nvCoverServiceLogic.find(id);
-		int hitcount = novelCover.getNvc_hit();
-		novelCover.setNvc_hit(hitcount+1);
+		int hitcount = novelCover.getNvcHit();
+		novelCover.setNvcHit(hitcount+1);
 		Queue<Integer> queue=new LinkedList<Integer>();
 		queue.add(novelCover.getNvid());
 		HashSet<Integer> node=new HashSet<Integer>();
@@ -198,4 +198,14 @@ public class NvCoverController {
 			return result;
 		}
 	}
+	
+	@GetMapping("/novels/search")
+    public ResponseEntity<?> findByTitleContain(@RequestParam(value = "keyword") String keyword, Pageable pageable) {
+		
+		
+		Page<NovelCover> novelCover = nvCoverServiceLogic.findByTitleContain(keyword,pageable);
+
+
+        return new ResponseEntity<>(novelCover,HttpStatus.OK);
+    }
 }

@@ -1,4 +1,4 @@
-package io.team.mapper;
+package io.team.Repository;
 
 import io.team.domain.NovelCover;
 
@@ -22,7 +22,7 @@ public interface NvCoverMapper extends JpaRepository<NovelCover, Integer> {
 	
 	Page<NovelCover> findAllByNvcidIn(List<Integer> nvc_id, Pageable pageable);
 	
-	
+	Page<NovelCover> findByNvcTitleContaining(String keyword, Pageable pageable);
 	/*
 	 * int create(NovelCover novelCover);
 	 * 

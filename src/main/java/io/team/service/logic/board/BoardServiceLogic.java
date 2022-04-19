@@ -78,13 +78,11 @@ public class BoardServiceLogic implements WriteService<Board> {
 	}
 
 	@Override
-	public ArrayList<Board> getList(int pagenum) {
-		int pagecount = 10;
+	public ArrayList<Board> getList(int pagenum, int rownum) {
 		
-		return boardMapper.getBoards((pagenum - 1) * pagecount, pagecount);
+		return boardMapper.getBoards((pagenum - 1) * rownum, rownum);
 	}
-
-
+	
 	@Override
 	public int getPageNum() {
 		int pagecount = 10;
@@ -98,6 +96,42 @@ public class BoardServiceLogic implements WriteService<Board> {
 			return result;
 
 	}
+	
+	
+	public ArrayList<Board> findByTitleContain(String keyword, int pagenum, int rownum){
+		return boardMapper.findByTitleContain(keyword, (pagenum - 1) * rownum, rownum);
+	}
+	
+	public int getTitleContainNum(String keyword) {
+		int pagecount = 10;
+		int brdNum = boardMapper.getTitleContainCount(keyword);
+		int result = brdNum / pagecount;
+
+		if (brdNum % pagecount != 0) {
+			result = brdNum / pagecount + 1;
+			return result;
+		} else
+			return result;
+	}
+	
+	public ArrayList<Board> findByContentsContain(String keyword, int pagenum, int rownum){
+		return boardMapper.findByContentsContain(keyword, (pagenum - 1) * rownum, rownum);
+	}
+	
+	public int getContentsContainNum(String keyword) {
+		int pagecount = 10;
+		int brdNum = boardMapper.getContentsContainCount(keyword);
+		int result = brdNum / pagecount;
+
+		if (brdNum % pagecount != 0) {
+			result = brdNum / pagecount + 1;
+			return result;
+		} else
+			return result;
+	}
+
+
+
 
 	
 	public int like(int id, String token) {

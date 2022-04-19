@@ -19,17 +19,25 @@ public interface BoardMapper {
 			int brd_img, int brd_file);
 
 	int delete(int brd_id);
-
-	int getNextBoard();
 	
-	ArrayList<Board> getBoards(int pagenum, int pagecount);
-	
-	int like(int brd_id, int mem_id);
-	
-	int dislike(int brd_id, int mem_id);
-	
-	int report(int brd_id, int mem_id);
-	
+	ArrayList<Board> getBoards(int pagenum, int rownum);
 	int brdcount();
+	
+	ArrayList<Board> findByTitleContain(String keyword, int pagenum, int rownum);
+	int getTitleContainCount(String keyword);
+	
+	ArrayList<Board> findByContentsContain(String keyword, int pagenum, int rownum);
+	int getContentsContainCount(String keyword);
+	
+	int like(int brd_id);
+	int likeMinus(int brd_id);
+	
+	int dislike(int brd_id);
+	int dislikeMinus(int brd_id);
+	
+	
+	int report(int brd_id);
+	
+	
 
 }

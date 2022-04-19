@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.aop.aspectj.AspectJMethodBeforeAdvice;
 import org.springframework.stereotype.Service;
 
+import io.team.Repository.SubNvRepository;
 import io.team.domain.NovelCover;
 import io.team.domain.SubscribeNovel;
 import io.team.domain.User;
-import io.team.mapper.SubNvRepository;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import lombok.RequiredArgsConstructor;
 

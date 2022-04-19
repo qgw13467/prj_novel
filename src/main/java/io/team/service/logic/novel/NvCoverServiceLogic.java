@@ -8,9 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import io.team.Repository.NvCoverMapper;
 import io.team.domain.NovelCover;
 import io.team.jwt.JwtManager;
-import io.team.mapper.NvCoverMapper;
 import io.team.service.WriteService;
 
 @Service
@@ -71,7 +71,11 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 			return -1;
 		}
 		
-
+	}
+	
+	
+	public Page<NovelCover> findByTitleContain(String keyword, Pageable pageable) {
+		return nvCoverMapper.findByNvcTitleContaining(keyword, pageable);
 	}
 
 	@Override
@@ -81,7 +85,7 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 	}
 
 	@Override
-	public ArrayList<NovelCover> getList(int pagenum) {
+	public ArrayList<NovelCover> getList(int pagenum, int rownum) {
 		// TODO Auto-generated method stub
 		return null;
 	}

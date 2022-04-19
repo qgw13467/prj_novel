@@ -5,12 +5,13 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import io.team.Repository.NvCoverMapper;
+import io.team.Repository.NvLinkMapper;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;
 import io.team.domain.NovelLink;
 import io.team.jwt.JwtManager;
-import io.team.mapper.NvCoverMapper;
-import io.team.mapper.NvLinkMapper;
 import io.team.mapper.NvMapper;
 import io.team.mapper.NvTagMapper;
 import io.team.mapper.TagMapper;
@@ -143,9 +144,8 @@ public class NvServiceLogic implements WriteService<Novel> {
 	}
 
 	@Override
-	public ArrayList<Novel> getList(int pagenum) {
-		int pagecount = 10;
-		return novelMapper.getNovels((pagenum - 1) * pagecount, pagecount);
+	public ArrayList<Novel> getList(int pagenum, int rownum) {
+		return novelMapper.getNovels((pagenum - 1) * rownum, rownum);
 	}
 
 	public int review(int id, int point) {
