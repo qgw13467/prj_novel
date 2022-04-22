@@ -8,6 +8,12 @@ server:
     key-store-password: 789741
 
 spring: 
+  data: 
+    web: 
+      pageable:  
+        one-indexed-parameters: true
+
+
   security:
     oauth2:
       client:
@@ -55,6 +61,8 @@ spring.kafka.consumer.max-poll-records: 1000
 spring.kafka.template.default-topic: FcmMsg
 
 mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
   mapper-locations: classpath:mapper/*.xml
 
 

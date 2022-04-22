@@ -4,19 +4,21 @@
 
 <mapper namespace="io.team.mapper.NvMapper">
 
+
+
 	<insert id="create" parameterType="io.team.domain.Novel"
-		useGeneratedKeys="true" keyProperty="nv_id">
+		useGeneratedKeys="true" keyProperty="nvId">
 		INSERT INTO novel
 		(mem_id,
 		img_url,
 		nv_writer,nv_title,
 		nv_contents,
 		nv_state, nv_datetime, nv_point)
-		values
-		(#{mem_id},#{img_url},#{nv_writer},#{nv_title},
-		#{nv_contents},#{nv_state},NOW(),#{nv_point})
-
+		VALUES
+		(#{memId},#{imgUrl},#{nvWriter},#{nvTitle},
+		#{nvContents},#{nvState},NOW(),#{nvPoint})
 	</insert>
+
 
 	<select id="read" resultType="io.team.domain.Novel">
 		SELECT * FROM novel where
@@ -25,8 +27,10 @@
 	</select>
 
 	<select id="readInfo" resultType="io.team.domain.Novel">
-		SELECT nv_id, mem_id, img_url, nv_writer, nv_title, nv_hit, nv_comment_count, 
-		nv_reviewpoint, nv_reviewcount, nv_datetime, nv_point
+		SELECT nv_id, mem_id, img_url,
+		nv_writer, nv_title, nv_hit, nv_comment_count,
+		nv_reviewpoint,
+		nv_reviewcount, nv_datetime, nv_point
 		FROM novel where
 		nv_id =
 		#{nv_id};
@@ -81,8 +85,8 @@
 		where
 		nv_id = #{nv_id}
 	</update>
-	
-		<update id="deletReview">
+
+	<update id="deletReview">
 		update novel set
 		nv_reviewpoint= nv_reviewpoint -
 		#{point},

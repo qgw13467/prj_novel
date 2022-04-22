@@ -5,11 +5,11 @@
 <mapper namespace="io.team.mapper.BrdCmtMapper">
 
 	<insert id="create">
-		insert into brd_comment (brd_id, mem_id,
+		INSERT INTO brd_comment (brd_id, mem_id,
 		brd_cmt_reply,mem_nickname,
 		brd_cmt_contents, brd_cmt_datetime,brd_cmt_updatetime,
 		brd_cmt_state)
-		values
+		VALUES
 		(#{brd_id},#{mem_id},#{brd_cmt_reply},
 		#{mem_nickname},#{brd_cmt_contents},NOW(),NOW(),#{brd_cmt_state})
 	</insert>

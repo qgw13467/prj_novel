@@ -16,11 +16,11 @@ public interface UserMapper {
 
 	User read(String mem_userid, String mem_password);
 	
-	User findById(String mem_userid);
-	
-	ArrayList<String> findTokenByMemid(ArrayList<Integer> item);
+	User findByMemUserId(String mem_userid);
 	
 	User findByMemid(int mem_id);
+	
+	ArrayList<String> findTokenByMemid(ArrayList<Integer> item);
 	
 	int lastlogin(int mem_id);
 	
@@ -28,7 +28,7 @@ public interface UserMapper {
 	
 	int getPoint(int mem_id);
 	
-	int update(String mem_userid, String mem_password, String mem_email,
+	int update(String mem_userid, String mem_email,
 			String mem_nick, int mem_point, int mem_state, int mem_following_nvnum,
 			int mem_following_wrnum, int mem_followed, String mem_icon);
 	
@@ -45,5 +45,6 @@ public interface UserMapper {
 	int chagePwd(int id);
 
 	int uploadImg(Object object);
+	
 
 }

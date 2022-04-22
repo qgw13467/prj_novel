@@ -9,41 +9,43 @@ import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Novel {
+
+	private int nvId;
+	private int memId;
+	private String imgUrl;
+	private String nvWriter;
+	private String nvTitle;
+	private String nvContents;
+	private int nvHit;
+	private int nvCommentCount;
+	private int nvReviewpoint;
+	private int nvReviewcount;
+	private int nvState;
+	private String nvDatetime;
+	private String nvUpdatetime;
+	private int nvPoint;
 	
-	private int nv_id;
-	private int mem_id;
-	private String img_url;
-	private String nv_writer;
-	private String nv_title;
-	private String nv_contents;
-	private int nv_hit;
-	private int nv_comment_count;
-	private int nv_reviewpoint;
-	private int nv_reviewcount;
-	private int nv_state;
-	private String nv_datetime;
-	private String nv_updatetime;
-	private int nv_point;
 	
-	public Novel(int nv_id){
-		this.nv_id=nv_id;
+	public Novel(int nvId){
+		this.nvId=nvId;
 	}
 	
 
 	public Novel(HashMap<String, String> map){
-		this.mem_id= Integer.parseInt(map.get("mem_id"));
-		this.img_url= map.get("img_url");
-		this.nv_writer= (String)map.get("nv_writer");
-		this.nv_title= (String)map.get("nv_title");
-		this.nv_contents= (String)map.get("nv_contents");
-		this.nv_state= Integer.parseInt(map.get("nv_state"));
-		this.nv_point = Integer.parseInt(map.get("nv_point"));
+		this.memId= Integer.parseInt(map.get("memId"));
+		this.imgUrl= map.get("imgUrl");
+		this.nvWriter= (String)map.get("nvWriter");
+		this.nvTitle= (String)map.get("nvTitle");
+		this.nvContents= (String)map.get("nvContents");
+		this.nvState= Integer.parseInt(map.get("nvState"));
+		this.nvPoint = Integer.parseInt(map.get("nvPoint"));
 	}
 
 

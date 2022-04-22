@@ -27,10 +27,10 @@ public class JwtManagerTest {
 	void tokenTest() { // given
 
 		User user = User.builder()
-				.mem_userid("test2")
-				.mem_password("1234").build();
+				.memUserId("test2")
+				.memPassword("1234").build();
 
-		User newUser = userMapper.read(user.getMem_userid(), user.getMem_password());
+		User newUser = userMapper.read(user.getMemUserId(), user.getMemPassword());
 		String token = jwtManager.generateJwtToken(user);
 
 		String usernameFromToken = jwtManager.getUserIdFromToken(token);

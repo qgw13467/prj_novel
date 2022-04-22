@@ -13,6 +13,7 @@ import io.team.domain.User;
 import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.novel.NvServiceLogic;
+import io.team.service.logic.user.UserServicLogic;
 
 @Service
 public class PointServiceLogic {
@@ -43,7 +44,7 @@ public class PointServiceLogic {
 			if (!mem_lastlogin_datetime.equals(nowDate)) {
 				Point newPoint = new Point(mem_id, pointPurpose, pnt_spend);
 				pointRepository.save(newPoint);
-				userServicLogic.changePoint(mem_id, newPoint.getPnt_spend());
+				userServicLogic.changePoint(mem_id, newPoint.getPntSpend());
 				return 1;
 				
 			} else {
@@ -63,7 +64,7 @@ public class PointServiceLogic {
 			try {
 				Point newPoint = new Point(mem_id, pointPurpose, pnt_spend);
 				pointRepository.save(newPoint);
-				userServicLogic.changePoint(mem_id, newPoint.getPnt_spend());
+				userServicLogic.changePoint(mem_id, newPoint.getPntSpend());
 
 				return 1;
 			} catch (Exception e) {
@@ -78,18 +79,18 @@ public class PointServiceLogic {
 	public int readNovel(PointPurpose pointPurpose, int pnt_spend, int nv_id, int writer_id, int checkMem_id) {
 		
 		try {
-			User user = userServicLogic.findByMemid(checkMem_id);
-			if (user.getMem_point() < pnt_spend) {
+			User user = userServicLogic.findByMemId(checkMem_id);
+			if (user.getMemPoint() < pnt_spend) {
 				return -1;
 			}
 
-			if (!purchaseListRepository.existsByMemidAndNvid(checkMem_id, nv_id)) {
+			if (!purchaseListRepository.existsByMemIdAndNvId(checkMem_id, nv_id)) {
 				PurchaseList newpurchaseList = new PurchaseList(checkMem_id, nv_id);
 				purchaseListRepository.save(newpurchaseList);
 				Point newPoint = new Point(checkMem_id, pointPurpose, pnt_spend);
 				pointRepository.save(newPoint);
-				userServicLogic.changePoint(checkMem_id, -newPoint.getPnt_spend());
-				userServicLogic.changePoint(writer_id, newPoint.getPnt_spend());
+				userServicLogic.changePoint(checkMem_id, -newPoint.getPntSpend());
+				userServicLogic.changePoint(writer_id, newPoint.getPntSpend());
 			}
 
 

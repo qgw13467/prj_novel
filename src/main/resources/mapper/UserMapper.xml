@@ -31,8 +31,9 @@
 		#{mem_password}
 	</select>
 
-	<select id="findById" resultType="io.team.domain.User">
-		SELECT * FROM user where
+	<select id="findByMemUserId" resultType="io.team.domain.User">
+		SELECT * FROM user
+		WHERE
 		mem_userid = #{mem_userid} LIMIT 1
 	</select>
 
@@ -63,30 +64,25 @@
 	</update>
 
 	<update id="update">
-		update user set
+		UPDATE user SET
 		mem_email = #{mem_email},
-		mem_nick =
-		#{mem_nick},
+		mem_nick = #{mem_nick},
 		mem_point = #{mem_point},
 		mem_state = #{mem_state},
 		mem_following_nvnum = #{mem_following_nvnum},
-		mem_following_wrnum =
-		#{mem_following_wrnum},
+		mem_following_wrnum = #{mem_following_wrnum},
 		mem_followed = #{mem_followed},
-		mem_icon =
-		#{mem_icon}
-		where
-		mem_userid = #{mem_userid} and
-		mem_password
-		=#{mem_password}
+		mem_icon = #{mem_icon}
+		WHERE
+		mem_userid = #{mem_userid};
+
 	</update>
-	<update id="modifypwd">
+	<update id="updatepwd">
 		update user set
 		mem_password =#{mem_password},
-		mem_changepwd = #{mem_changepwd}
-		where
-		mem_id =
-		#{mem_id}
+		mem_changepwd = NOW()
+		WHERE
+		mem_id =#{mem_id}
 	</update>
 
 	<update id="delete">
@@ -110,4 +106,5 @@
 		where
 		mem_id = #{mem_id} LIMIT 1
 	</select>
+	
 </mapper>

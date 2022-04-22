@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import io.team.auth.PrincipalDetails;
 import io.team.domain.User;
-import io.team.service.logic.UserServicLogic;
+import io.team.service.logic.user.UserServicLogic;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -34,14 +34,14 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
 
 		
 		//새로운 사용자가 회원가입할 떄 닉네임이 같으면 생성되지 않는 문제 해결할 것
-		User user = userServicLogic.findByUserid(providerid);
+		User user = userServicLogic.findByMemUserId(providerid);
 		if(user == null) {
 			user = User.builder()
-					.mem_userid(username)
-					.mem_password(password)
-					.mem_email(email)
-					.mem_nick("guest_"+providerid)
-					.mem_icon("1")
+					.memUserId(username)
+					.memPassword(password)
+					.memEmail(email)
+					.memNick("guest_"+providerid)
+					.memIcon("1")
 					.build();
 			userServicLogic.register(user);
 		}

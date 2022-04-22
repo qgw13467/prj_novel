@@ -4,17 +4,17 @@ import lombok.Data;
 
 @Data
 public class NovelCmt {
-	private int nv_cmt_id;
-	private int mem_id;
-	private int nv_id;
-	private int nv_cmt_reply;
-	private int nv_cmt_replynum;
-	private String mem_nickname;
-	private String nv_cmt_contents;
-	private int nv_cmt_like;
-	private int nv_cmt_dislike;
-	private int nv_cmt_blame;
-	private String nv_cmt_datetime;
-	private String nv_cmt_updatetime;
-	private int nv_cmt_state;
+	private int nvCmtId;
+	private int memId;
+	private int nvId;
+	private int nvCmtReply;
+	private int nvCmtReplynum;
+	private String memNickname;
+	private String nvCmtContents;
+	private int nvCmtLike;
+	private int nvCmtDislike;
+	private int nvCmtBlame;
+	private String nvCmtDatetime;
+	private String nvCmtUpdatetime;
+	private int nvCmtState;
 }

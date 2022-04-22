@@ -13,16 +13,16 @@ import io.team.domain.SubscribeNovel;
 @Repository
 public interface SubNvRepository extends JpaRepository<SubscribeNovel, Integer>{
 	
-	SubscribeNovel findFirstByMemidAndNvcid(int memid, int nvcid);
+	SubscribeNovel findFirstByMemIdAndNvcId(int memid, int nvcid);
 	
-	ArrayList<SubscribeNovel> findByNvcid(int nvcid);
+	ArrayList<SubscribeNovel> findByNvcId(int nvcid);
 	
-	ArrayList<SubscribeNovel> findByMemidIn(List<Integer> memids);
+	ArrayList<SubscribeNovel> findByMemIdIn(List<Integer> memids);
 	
-	ArrayList<SubscribeNovel> findTokenByNvcid(int nvcid);
+	ArrayList<SubscribeNovel> findTokenByNvcId(int nvcid);
 	
-	ArrayList<SubscribeNovel> findNvcidByMemid(int memid);
+	ArrayList<SubscribeNovel> findNvcIdByMemId(int memid);
 	
-	SubscribeNovel findByMemidAndNvcid(int memid, int nvcid);
+	SubscribeNovel findByMemIdAndNvcId(int memid, int nvcid);
 	
 }

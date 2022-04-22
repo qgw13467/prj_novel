@@ -25,13 +25,13 @@ public class SubscribeNovel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "subnv_id")
-	private int subnvid;
+	private int subnvId;
 	
 	@Column(name = "mem_id")
-	private int memid;
+	private int memId;
 
 	@Column(name = "nvc_id")
-	private int nvcid;
+	private int nvcId;
 
 	
 	@Column(name = "subnv_datetime")

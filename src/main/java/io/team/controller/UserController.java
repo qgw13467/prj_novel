@@ -9,9 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,15 +24,11 @@ import io.team.domain.NovelLink;
 import io.team.domain.PurchaseList;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
-import io.team.mapper.UserMapper;
-import io.team.service.logic.PointServiceLogic;
-import io.team.service.logic.SubscribeNvService;
-import io.team.service.logic.UserServicLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import io.team.service.logic.novel.NvServiceLogic;
 import io.team.service.logic.user.PurchaseService;
+import io.team.service.logic.user.UserServicLogic;
 import lombok.RequiredArgsConstructor;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -43,18 +37,15 @@ public class UserController {
 	private final UserServicLogic userServicLogic;
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+
 	private final JwtManager jwtManager;
 
-	private final PointServiceLogic pointServiceLogic;
-	
 	private final PurchaseService purchaseService;
-	
+
 	private final NvServiceLogic nvServiceLogic;
-	
+
 	private final NvCoverServiceLogic nvCoverServiceLogic;
-	
-	private final SubscribeNvService subscribeNvService;
+
 //	@PostMapping("/login")
 //	@ResponseBody
 //	public HashMap find(@RequestBody User newUser, HttpServletResponse response) {
@@ -82,177 +73,214 @@ public class UserController {
 //		}
 //		
 //	}
-	
+
 	@PostMapping("/join")
 	public HashMap register(@RequestBody User newUser) {
-		HashMap<String,String> map=new HashMap<String, String>();
-		
-		String pwd = newUser.getMem_password();
+		HashMap<String, String> map = new HashMap<String, String>();
+
+		String pwd = newUser.getMemPassword();
 		String encPwd = bCryptPasswordEncoder.encode(pwd);
-		newUser.setMem_password(encPwd);
-		
+		newUser.setMemPassword(encPwd);
+
 		map.put("msg", userServicLogic.register(newUser));
 		return map;
 	}
-	
-	
+
 	@PutMapping("/users")
-	public Map<String, Object> modify(@RequestBody User newUser,HttpServletRequest req ) {
-		
-		String token = req.getHeader("Authorization");
+	public ResponseEntity<?> modify(@RequestBody User newUser, HttpServletRequest req) {
+
 		Map<String, Object> result = new HashMap<String, Object>();
-		
-		String pwd = newUser.getMem_password();
-		String encPwd = bCryptPasswordEncoder.encode(pwd);
-		newUser.setMem_password(encPwd);
-		
+
 		try {
+			String token = req.getHeader("Authorization");
+			int mem_id = jwtManager.getIdFromToken(token);
+
 			result.put("msg", userServicLogic.modify(newUser, token));
-			return result;
-		}
-		catch (Exception e){
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (Exception e) {
 			result.put("msg", "ERROR");
-			return result;
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
-		
+
 	}
-	
-	
+
+	@PutMapping("/users/pwd")
+	public ResponseEntity<?> modifypwd(@RequestBody User newUser, HttpServletRequest req) {
+
+		Map<String, Object> result = new HashMap<String, Object>();
+
+		try {
+			String token = req.getHeader("Authorization");
+			int mem_id = jwtManager.getIdFromToken(token);
+			String pwd = newUser.getMemPassword();
+			String encPwd = bCryptPasswordEncoder.encode(pwd);
+			newUser.setMemPassword(encPwd);
+			result.put("msg", userServicLogic.modify(mem_id, encPwd, token));
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			result.put("msg", "ERROR");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
+
+	}
+
 	@DeleteMapping("/users")
-	public Map<String, Object> remove(@RequestBody User newUser,HttpServletRequest req) {
+	public Map<String, Object> remove(@RequestBody User newUser, HttpServletRequest req) {
 
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result.put("msg", userServicLogic.remove(newUser, token));
 			return result;
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			result.put("msg", "ERROR");
 			return result;
 		}
-		
-	}	
-	
 
+	}
+	
+	@PutMapping("/users/token")
+	public ResponseEntity<?> updateToken(@RequestBody String firebaseToken, HttpServletRequest req) {
+
+		Map<String, Object> result = new HashMap<String, Object>();
+
+		try {
+			String token = req.getHeader("Authorization");
+			int mem_id = jwtManager.getIdFromToken(token);
+			userServicLogic.updateToken(token, mem_id);
+			result.put("msg", "OK");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			result.put("msg", "ERROR");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
+
+	}
 	
 	@GetMapping("/users/purchase")
-	public ResponseEntity<?> getPurchaseList(HttpServletRequest req ) {
-		
+	public ResponseEntity<?> getPurchaseList(HttpServletRequest req) {
+
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
-		
+
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
 			ArrayList<PurchaseList> purchaseLists = purchaseService.getPurchaseList(mem_id);
 			ArrayList<Novel> novels = new ArrayList<>();
 			ArrayList<NovelCover> novelCovers = new ArrayList<>();
-			
+
 			HashSet<Integer> firstNvid = new HashSet<>();
-			
-			
+
 			for (PurchaseList purchaseList : purchaseLists) {
-				novels.add(nvServiceLogic.find(purchaseList.getNvid()));
+				novels.add(nvServiceLogic.find(purchaseList.getNvId()));
 			}
 			System.out.println(novels);
-			
+
 			for (Novel novel : novels) {
-				firstNvid.add(nvServiceLogic.findFirstNvid(novel.getNv_id()));
+				firstNvid.add(nvServiceLogic.findFirstNvid(novel.getNvId()));
 			}
 			System.out.println(firstNvid);
 			for (Integer integer : firstNvid) {
 				novelCovers.add(nvCoverServiceLogic.findByNvid(integer));
 			}
-			
-			 		
+
 			return new ResponseEntity<>(novelCovers, HttpStatus.OK);
-		}catch (ExpiredJwtException e) {
+		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
-		} catch (Exception e){
+		} catch (Exception e) {
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
-		
+
 	}
-	
+
 	@GetMapping("/users/purchase/{titleId}")
-	public ResponseEntity<?> getPurchaseNovelList(@PathVariable int titleId, HttpServletRequest req ) {
-		
+	public ResponseEntity<?> getPurchaseNovelList(@PathVariable int titleId, HttpServletRequest req) {
+
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
-		
+
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
-			
+
 			ArrayList<Integer> puchaseNvId = new ArrayList<>();
 			ArrayList<Novel> novels = new ArrayList<>();
 			ArrayList<Novel> resultNovels = new ArrayList<>();
 			ArrayList<NovelLink> novelLinks = new ArrayList<>();
 			ArrayList<PurchaseList> purchaseLists = purchaseService.getPurchaseList(mem_id);
-			
+
 			System.out.println(purchaseLists);
 			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
-			novelLinks = nvServiceLogic.findLinks(novelCover.getNvid());
+			novelLinks = nvServiceLogic.findLinks(novelCover.getNvId());
 			System.out.println(novelLinks);
-			novels.add(nvServiceLogic.findInfo(novelCover.getNvid()));
+			novels.add(nvServiceLogic.findInfo(novelCover.getNvId()));
 			System.out.println(novels);
-			
-			
+
 			for (PurchaseList purchaseList : purchaseLists) {
-				if(purchaseList.getNvid()==novelCover.getNvid()) {
-					puchaseNvId.add(purchaseList.getNvid());
+				if (purchaseList.getNvId() == novelCover.getNvId()) {
+					puchaseNvId.add(purchaseList.getNvId());
 				}
 				for (NovelLink novelLink : novelLinks) {
 //					
-					if(novelLink.getNvlchildnode() == purchaseList.getNvid()) {
+					if (novelLink.getNvlChildnode() == purchaseList.getNvId()) {
 
-						puchaseNvId.add(purchaseList.getNvid());
+						puchaseNvId.add(purchaseList.getNvId());
 					}
 				}
 			}
-			
+
 			for (Integer integer : puchaseNvId) {
 				resultNovels.add(nvServiceLogic.findInfo(integer));
 			}
-			 		
+
 			return new ResponseEntity<>(resultNovels, HttpStatus.OK);
-		}catch (ExpiredJwtException e) {
+		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
-		} catch (Exception e){
+		} catch (Exception e) {
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
-		
+
 	}
-	
+
 	@GetMapping("/users/point")
-	public ResponseEntity<?> getPoint(HttpServletRequest req ) {
-		
+	public ResponseEntity<?> getPoint(HttpServletRequest req) {
+
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
-		
+
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
-			
+
 			int point = userServicLogic.getPoint(mem_id);
 			result.put("point", point);
-			
-			 		
+
 			return new ResponseEntity<>(result, HttpStatus.OK);
-		}catch (ExpiredJwtException e) {
+		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
-		} catch (Exception e){
+		} catch (Exception e) {
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
-		
+
 	}
-	
 
 }

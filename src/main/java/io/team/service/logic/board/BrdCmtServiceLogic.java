@@ -23,17 +23,16 @@ public class BrdCmtServiceLogic implements CmtService<BrdCmt> {
 
 	@Override
 	public int register(BrdCmt newCmt, String token) {
-		int mem_id = jwtManager.getIdFromToken(token);
+
 		
-		if(newCmt.getBrd_cmt_reply()!=0) {
-			cmt_reply_count(newCmt.getBrd_cmt_reply());
-		}
-		
-		if (newCmt.getMem_id() == mem_id) {
-			int result = brdCmtMapper.create(newCmt.getBrd_id(), newCmt.getMem_id(), newCmt.getBrd_cmt_reply(),
-					newCmt.getMem_nickname(), newCmt.getBrd_cmt_contents(), newCmt.getBrd_cmt_state());
+		try {
+			if(newCmt.getBrdCmtReply()!=0) {
+				cmt_reply_count(newCmt.getBrdCmtReply());
+			}
+			int result = brdCmtMapper.create(newCmt.getBrdId(), newCmt.getMemId(), newCmt.getBrdCmtReply(),
+					newCmt.getMemNickname(), newCmt.getBrdCmtContents(), newCmt.getBrdCmtState());
 			return result;
-		} else {
+		} catch (Exception e) {
 			return -1;
 		}
 
@@ -58,9 +57,9 @@ public class BrdCmtServiceLogic implements CmtService<BrdCmt> {
 		
 		BrdCmt brdCmt = brdCmtMapper.read(cmt_id);
 		
-		if (brdCmt.getMem_id() == mem_id) {
-			int result = brdCmtMapper.update(cmt_id, newCmt.getBrd_cmt_contents(),
-					newCmt.getBrd_cmt_state());
+		if (brdCmt.getMemId() == mem_id) {
+			int result = brdCmtMapper.update(cmt_id, newCmt.getBrdCmtContents(),
+					newCmt.getBrdCmtState());
 			return result;
 		} else {
 			return -1;
@@ -72,7 +71,7 @@ public class BrdCmtServiceLogic implements CmtService<BrdCmt> {
 		int mem_id = jwtManager.getIdFromToken(token);
 		BrdCmt brdCmt = brdCmtMapper.read(id);
 
-		if (brdCmt.getMem_id() == mem_id) {
+		if (brdCmt.getMemId() == mem_id) {
 			int result = brdCmtMapper.delete(id);
 			return result;
 		} else {

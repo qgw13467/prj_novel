@@ -9,6 +9,6 @@ import io.team.domain.Review;
 @Repository
 public interface ReviewMapper extends JpaRepository<Review, Integer>{
 
-	Review findByNvidAndMemid(int nvid, int memid);
+	Review findByNvIdAndMemId(int nvid, int memid);
 
 }

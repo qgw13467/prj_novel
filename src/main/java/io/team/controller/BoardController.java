@@ -37,16 +37,7 @@ public class BoardController {
 
 	private final BoardGoodServiceLogic boardGoodServiceLogic;
 
-	private final JwtManager jwtMager;
-
-	@GetMapping("/user/test")
-	public @ResponseBody Map<String, Object> getAllBoards() {
-
-		Map<String, Object> result = new HashMap<String, Object>();
-
-		result.put("test", "tsetsdf");
-		return result;
-	}
+	private final JwtManager jwtManager;
 
 	@GetMapping("/boards")
 	public @ResponseBody Map<String, Object> getAllBoards(
@@ -73,6 +64,8 @@ public class BoardController {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+			int mem_id = jwtManager.getIdFromToken(token);
+			newBoard.setMemId(mem_id);
 			result.put("msg", boardService.register(newBoard, token));
 			return result;
 		} catch (ExpiredJwtException e) {
@@ -80,6 +73,7 @@ public class BoardController {
 			result.put("msg", "JWT expiration");
 			return result;
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return result;
 		}
@@ -89,6 +83,7 @@ public class BoardController {
 	public @ResponseBody Map<String, Object> update(@PathVariable int id, @RequestBody Board newBoard,
 			HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
+		
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result.put("msg", boardService.modify(id, newBoard, token));
@@ -98,6 +93,7 @@ public class BoardController {
 			result.put("msg", "JWT expiration");
 			return result;
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return result;
 		}
@@ -115,6 +111,7 @@ public class BoardController {
 			result.put("msg", "JWT expiration");
 			return result;
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return result;
 		}
@@ -135,7 +132,7 @@ public class BoardController {
 		for (BrdCmt cmt : cmts) {
 			ArrayList<BrdCmt> tempArrayList = new ArrayList<BrdCmt>();
 			tempArrayList.add(cmt);
-			ArrayList<BrdCmt> replies = cmtService.read_replies(cmt.getBrd_cmt_id());
+			ArrayList<BrdCmt> replies = cmtService.read_replies(cmt.getBrdCmtId());
 			tempArrayList.addAll(replies);
 			cmtsArray.add(tempArrayList);
 		}
@@ -153,13 +150,19 @@ public class BoardController {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-
-			newCmt.setBrd_id(id);
+			int mem_id = jwtManager.getIdFromToken(token);
+			newCmt.setBrdId(id);
+			newCmt.setMemId(mem_id);
+			System.out.println(newCmt);
 			result.put("msg", cmtService.register(newCmt, token));
+			return result;
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
 			return result;
 		} catch (Exception e) {
 			result.put("msg", "ERROR");
-			System.out.println(e);
+			e.printStackTrace();
 			return result;
 		}
 	}
@@ -170,9 +173,16 @@ public class BoardController {
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+			int mem_id = jwtManager.getIdFromToken(token);
+			newCmt.setMemId(mem_id);
 			result.put("msg", cmtService.modify(brd_cmt_id, newCmt, token));
 			return result;
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return result;
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return result;
 		}
@@ -185,12 +195,20 @@ public class BoardController {
 		try {
 			result.put("msg", cmtService.remove(brd_cmt_id, token));
 			return result;
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return result;
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return result;
 		}
 	}
 
+	
+	
+	//검색
 	@GetMapping("/boards/search")
 	public @ResponseBody Map<String, Object> findByTitleConrain(
 			@RequestParam(value = "srctype", required = false, defaultValue = "title") String srctype,
@@ -218,13 +236,16 @@ public class BoardController {
 
 	}
 
+	
+	
+	//추천, 비추천
 	@PostMapping("/boards/{id}/like")
 	public ResponseEntity<?> writeBrdLike(@PathVariable int id, HttpServletRequest req) {
 
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			int mem_id = jwtMager.getIdFromToken(token);
+			int mem_id = jwtManager.getIdFromToken(token);
 			boardGoodServiceLogic.assessBrdGood(id, mem_id);
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
@@ -234,7 +255,7 @@ public class BoardController {
 
 		} catch (Exception e) {
 			result.put("msg", "ERROR");
-			System.out.println(e);
+			e.printStackTrace();
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 	}
@@ -243,11 +264,11 @@ public class BoardController {
 	public ResponseEntity<?> writeBrdDislike(@PathVariable int id, HttpServletRequest req) {
 
 		String token = req.getHeader("Authorization");
-		
+
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 
-			int mem_id = jwtMager.getIdFromToken(token);
+			int mem_id = jwtManager.getIdFromToken(token);
 			boardGoodServiceLogic.assessBrdBad(id, mem_id);
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
@@ -257,7 +278,7 @@ public class BoardController {
 
 		} catch (Exception e) {
 			result.put("msg", "ERROR");
-			System.out.println(e);
+			e.printStackTrace();
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 	}

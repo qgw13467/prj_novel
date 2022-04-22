@@ -23,10 +23,10 @@ public class NovelCover {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="nvc_id")
-	private int nvcid;
+	private int nvcId;
 	
 	@Column(name="nv_id")
-	private int nvid;
+	private int nvId;
 	private String imgUrl;
 	private String nvcTitle;
 	private String nvcContents;
@@ -36,8 +36,8 @@ public class NovelCover {
 
 	
 	public NovelCover (HashMap<String, String> map) {
-		this.imgUrl=map.get("img_url");
-		this.nvcTitle=map.get("nvc_title");
-		this.nvcContents=map.get("nvc_content");
+		this.imgUrl=map.get("imgUrl");
+		this.nvcTitle=map.get("nvcTitle");
+		this.nvcContents=map.get("nvcContents");
 	}
 }

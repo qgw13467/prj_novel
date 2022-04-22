@@ -1,14 +1,10 @@
-package io.team.service.logic;
+package io.team.service.logic.user;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import io.team.Repository.PurchaseListRepository;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
 import io.team.mapper.UserMapper;
@@ -23,7 +19,6 @@ public class UserServicLogic implements UserService {
 
 	private final UserMapper userMapper;
 	
-	private final PurchaseListRepository purchaseListRepository;
 	
 	
 	SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -33,11 +28,11 @@ public class UserServicLogic implements UserService {
 	@Override
 	public String register(User newUser) {
 
-		if (userMapper.checkIdOverlap(newUser.getMem_userid(), newUser.getMem_nick()) != 0) {
+		if (userMapper.checkIdOverlap(newUser.getMemUserId(), newUser.getMemNick()) != 0) {
 			return "ERROR";
 		}
-		userMapper.create(newUser.getMem_userid(), newUser.getMem_password(), format_time1, newUser.getMem_email(),
-				newUser.getMem_nick(), format_time1, format_time1, newUser.getMem_icon());
+		userMapper.create(newUser.getMemUserId(), newUser.getMemPassword(), format_time1, newUser.getMemEmail(),
+				newUser.getMemNick(), format_time1, format_time1, newUser.getMemIcon());
 		return "OK";
 	}
 
@@ -46,7 +41,7 @@ public class UserServicLogic implements UserService {
 		User user;
 		try {
 
-			user = userMapper.read(newUser.getMem_userid(), newUser.getMem_password());
+			user = userMapper.read(newUser.getMemUserId(), newUser.getMemPassword());
 			String token = jwtManager.generateJwtToken(user);
 			return token;
 		} catch (Exception e) {
@@ -58,20 +53,20 @@ public class UserServicLogic implements UserService {
 	public HashMap find(User newUser) {
 		HashMap<String, String> map = new HashMap<String, String>();
 		try {
-			User user = userMapper.read(newUser.getMem_userid(), newUser.getMem_password());
+			User user = userMapper.read(newUser.getMemUserId(), newUser.getMemPassword());
 
-			map.put("mem_nick", user.getMem_nick());
-			map.put("mem_id", Integer.toString(user.getMem_id()));
-			map.put("mem_userid", user.getMem_userid());
-			map.put("mem_icon", user.getMem_icon());
-			map.put("mem_lastlogin_datetime", user.getMem_lastlogin_datetime());
+			map.put("memNick", user.getMemNick());
+			map.put("memId", Integer.toString(user.getMemId()));
+			map.put("memUserId", user.getMemUserId());
+			map.put("memIcon", user.getMemIcon());
+			map.put("memLastloginDatetime", user.getMemLastloginDatetime());
 			return map;
 		} catch (Exception e) {
 			return map;
 		}
 	}
 
-	public User findByMemid(int mem_id) {
+	public User findByMemId(int mem_id) {
 
 		try {
 			User user = userMapper.findByMemid(mem_id);
@@ -81,10 +76,11 @@ public class UserServicLogic implements UserService {
 		}
 	}
 
-	public User findByUserid(String userid) {
+	public User findByMemUserId(String userid) {
 
 		try {
-			User user = userMapper.findById(userid);
+			User user = userMapper.findByMemUserId(userid);
+			
 			return user;
 		} catch (Exception e) {
 			return new User();
@@ -101,9 +97,10 @@ public class UserServicLogic implements UserService {
 	
 	@Override
 	public int modify(User newUser, String token) {
-		int result = userMapper.update(newUser.getMem_userid(), newUser.getMem_password(), newUser.getMem_email(),
-				newUser.getMem_nick(), newUser.getMem_point(), newUser.getState(), newUser.getMem_following_nvnum(),
-				newUser.getMem_following_wrnum(), newUser.getMem_followed(), newUser.getMem_icon());
+		System.out.println(newUser);
+		int result = userMapper.update(newUser.getMemUserId(), newUser.getMemEmail(),
+				newUser.getMemNick(), newUser.getMemPoint(), newUser.getState(), newUser.getMemFollowingNvnum(),
+				newUser.getMemFollowingWrnum(), newUser.getMemFollowed(), newUser.getMemIcon());
 		return result;
 
 	}
@@ -122,7 +119,7 @@ public class UserServicLogic implements UserService {
 
 	@Override
 	public int remove(User newUser, String token) {
-		int result = userMapper.delete(newUser.getMem_userid(), newUser.getMem_password());
+		int result = userMapper.delete(newUser.getMemUserId(), newUser.getMemPassword());
 		return result;
 	}
 
@@ -157,5 +154,7 @@ public class UserServicLogic implements UserService {
 			return result;
 		}
 	}
+	
+
 
 }

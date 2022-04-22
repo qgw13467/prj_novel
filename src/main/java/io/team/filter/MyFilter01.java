@@ -21,8 +21,6 @@ public class MyFilter01 implements Filter{
 		
 		HttpServletRequest req = (HttpServletRequest)request;
 		HttpServletResponse res = (HttpServletResponse)response;
-		
-		String headerAuthString = req.getHeader("Authorization");
         try {
             chain.doFilter(req, res); // go to 'JwtAuthenticationFilter'
         } catch (JwtException ex) {

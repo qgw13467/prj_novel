@@ -20,21 +20,21 @@ public class PurchaseList {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="pl_id")
-	private int plid;
+	private int plId;
 	
 	@Column(name="mem_id")
-	private int memid;
+	private int memId;
 	
 	@Column(name="nv_id")
-	private int nvid;
+	private int nvId;
 
 	@Column(name="pl_datetime")
 	@CreationTimestamp
-	private LocalDateTime pl_datetime = LocalDateTime.now();
+	private LocalDateTime plDatetime = LocalDateTime.now();
 	
 	
 	public PurchaseList(int mem_id, int nv_id) {
-		this.memid = mem_id;
-		this.nvid = nv_id;
+		this.memId = mem_id;
+		this.nvId = nv_id;
 	}
 }

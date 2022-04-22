@@ -12,9 +12,9 @@ import io.team.domain.PurchaseList;
 @Repository
 public interface PurchaseListRepository extends JpaRepository<PurchaseList, Integer>{
 	
-	PurchaseList findByMemidAndNvid(int memid, int nvid);
+	PurchaseList findByMemIdAndNvId(int memid, int nvid);
 	
-	ArrayList<PurchaseList> findByMemid(int memid);
+	ArrayList<PurchaseList> findByMemId(int memid);
 	
-	boolean existsByMemidAndNvid(int memid, int nvid);
+	boolean existsByMemIdAndNvId(int memid, int nvid);
 }

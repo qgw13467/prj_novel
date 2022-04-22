@@ -24,7 +24,7 @@ import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.mapper.UserMapper;
 import io.team.service.logic.PointServiceLogic;
-import io.team.service.logic.UserServicLogic;
+import io.team.service.logic.user.UserServicLogic;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -51,24 +51,24 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 //			}
 
 			ObjectMapper omo = new ObjectMapper();
+			
 			User user = omo.readValue(request.getInputStream(), User.class);
-
+			
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-					user.getMem_userid(), user.getMem_password());
-
+					user.getMemUserId(), user.getMemPassword());
+			
+			
 			// PrincipalDetailsService의 loadUserByUsername() 함수 실행됨
 			// DB에 있는 id와 pwd가 일치
 			Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
 			// authentication 객체가 session영역에 저장됨-> 로그인됨
 			PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
 			// authentication 객체가 session영역에 저장해햐 하고 그 방법으로 return 하면됨
 			// 리턴의 이유는 권한 관리를 security가 대신 해주기 때문에 편하려고함
 			// jwt토큰을 사용하면 세션을 만들 이유가 없으나 권한 처리때문에 session에 넣어줌
 			return authentication;
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		}
 		return null;
@@ -90,7 +90,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 			result.put("\"msg\"","\"OK\"");
 			int attendance_point = 100;
-			int check = pointServiceLogic.attend(Integer.parseInt(map.get("mem_id")), PointPurpose.ATTENDANCE, attendance_point, map.get("mem_lastlogin_datetime"));
+			int check = pointServiceLogic.attend(Integer.parseInt(map.get("memId")), PointPurpose.ATTENDANCE, attendance_point, map.get("memLastloginDatetime"));
 			
 			if(check == 1) {
 				result.put("\"attendance point\"", ""+attendance_point);
@@ -100,20 +100,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				result.put("\"attendance point\"", "0");
 			}
 
-			userServicLogic.lastlogin(user.getMem_id());
+			userServicLogic.lastlogin(user.getMemId());
 			String token = jwtManager.generateJwtToken(user);
 //			System.out.println(token);
 			response.setCharacterEncoding("UTF-8");
 			response.setContentType("charset=utf-8");
 
-			response.addCookie(new Cookie("mem_nick", URLEncoder.encode(user.getMem_nick(), "utf-8")));
-			response.addCookie(new Cookie("mem_id", URLEncoder.encode(Integer.toString(user.getMem_id()), "utf-8")));
-			response.addCookie(new Cookie("mem_userid", URLEncoder.encode(user.getMem_userid(), "utf-8")));
-			response.addCookie(new Cookie("mem_icon", URLEncoder.encode(user.getMem_icon(), "utf-8")));
-			response.addCookie(new Cookie("mem_point", URLEncoder.encode(Integer.toString(user.getMem_point()), "utf-8")));
-			String date = URLEncoder.encode(user.getMem_lastlogin_datetime(), "utf-8");
+			response.addCookie(new Cookie("memNick", URLEncoder.encode(user.getMemNick(), "utf-8")));
+			response.addCookie(new Cookie("memId", URLEncoder.encode(Integer.toString(user.getMemId()), "utf-8")));
+			response.addCookie(new Cookie("memUserid", URLEncoder.encode(user.getMemUserId(), "utf-8")));
+			response.addCookie(new Cookie("memIcon", URLEncoder.encode(user.getMemIcon(), "utf-8")));
+			response.addCookie(new Cookie("memPoint", URLEncoder.encode(Integer.toString(user.getMemPoint()), "utf-8")));
+			String date = URLEncoder.encode(user.getMemLastloginDatetime(), "utf-8");
 			response.addCookie(
-					new Cookie("mem_lastlogin_datetime", date.substring(0,23)));
+					new Cookie("memLastloginDatetime", date.substring(0,23)));
 			
 			
 			response.getWriter().print(result);

@@ -23,16 +23,15 @@ public class BoardServiceLogic implements WriteService<Board> {
 	@Override
 	public int register(Board newBoard, String token) {
 
-
-		int mem_id = jwtManager.getIdFromToken(token);
-		if (newBoard.getMem_id() == mem_id) {
-			int result = boardMapper.create(newBoard.getMem_id(), newBoard.getImg_url(), newBoard.getMem_nickname(),
-					newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(),
-					newBoard.getBrd_datetime(), newBoard.getBrd_img(), newBoard.getBrd_file());
+		try {
+			int result = boardMapper.create(newBoard.getMemId(), newBoard.getImgUrl(), newBoard.getMemNickname(),
+					newBoard.getBrdTitle(), newBoard.getBrdContents(), newBoard.getBrdState(),
+					newBoard.getBrdDatetime(), newBoard.getBrdImg(), newBoard.getBrdFile());
 			return result;
-		} else {
+		} catch (Exception e) {
 			return -1;
 		}
+		
 	}
 
 	@Override
@@ -43,15 +42,15 @@ public class BoardServiceLogic implements WriteService<Board> {
 
 	@Override
 	public int modify(int brd_id, Board newBoard, String token) {
-		newBoard.setBrd_id(brd_id);
+		newBoard.setBrdId(brd_id);
 		
 
 		Board board = boardMapper.read(brd_id);
 		int mem_id = jwtManager.getIdFromToken(token);
-		if (board.getMem_id() == mem_id) {
-			int result = boardMapper.update(newBoard.getBrd_id(), newBoard.getImg_url(), newBoard.getMem_nickname(),
-					newBoard.getBrd_title(), newBoard.getBrd_contents(), newBoard.getBrd_state(), newBoard.getBrd_img(),
-					newBoard.getBrd_file());
+		if (board.getMemId() == mem_id) {
+			int result = boardMapper.update(newBoard.getBrdId(), newBoard.getImgUrl(), newBoard.getMemNickname(),
+					newBoard.getBrdTitle(), newBoard.getBrdContents(), newBoard.getBrdState(), newBoard.getBrdImg(),
+					newBoard.getBrdFile());
 
 			return result;
 
@@ -66,7 +65,7 @@ public class BoardServiceLogic implements WriteService<Board> {
 		int mem_id = jwtManager.getIdFromToken(token);
 		Board board = boardMapper.read(id);
 
-		if (board.getMem_id() == mem_id) {
+		if (board.getMemId() == mem_id) {
 
 			return boardMapper.delete(id);
 

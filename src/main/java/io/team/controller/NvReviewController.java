@@ -13,30 +13,41 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.jsonwebtoken.ExpiredJwtException;
 import io.team.domain.Review;
+import io.team.jwt.JwtManager;
 import io.team.service.logic.novel.ReviewServiceLogic;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 public class NvReviewController {
 
-	@Autowired
-	ReviewServiceLogic reviewServiceLogic;
+	private final ReviewServiceLogic reviewServiceLogic;
+
+	private final JwtManager jwtManager;
 
 	@PostMapping("/novels/review/{titleId}")
-	public ResponseEntity review(@PathVariable int titleId, @RequestParam(value = "nv_id") int nv_id,
-			@RequestBody Review review, HttpServletRequest req) {
+	public ResponseEntity<?> review(@PathVariable int titleId, @RequestBody Review review, HttpServletRequest req) {
 		HashMap<String, Object> result = new HashMap<>();
 		String token = req.getHeader("Authorization");
-		int check = reviewServiceLogic.findPastReview(review.getNvid(), review.getMemid());
-		System.out.println(check);
-		if(check == 1) {
-			result.put("msg", "reduplication");
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		}
-		
+
 		try {
-			check = reviewServiceLogic.register(review, token);
+			int mem_id = jwtManager.getIdFromToken(token);
+			int check = reviewServiceLogic.findPastReview(review.getNvId(), mem_id);
+
+			if (check == 1) {
+				result.put("msg", "reduplication");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			review.setMemId(mem_id);
+			check = reviewServiceLogic.register(review);
 			result.put("msg", check);
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (Exception e) {
 			result.put("msg", "ERROR");
@@ -44,23 +55,19 @@ public class NvReviewController {
 		}
 
 	}
-	
+
 	/*
-	@PutMapping("/novels/review/{titleId}")
-	public @ResponseBody ResponseEntity modifyreview(@PathVariable int titleId, @RequestParam(value = "nv_id") int nv_id,
-			@RequestBody Review review, HttpServletRequest req) {
-		HashMap<String, Object> result = new HashMap<>();
-		String token = req.getHeader("Authorization");
-		int check = 0;
-		try {
-			check = reviewServiceLogic.modify(review, token);
-			result.put("msg", check);
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		} catch (Exception e) {
-			result.put("msg", "ERROR");
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		}
-
-	}
+	 * @PutMapping("/novels/review/{titleId}") public @ResponseBody ResponseEntity
+	 * modifyreview(@PathVariable int titleId, @RequestParam(value = "nv_id") int
+	 * nv_id,
+	 * 
+	 * @RequestBody Review review, HttpServletRequest req) { HashMap<String, Object>
+	 * result = new HashMap<>(); String token = req.getHeader("Authorization"); int
+	 * check = 0; try { check = reviewServiceLogic.modify(review, token);
+	 * result.put("msg", check); return new ResponseEntity<>(result, HttpStatus.OK);
+	 * } catch (Exception e) { result.put("msg", "ERROR"); return new
+	 * ResponseEntity<>(result, HttpStatus.OK); }
+	 * 
+	 * }
 	 */
 }

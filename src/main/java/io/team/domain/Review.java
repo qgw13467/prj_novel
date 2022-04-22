@@ -26,18 +26,18 @@ public class Review {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="rv_id")
-	private int rvid;
+	private int rvId;
 	
 	@Column(name="nv_id")
-	private int nvid;
+	private int nvId;
 	@Column(name="mem_id")
-	private int memid;
+	private int memId;
 	@Column(name="rv_point")
-	private int rvpoint;
+	private int rvPoint;
 	
 	@Column(name="rv_datetime")
 	@CreationTimestamp
-	private LocalDateTime rvdatetime = LocalDateTime.now();
+	private LocalDateTime rvDatetime = LocalDateTime.now();
 	
 
 }

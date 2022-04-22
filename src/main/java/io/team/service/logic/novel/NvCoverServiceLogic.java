@@ -23,14 +23,14 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 	@Override
 	public int register(NovelCover novelCover, String token) {
 
-		if (novelCover.getNvid() == 0) {
-			novelCover.setNvid(1);
+		if (novelCover.getNvId() == 0) {
+			novelCover.setNvId(getPageNum());
 		}
 
 		try {
 			int result = 0;
 			NovelCover tempNvCover = nvCoverMapper.save(novelCover);
-			result= tempNvCover.getNvcid();
+			result= tempNvCover.getNvcId();
 			
 			return result;
 		} catch (Exception e) {
@@ -45,18 +45,18 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 	}
 	
 	public Page<NovelCover> findAll(List<Integer> novelCovers, Pageable pageable) {
-		return nvCoverMapper.findAllByNvcidIn(novelCovers, pageable);
+		return nvCoverMapper.findAllByNvcIdIn(novelCovers, pageable);
 	}
 	
 	//id로 소설커버 찾기
 	@Override
 	public NovelCover find(int id) {
-		NovelCover tempCover = nvCoverMapper.findByNvcid(id);
+		NovelCover tempCover = nvCoverMapper.findByNvcId(id);
 		return tempCover;
 	}
 	
 	public NovelCover findByNvid(int id) {
-		NovelCover tempCover = nvCoverMapper.findFirstByNvid(id);
+		NovelCover tempCover = nvCoverMapper.findFirstByNvId(id);
 		return tempCover;
 	}
 
@@ -66,7 +66,7 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 		
 		try {
 			NovelCover tempCover = nvCoverMapper.save(obj);
-			return tempCover.getNvcid();
+			return tempCover.getNvcId();
 		}catch (Exception e) {
 			return -1;
 		}

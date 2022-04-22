@@ -12,6 +12,7 @@ import io.team.domain.NovelCover;
 import io.team.domain.SubscribeNovel;
 import io.team.domain.User;
 import io.team.service.logic.novel.NvCoverServiceLogic;
+import io.team.service.logic.user.UserServicLogic;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,10 +30,10 @@ public class SubscribeNvService {
 	public int subscribeNv(int mem_id, int nvc_id) {
 
 		try {
-			SubscribeNovel subscribeNovel = SubscribeNovel.builder().memid(mem_id).nvcid(nvc_id).build();
+			SubscribeNovel subscribeNovel = SubscribeNovel.builder().memId(mem_id).nvcId(nvc_id).build();
 
 			SubscribeNovel temp = new SubscribeNovel();
-			temp = subNvRepository.findFirstByMemidAndNvcid(mem_id, nvc_id);
+			temp = subNvRepository.findFirstByMemIdAndNvcId(mem_id, nvc_id);
 
 			if (temp == null) {
 				subNvRepository.save(subscribeNovel);
@@ -57,10 +58,10 @@ public class SubscribeNvService {
 		ArrayList<NovelCover> novelCovers = new ArrayList<>();
 		ArrayList<SubscribeNovel> subscribeNovels = new ArrayList<>();
 
-		subscribeNovels = subNvRepository.findNvcidByMemid(mem_id);
+		subscribeNovels = subNvRepository.findNvcIdByMemId(mem_id);
 
 		for (SubscribeNovel subscribeNovel : subscribeNovels) {
-			NovelCover novelCover = nvCoverServiceLogic.find(subscribeNovel.getNvcid());
+			NovelCover novelCover = nvCoverServiceLogic.find(subscribeNovel.getNvcId());
 			novelCovers.add(novelCover);
 		}
 
@@ -68,7 +69,8 @@ public class SubscribeNvService {
 	}
 
 	public int deleteSubscribe(int mem_id, int nvc_id) {
-		SubscribeNovel subscribeNovel = subNvRepository.findByMemidAndNvcid(mem_id, nvc_id);
+		SubscribeNovel subscribeNovel = subNvRepository.findByMemIdAndNvcId(mem_id, nvc_id);
+		System.out.println(subscribeNovel);
 		subNvRepository.delete(subscribeNovel);
 		return 1;
 	}
@@ -78,10 +80,10 @@ public class SubscribeNvService {
 		ArrayList<SubscribeNovel> subscribeNovels = new ArrayList<>();
 
 		try {
-			subscribeNovels = subNvRepository.findByNvcid(nvc_id);
+			subscribeNovels = subNvRepository.findByNvcId(nvc_id);
 
 			for (SubscribeNovel subscribeNovel : subscribeNovels) {
-				User user = userServicLogic.findByMemid(subscribeNovel.getMemid());
+				User user = userServicLogic.findByMemId(subscribeNovel.getMemId());
 
 				if (user.getToken().equals(""))
 					continue;

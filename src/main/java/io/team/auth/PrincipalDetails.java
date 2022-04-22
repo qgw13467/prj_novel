@@ -39,12 +39,12 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
 	@Override
 	public String getPassword() { 
 		
-		return user.getMem_password();
+		return user.getMemPassword();
 	}
 
 	@Override
 	public String getUsername() {
-		return user.getMem_userid();
+		return user.getMemUserId();
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import io.team.Repository.PurchaseListRepository;
 import io.team.domain.PurchaseList;
-import io.team.service.logic.UserServicLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +23,7 @@ public class PurchaseService {
 		
 		ArrayList<PurchaseList> purchaseLists = new ArrayList<>();
 		
-		purchaseLists = purchaseListRepository.findByMemid(mem_id);
+		purchaseLists = purchaseListRepository.findByMemId(mem_id);
 		
 		
 		return purchaseLists;

@@ -24,7 +24,7 @@ public class JwtManager {
 
 	public String generateJwtToken(User newUser) {
 		Date now = new Date();
-		return Jwts.builder().setSubject(newUser.getMem_userid()) // 보통 username
+		return Jwts.builder().setSubject(newUser.getMemUserId()) // 보통 username
 				.setHeader(createHeader()).setClaims(createClaims(newUser)) // 클레임, 토큰에 포함될 정보
 				.setExpiration(new Date(now.getTime() + expiredTime)) // 만료일
 				.signWith(SignatureAlgorithm.HS256, securityKey).compact();
@@ -40,10 +40,10 @@ public class JwtManager {
 
 	private Map<String, Object> createClaims(User newUser) {
 		Map<String, Object> claims = new HashMap<>();
-		claims.put("mem_id", newUser.getMem_id());
-		claims.put("mem_userid", newUser.getMem_userid()); // username
-		claims.put("mem_email", newUser.getMem_email());
-		claims.put("mem_nick", newUser.getMem_nick());// 인가정보
+		claims.put("mem_id", newUser.getMemId());
+		claims.put("mem_userid", newUser.getMemUserId()); // username
+		claims.put("mem_email", newUser.getMemEmail());
+		claims.put("mem_nick", newUser.getMemNick());// 인가정보
 		return claims;
 	}
 

@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Tag {
-	private long tag_hash;
-	private String tag_name;
+	private long tagHash;
+	private String tagName;
 }

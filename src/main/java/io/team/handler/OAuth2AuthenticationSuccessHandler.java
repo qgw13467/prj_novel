@@ -16,7 +16,7 @@ import io.team.domain.User;
 import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.PointServiceLogic;
-import io.team.service.logic.UserServicLogic;
+import io.team.service.logic.user.UserServicLogic;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -32,17 +32,17 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 			Authentication authentication) throws IOException, ServletException {
 
 		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-		User user = userServicLogic.findByUserid(principalDetails.getUser().getMem_userid());
+		User user = userServicLogic.findByMemUserId(principalDetails.getUser().getMemUserId());
 
 		int attendance_point = 100;
-		int check = pointServiceLogic.attend(user.getMem_id(), PointPurpose.ATTENDANCE, attendance_point,
-				user.getMem_lastlogin_datetime());
+		int check = pointServiceLogic.attend(user.getMemId(), PointPurpose.ATTENDANCE, attendance_point,
+				user.getMemLastloginDatetime());
 
 //      System.out.println(user);
 //      System.out.println(user.getMem_lastlogin_datetime());
 //		System.out.println(check);
 
-		userServicLogic.lastlogin(user.getMem_id());
+		userServicLogic.lastlogin(user.getMemId());
 		String token = jwtManager.generateJwtToken(user);
 		writeTokenResponse(response, token);
 
@@ -51,12 +51,12 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 		RequestDispatcher rd = request.getRequestDispatcher("/oauth/redirect");
 		request.setCharacterEncoding("UTF-8");
 		request.setAttribute("Authorization", token);
-		request.setAttribute("mem_nick", user.getMem_nick());
-		request.setAttribute("mem_id", user.getMem_id());
-		request.setAttribute("mem_userid", user.getMem_userid());
-		request.setAttribute("mem_icon", user.getMem_icon());
-		request.setAttribute("mem_lastlogin_datetime", user.getMem_lastlogin_datetime());
-		request.setAttribute("mem_point", user.getMem_point());
+		request.setAttribute("memNick", user.getMemNick());
+		request.setAttribute("memId", user.getMemId());
+		request.setAttribute("memUserId", user.getMemUserId());
+		request.setAttribute("memIcon", user.getMemIcon());
+		request.setAttribute("memLastloginDatetime", user.getMemLastloginDatetime());
+		request.setAttribute("memPoint", user.getMemPoint());
 		rd.forward(request, response);
 
 

@@ -30,27 +30,27 @@ public class Point {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="pnt_id")
-	private int rvid;
+	private int rvId;
 	
 	@Column(name="mem_id")
-	private int memid;
+	private int memId;
 	
 	@Column(name="pnt_usehistory")
 	@Enumerated(EnumType.STRING)
 	private PointPurpose pointPurpose;
 	
 	@Column(name="pnt_spend")
-	private int pnt_spend;
+	private int pntSpend;
 	
 	@Column(name="pnt_datetime")
 	@CreationTimestamp
-	private LocalDateTime pnt_datetime = LocalDateTime.now();
+	private LocalDateTime pntDatetime = LocalDateTime.now();
 	
 	
 	public Point(int mem_id, PointPurpose pointPurpose, int pnt_spend) {
-		this.memid = mem_id;
+		this.memId = mem_id;
 		this.pointPurpose = pointPurpose;
-		this.pnt_spend = pnt_spend;
+		this.pntSpend = pnt_spend;
 	}
 
 }

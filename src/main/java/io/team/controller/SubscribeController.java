@@ -16,7 +16,7 @@ import io.team.domain.SubscribeNovel;
 import io.team.jwt.JwtManager;
 import io.team.service.UserService;
 import io.team.service.logic.SubscribeNvService;
-import io.team.service.logic.UserServicLogic;
+import io.team.service.logic.user.UserServicLogic;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,9 +26,7 @@ public class SubscribeController {
 	private final SubscribeNvService subscribeNvService;
 	private final JwtManager jwtManager;
 	private final UserServicLogic userServicLogic;
-	
-	
-	
+
 	@GetMapping("/nvc")
 	public ResponseEntity<?> getSubsribeList(HttpServletRequest req) {
 
@@ -38,12 +36,12 @@ public class SubscribeController {
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
 			ArrayList<NovelCover> novelCovers = new ArrayList<>();
-			
+
 			novelCovers = subscribeNvService.getSubList(mem_id);
-			
+
 			result.put("novelCovers", novelCovers);
 			return new ResponseEntity<>(result, HttpStatus.OK);
-			
+
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
@@ -54,21 +52,21 @@ public class SubscribeController {
 		}
 
 	}
-	
+
 	@PostMapping("/nvc")
 	public ResponseEntity<?> review(@RequestBody HashMap<String, String> map, HttpServletRequest req) {
 
 		HashMap<String, Object> result = new HashMap<>();
 		String token = req.getHeader("Authorization");
 		try {
-			int mem_id = jwtManager.getIdFromToken(token);
+			int memId = jwtManager.getIdFromToken(token);
 
-			subscribeNvService.subscribeNv(mem_id, Integer.parseInt(map.get("nvcid")));
-			userServicLogic.updateToken(map.get("token"), mem_id);
-			
+			subscribeNvService.subscribeNv(memId, Integer.parseInt(map.get("nvcId")));
+			userServicLogic.updateToken(map.get("token"), memId);
+
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
-			
+
 //			if (mem_id == (int)subscribeNovel.get("memid")) {
 //				System.out.println("check1");
 //
@@ -76,8 +74,7 @@ public class SubscribeController {
 //				result.put("msg", "mem_id is mismatch");
 //				return new ResponseEntity<>(result, HttpStatus.OK);
 //			}
-			
-			
+
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
@@ -88,7 +85,6 @@ public class SubscribeController {
 		}
 
 	}
-	
 
 	@DeleteMapping("/nvc")
 	public ResponseEntity<?> deleteSubsribe(@RequestBody SubscribeNovel subscribeNovel, HttpServletRequest req) {
@@ -98,12 +94,10 @@ public class SubscribeController {
 
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
-			if (mem_id == subscribeNovel.getMemid()) {
-				subscribeNvService.deleteSubscribe(subscribeNovel.getMemid(), subscribeNovel.getNvcid());
-			}
+			subscribeNvService.deleteSubscribe(mem_id, subscribeNovel.getNvcId());
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
-			
+
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
@@ -114,6 +108,5 @@ public class SubscribeController {
 		}
 
 	}
-
 
 }

@@ -20,22 +20,23 @@ public class ReviewServiceLogic {
 	@Autowired
 	NvServiceLogic nvServiceLogic;
 	
-	public int register(Review newReview, String token) {
+	public int register(Review newReview) {
 		
-		int mem_id = jwtManager.getIdFromToken(token);
-		if (newReview.getMemid() == mem_id) {
+		try {
 			reviewMapper.save(newReview);
-			nvServiceLogic.review(newReview.getNvid(), newReview.getRvpoint());
+			nvServiceLogic.review(newReview.getNvId(), newReview.getRvPoint());
 			return 1;
-		} else {
+		} catch (Exception e) {
 			return -1;
 		}
+		
+
 	}
 	
 	public int findPastReview(int nv_id, int mem_id) {
 		try {
-			Review review= reviewMapper.findByNvidAndMemid(nv_id,mem_id);
-			System.out.println(review);
+			Review review= reviewMapper.findByNvIdAndMemId(nv_id,mem_id);
+
 			if(review == null) {
 				return 0;
 			}

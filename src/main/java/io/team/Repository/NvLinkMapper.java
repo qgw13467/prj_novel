@@ -15,10 +15,10 @@ import org.springframework.stereotype.Repository;
 public interface NvLinkMapper extends JpaRepository<NovelLink, Integer>{
 	
 
-	ArrayList<NovelLink> findByNvlparents(int nvl_parents);
+	ArrayList<NovelLink> findByNvlParents(int nvl_parents);
 	
-	ArrayList<NovelLink> findByNvid(int nv_id);
+	ArrayList<NovelLink> findByNvId(int nv_id);
 
-	NovelLink findByNvlchildnode(int nvlchildnode);
+	NovelLink findByNvlChildnode(int nvlchildnode);
 	
 }

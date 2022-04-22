@@ -14,13 +14,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NvCoverMapper extends JpaRepository<NovelCover, Integer> {
 	
-	NovelCover findByNvcid(int nvc_id);
+	NovelCover findByNvcId(int nvc_id);
 	
-	NovelCover findFirstByNvid(int nv_id);
+	NovelCover findFirstByNvId(int nv_id);
 	
-	List<NovelCover> findAllByNvcidIn(List<Integer> nvc_id);
+	List<NovelCover> findAllByNvcIdIn(List<Integer> nvc_id);
 	
-	Page<NovelCover> findAllByNvcidIn(List<Integer> nvc_id, Pageable pageable);
+	Page<NovelCover> findAllByNvcIdIn(List<Integer> nvc_id, Pageable pageable);
 	
 	Page<NovelCover> findByNvcTitleContaining(String keyword, Pageable pageable);
 	/*

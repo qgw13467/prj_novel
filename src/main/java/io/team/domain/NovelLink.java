@@ -18,12 +18,12 @@ public class NovelLink {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int nvl_id;
+	private int nvlId;
 	
 	@Column(name="nvl_parents")
-	private int nvlparents;
+	private int nvlParents;
 	@Column(name="nvl_childnode")
-	private int nvlchildnode;
+	private int nvlChildnode;
 	@Column(name="nv_id")
-	private int nvid;
+	private int nvId;
 }
