@@ -1,6 +1,7 @@
 package io.team.service.logic;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -70,9 +71,14 @@ public class SubscribeNvService {
 
 	public int deleteSubscribe(int mem_id, int nvc_id) {
 		SubscribeNovel subscribeNovel = subNvRepository.findByMemIdAndNvcId(mem_id, nvc_id);
-		System.out.println(subscribeNovel);
 		subNvRepository.delete(subscribeNovel);
 		return 1;
+	}
+	
+	public Optional<SubscribeNovel> checkSubscribe(int mem_id, int nvc_id) {
+		Optional<SubscribeNovel> optSubscribeNovel = Optional.ofNullable(subNvRepository.findByMemIdAndNvcId(mem_id, nvc_id));
+			
+		return optSubscribeNovel;
 	}
 
 	// 소설커버아이디, 제목, 내용입력시 구독자에게 푸시알림

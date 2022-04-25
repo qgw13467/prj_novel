@@ -2,6 +2,8 @@ package io.team.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,52 +63,81 @@ public class SubscribeController {
 		try {
 			int memId = jwtManager.getIdFromToken(token);
 
-			subscribeNvService.subscribeNv(memId, Integer.parseInt(map.get("nvcId")));
-			userServicLogic.updateToken(map.get("token"), memId);
+			Optional<SubscribeNovel> optSubscribeNovel = subscribeNvService.checkSubscribe(memId,
+					Integer.parseInt(map.get("nvcId")));
 
-			result.put("msg", "OK");
+			if (optSubscribeNovel.isPresent()) {
+				subscribeNvService.deleteSubscribe(memId, Integer.parseInt(map.get("nvcId")));
+				result.put("msg", "delete");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			} else {
+				subscribeNvService.subscribeNv(memId, Integer.parseInt(map.get("nvcId")));
+				userServicLogic.updateToken(map.get("token"), memId);
+
+				result.put("msg", "subscribe");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			result.put("msg", "ERROR");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
 
-//			if (mem_id == (int)subscribeNovel.get("memid")) {
-//				System.out.println("check1");
+	}
+
+//	@PostMapping("/nvc")
+//	public ResponseEntity<?> review(@RequestBody HashMap<String, String> map, HttpServletRequest req) {
 //
-//			} else {
-//				result.put("msg", "mem_id is mismatch");
-//				return new ResponseEntity<>(result, HttpStatus.OK);
-//			}
+//		HashMap<String, Object> result = new HashMap<>();
+//		String token = req.getHeader("Authorization");
+//		try {
+//			int memId = jwtManager.getIdFromToken(token);
+//			
+//			
+//			
+//			
+//			subscribeNvService.subscribeNv(memId, Integer.parseInt(map.get("nvcId")));
+//			userServicLogic.updateToken(map.get("token"), memId);
+//
+//			result.put("msg", "OK");
+//			return new ResponseEntity<>(result, HttpStatus.OK);
+//
+//		} catch (ExpiredJwtException e) {
+//			result = new HashMap<String, Object>();
+//			result.put("msg", "JWT expiration");
+//			return new ResponseEntity<>(result, HttpStatus.OK);
+//		} catch (Exception e) {
+//			result.put("msg", "ERROR");
+//			return new ResponseEntity<>(result, HttpStatus.OK);
+//		}
+//
+//	}
 
-		} catch (ExpiredJwtException e) {
-			result = new HashMap<String, Object>();
-			result.put("msg", "JWT expiration");
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		} catch (Exception e) {
-			result.put("msg", "ERROR");
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		}
-
-	}
-
-	@DeleteMapping("/nvc")
-	public ResponseEntity<?> deleteSubsribe(@RequestBody SubscribeNovel subscribeNovel, HttpServletRequest req) {
-
-		HashMap<String, Object> result = new HashMap<>();
-		String token = req.getHeader("Authorization");
-
-		try {
-			int mem_id = jwtManager.getIdFromToken(token);
-			subscribeNvService.deleteSubscribe(mem_id, subscribeNovel.getNvcId());
-			result.put("msg", "OK");
-			return new ResponseEntity<>(result, HttpStatus.OK);
-
-		} catch (ExpiredJwtException e) {
-			result = new HashMap<String, Object>();
-			result.put("msg", "JWT expiration");
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		} catch (Exception e) {
-			result.put("msg", "ERROR");
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		}
-
-	}
+//	@DeleteMapping("/nvc")
+//	public ResponseEntity<?> deleteSubsribe(@RequestBody SubscribeNovel subscribeNovel, HttpServletRequest req) {
+//
+//		HashMap<String, Object> result = new HashMap<>();
+//		String token = req.getHeader("Authorization");
+//
+//		try {
+//			int mem_id = jwtManager.getIdFromToken(token);
+//			subscribeNvService.deleteSubscribe(mem_id, subscribeNovel.getNvcId());
+//			result.put("msg", "OK");
+//			return new ResponseEntity<>(result, HttpStatus.OK);
+//
+//		} catch (ExpiredJwtException e) {
+//			result = new HashMap<String, Object>();
+//			result.put("msg", "JWT expiration");
+//			return new ResponseEntity<>(result, HttpStatus.OK);
+//		} catch (Exception e) {
+//			result.put("msg", "ERROR");
+//			return new ResponseEntity<>(result, HttpStatus.OK);
+//		}
+//
+//	}
 
 }
