@@ -22,15 +22,10 @@ public class ReviewServiceLogic {
 	
 	public int register(Review newReview) {
 		
-		try {
-			reviewMapper.save(newReview);
-			nvServiceLogic.review(newReview.getNvId(), newReview.getRvPoint());
-			return 1;
-		} catch (Exception e) {
-			return -1;
-		}
+		reviewMapper.save(newReview);
+		nvServiceLogic.review(newReview.getNvId(), newReview.getRvPoint());
+		return 1;
 		
-
 	}
 	
 	public int findPastReview(int nv_id, int mem_id) {

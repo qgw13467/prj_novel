@@ -148,14 +148,14 @@ public class UserController {
 	}
 	
 	@PutMapping("/users/token")
-	public ResponseEntity<?> updateToken(@RequestBody String firebaseToken, HttpServletRequest req) {
+	public ResponseEntity<?> updateToken(@RequestBody HashMap<String, String> map, HttpServletRequest req) {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 
 		try {
 			String token = req.getHeader("Authorization");
 			int mem_id = jwtManager.getIdFromToken(token);
-			userServicLogic.updateToken(token, mem_id);
+			userServicLogic.updateToken(map.get("token"), mem_id);
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
@@ -163,6 +163,7 @@ public class UserController {
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}

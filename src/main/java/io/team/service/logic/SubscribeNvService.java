@@ -27,25 +27,17 @@ public class SubscribeNvService {
 	private final FcmService fcmService;
 
 	private final UserServicLogic userServicLogic;
-
+	
+	//구독 
 	public int subscribeNv(int mem_id, int nvc_id) {
 
 		try {
 			SubscribeNovel subscribeNovel = SubscribeNovel.builder().memId(mem_id).nvcId(nvc_id).build();
+			Optional<SubscribeNovel> optSubscribeNovel = Optional.ofNullable(subNvRepository.findFirstByMemIdAndNvcId(mem_id, nvc_id));
 
-			SubscribeNovel temp = new SubscribeNovel();
-			temp = subNvRepository.findFirstByMemIdAndNvcId(mem_id, nvc_id);
-
-			if (temp == null) {
+			if (!optSubscribeNovel.isPresent()) {
 				subNvRepository.save(subscribeNovel);
 			}
-
-//			else if (temp.getToken().equals(subscribeNovel.getToken())) {
-//				return 1;
-//			} else {
-//				temp.setToken(subscribeNovel.getToken());
-//				subNvRepository.save(temp);
-//			}
 
 			return 1;
 		} catch (Exception e) {

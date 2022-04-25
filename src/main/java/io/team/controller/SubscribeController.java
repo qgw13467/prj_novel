@@ -28,7 +28,8 @@ public class SubscribeController {
 	private final SubscribeNvService subscribeNvService;
 	private final JwtManager jwtManager;
 	private final UserServicLogic userServicLogic;
-
+	
+	//구독 목록
 	@GetMapping("/nvc")
 	public ResponseEntity<?> getSubsribeList(HttpServletRequest req) {
 
@@ -54,7 +55,9 @@ public class SubscribeController {
 		}
 
 	}
-
+	
+	
+	//구독, 취소
 	@PostMapping("/nvc")
 	public ResponseEntity<?> review(@RequestBody HashMap<String, String> map, HttpServletRequest req) {
 

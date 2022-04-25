@@ -59,8 +59,7 @@
 		update user set
 		token = #{token}
 		where
-		mem_id
-		=#{mem_id};
+		mem_id =#{mem_id};
 	</update>
 
 	<update id="update">

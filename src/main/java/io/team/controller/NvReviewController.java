@@ -43,7 +43,7 @@ public class NvReviewController {
 			}
 			review.setMemId(mem_id);
 			check = reviewServiceLogic.register(review);
-			result.put("msg", check);
+			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
