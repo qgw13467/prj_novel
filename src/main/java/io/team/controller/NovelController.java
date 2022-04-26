@@ -34,6 +34,7 @@ import io.team.service.logic.kafka.KafkaProducer;
 import io.team.service.logic.novel.NvCmtServiceLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import io.team.service.logic.novel.NvServiceLogic;
+import io.team.service.logic.user.PurchaseService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -52,7 +53,8 @@ public class NovelController {
 
 	private final KafkaProducer kafkaProducer;	
 
-
+	private final PurchaseService purchaseService;	
+	
 	@GetMapping("/novels/detail")
 	public @ResponseBody Map<String, Object> getAllNovels(
 			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum,
@@ -314,8 +316,13 @@ public class NovelController {
 			int mem_id = jwtManager.getIdFromToken(token);
 			novelReport.setMemId(mem_id);
 			novelReport.setNvId(id);
-			System.out.println(novelReport);
 			Optional<NovelReport> optNovelReport = nvServiceLogic.findReport(id, mem_id);
+			
+			if(!purchaseService.isPurchased(mem_id, id)) {
+				result.put("msg", "Not purchase");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			
 			if (!optNovelReport.isPresent()) {
 				nvServiceLogic.report(novelReport);
 				result.put("msg", "OK");
@@ -325,6 +332,8 @@ public class NovelController {
 				result.put("msg", "reduplication");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
+			
+
 
 		} catch (ExpiredJwtException e) {
 			result.put("msg", "JWT expiration");

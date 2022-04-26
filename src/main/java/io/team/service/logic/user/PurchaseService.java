@@ -13,33 +13,40 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class PurchaseService {
-	
+
 	private final PurchaseListRepository purchaseListRepository;
-	
-	private final UserServicLogic userServicLogic;
-	
-	private final NvCoverServiceLogic nvCoverServiceLogic;
-	
+
+
 	public ArrayList<PurchaseList> getPurchaseList(int mem_id) {
-		
+
 		ArrayList<PurchaseList> purchaseLists = new ArrayList<>();
-		
+
 		purchaseLists = purchaseListRepository.findByMemId(mem_id);
-		
-		
+
 		return purchaseLists;
 	}
-	
-	public HashSet<PurchaseList> getPurchaseListAsSet(int mem_id) {
-		
-		ArrayList<PurchaseList> purchaseLists = new ArrayList<>();
-		HashSet<PurchaseList> purchaseListAsSet = new HashSet<>();
-		purchaseLists = purchaseListRepository.findByMemId(mem_id);
-		for (PurchaseList purchaseList : purchaseListAsSet) {
-			purchaseListAsSet.add(purchaseList);
+
+
+
+	public boolean isPurchased(int mem_id, int nv_id) {
+		int check = 0;
+		ArrayList<PurchaseList> purchaseLists = getPurchaseList(mem_id);
+		for (PurchaseList purchaseList : purchaseLists) {
+
+			if (purchaseList.getMemId() == mem_id && purchaseList.getNvId() == nv_id) {
+				System.out.println(purchaseList.getMemId());
+				System.out.println(purchaseList.getNvId());
+				check = 1;
+				break;
+			}
 		}
-		
-		return purchaseListAsSet;
+
+		if (check == 0) {
+			return false;
+		} else {
+			return true;
+		}
+
 	}
-	
+
 }

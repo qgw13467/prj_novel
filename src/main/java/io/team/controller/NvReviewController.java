@@ -32,14 +32,15 @@ public class NvReviewController {
 	private final PurchaseService purchaseService;
 	private final JwtManager jwtManager;
 
-	@PostMapping("/novels/review/{titleId}")
-	public ResponseEntity<?> review(@PathVariable int titleId, @RequestBody Review review, HttpServletRequest req) {
+	@PostMapping("/novels/{id}/review")
+	public ResponseEntity<?> review(@PathVariable int id, @RequestBody Review review, HttpServletRequest req) {
 		HashMap<String, Object> result = new HashMap<>();
 		String token = req.getHeader("Authorization");
 
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
 			review.setMemId(mem_id);
+			review.setNvId(id);
 			int check = reviewServiceLogic.findPastReview(review.getNvId(), mem_id);
 			
 			if (check == 1) {
@@ -47,20 +48,12 @@ public class NvReviewController {
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
 			
-			ArrayList<PurchaseList> purchaseLists = purchaseService.getPurchaseList(mem_id);
-			int check2 = 0;
-			for (PurchaseList purchaseList : purchaseLists) {
-				if(purchaseList.getMemId() == mem_id && purchaseList.getNvId() == review.getNvId()) {
-					check2 =1;
-				}
-				if (check2 ==1 ) break;
-			}
-			if(check2 == 1) {
+			if(purchaseService.isPurchased(mem_id, review.getNvId())) {
 				check = reviewServiceLogic.register(review);
 				result.put("msg", "OK");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}else {
-				result.put("msg", "not purchase");
+				result.put("msg", "Not purchase");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
 			
