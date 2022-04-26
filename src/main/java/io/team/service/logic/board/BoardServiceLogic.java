@@ -1,25 +1,24 @@
 package io.team.service.logic.board;
 
 import java.util.ArrayList;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
-
+import io.team.Repository.BrdReportRepository;
 import io.team.domain.Board;
-import io.team.domain.User;
+import io.team.domain.BrdReport;
 import io.team.jwt.JwtManager;
 import io.team.mapper.BoardMapper;
 import io.team.service.WriteService;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class BoardServiceLogic implements WriteService<Board> {
 
-	@Autowired
-	JwtManager jwtManager;
-
-	@Autowired
-	BoardMapper boardMapper;
-
+	private final JwtManager jwtManager;
+	private final BoardMapper boardMapper;
+	private final BrdReportRepository brdReportRepository;
+	
 	@Override
 	public int register(Board newBoard, String token) {
 
@@ -42,9 +41,8 @@ public class BoardServiceLogic implements WriteService<Board> {
 
 	@Override
 	public int modify(int brd_id, Board newBoard, String token) {
-		newBoard.setBrdId(brd_id);
 		
-
+		newBoard.setBrdId(brd_id);
 		Board board = boardMapper.read(brd_id);
 		int mem_id = jwtManager.getIdFromToken(token);
 		if (board.getMemId() == mem_id) {
@@ -130,24 +128,14 @@ public class BoardServiceLogic implements WriteService<Board> {
 	}
 
 
-
-
-	
-	public int like(int id, String token) {
-		// TODO Auto-generated method stub
-		return 0;
+	public BrdReport report(BrdReport brdReport) {
+		
+		return brdReportRepository.save(brdReport);
 	}
-
 	
-	public int dislike(int id, String token) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int report(int id, String token) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Optional<BrdReport> findReport(int brd_id, int mem_id) {
+		Optional<BrdReport> optBrdReport = Optional.ofNullable( brdReportRepository.findFirstByBrdIdAndMemId(brd_id, mem_id));
+		return optBrdReport;
 	}
 
 }

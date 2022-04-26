@@ -1,21 +1,27 @@
 package io.team.service.logic.novel;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import io.team.Repository.NvCoverMapper;
 import io.team.Repository.NvLinkMapper;
+import io.team.Repository.NvReportRepository;
+import io.team.domain.BrdReport;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;
 import io.team.domain.NovelLink;
+import io.team.domain.NovelReport;
 import io.team.jwt.JwtManager;
 import io.team.mapper.NvMapper;
 import io.team.mapper.NvTagMapper;
 import io.team.mapper.TagMapper;
 import io.team.service.WriteService;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class NvServiceLogic implements WriteService<Novel> {
 
 	@Autowired
@@ -35,6 +41,8 @@ public class NvServiceLogic implements WriteService<Novel> {
 
 	@Autowired
 	TagMapper tagMapper;
+	
+	private final NvReportRepository nvReportRepository;
 
 	@Override
 	public int register(Novel newNovel, String token) {
@@ -131,11 +139,15 @@ public class NvServiceLogic implements WriteService<Novel> {
 	public int deleteReview(int id, int point) {
 		return novelMapper.review(id, point);
 	}
-
-	@Override
-	public int report(int id, String token) {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	public NovelReport report(NovelReport novelReport) {
+		
+		return nvReportRepository.save(novelReport);
+	}
+	
+	public Optional<NovelReport> findReport(int nv_id, int mem_id) {
+		Optional<NovelReport> optNovelReport = Optional.ofNullable( nvReportRepository.findFirstByNvIdAndMemId(nv_id, mem_id));
+		return optNovelReport;
 	}
 
 	@Override

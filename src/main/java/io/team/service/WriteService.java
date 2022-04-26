@@ -14,7 +14,5 @@ public interface WriteService<T> {
 	
 	ArrayList<T> getList(int pagenum, int rownum);
 	
-	int report(int id, String token);
-	
 	int getPageNum();
 }

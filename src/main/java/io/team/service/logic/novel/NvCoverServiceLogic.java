@@ -90,11 +90,7 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 		return null;
 	}
 
-	@Override
-	public int report(int id, String token) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
 
 	@Override
 	public int getPageNum() {

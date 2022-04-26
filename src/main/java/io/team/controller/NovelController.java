@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.Map;
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
@@ -20,9 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.team.domain.BrdReport;
 import io.team.domain.Novel;
 import io.team.domain.NovelCmt;
 import io.team.domain.NovelCover;
+import io.team.domain.NovelReport;
 import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.PointServiceLogic;
@@ -296,6 +300,40 @@ public class NovelController {
 			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return result;
+		}
+	}
+	
+	@PostMapping("/novels/{id}/report")
+	public ResponseEntity<?> writeReport(@PathVariable int id, HttpServletRequest req,
+			@RequestBody NovelReport novelReport) {
+
+		String token = req.getHeader("Authorization");
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			int mem_id = jwtManager.getIdFromToken(token);
+			novelReport.setMemId(mem_id);
+			novelReport.setNvId(id);
+			System.out.println(novelReport);
+			Optional<NovelReport> optNovelReport = nvServiceLogic.findReport(id, mem_id);
+			if (!optNovelReport.isPresent()) {
+				nvServiceLogic.report(novelReport);
+				result.put("msg", "OK");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+
+			} else {
+				result.put("msg", "reduplication");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+
+		} catch (ExpiredJwtException e) {
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+
+		} catch (Exception e) {
+			result.put("msg", "ERROR");
+			e.printStackTrace();
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 	}
 

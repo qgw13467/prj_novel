@@ -29,16 +29,12 @@ public class ReviewServiceLogic {
 	}
 	
 	public int findPastReview(int nv_id, int mem_id) {
-		try {
-			Review review= reviewMapper.findByNvIdAndMemId(nv_id,mem_id);
+		Review review= reviewMapper.findByNvIdAndMemId(nv_id,mem_id);
 
-			if(review == null) {
-				return 0;
-			}
-			return 1;
-		}catch (Exception e) {
-			return -1;
+		if(review == null) {
+			return 0;
 		}
+		return 1;
 		
 	}
 	

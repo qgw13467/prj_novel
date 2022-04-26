@@ -1,5 +1,6 @@
 package io.team.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.team.domain.PurchaseList;
 import io.team.domain.Review;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.novel.ReviewServiceLogic;
+import io.team.service.logic.user.PurchaseService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,6 +29,7 @@ public class NvReviewController {
 
 	private final ReviewServiceLogic reviewServiceLogic;
 
+	private final PurchaseService purchaseService;
 	private final JwtManager jwtManager;
 
 	@PostMapping("/novels/review/{titleId}")
@@ -35,16 +39,32 @@ public class NvReviewController {
 
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
+			review.setMemId(mem_id);
 			int check = reviewServiceLogic.findPastReview(review.getNvId(), mem_id);
-
+			
 			if (check == 1) {
 				result.put("msg", "reduplication");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
-			review.setMemId(mem_id);
-			check = reviewServiceLogic.register(review);
-			result.put("msg", "OK");
-			return new ResponseEntity<>(result, HttpStatus.OK);
+			
+			ArrayList<PurchaseList> purchaseLists = purchaseService.getPurchaseList(mem_id);
+			int check2 = 0;
+			for (PurchaseList purchaseList : purchaseLists) {
+				if(purchaseList.getMemId() == mem_id && purchaseList.getNvId() == review.getNvId()) {
+					check2 =1;
+				}
+				if (check2 ==1 ) break;
+			}
+			if(check2 == 1) {
+				check = reviewServiceLogic.register(review);
+				result.put("msg", "OK");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}else {
+				result.put("msg", "not purchase");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			
+			
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");

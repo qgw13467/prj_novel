@@ -3,9 +3,9 @@ package io.team.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.team.domain.Board;
 import io.team.domain.BrdCmt;
+import io.team.domain.BrdReport;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.board.BoardGoodServiceLogic;
 import io.team.service.logic.board.BoardServiceLogic;
@@ -66,7 +67,8 @@ public class BoardController {
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
 			newBoard.setMemId(mem_id);
-			result.put("msg", boardService.register(newBoard, token));
+			boardService.register(newBoard, token);
+			result.put("msg", "OK");
 			return result;
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
@@ -83,11 +85,20 @@ public class BoardController {
 	public @ResponseBody Map<String, Object> update(@PathVariable int id, @RequestBody Board newBoard,
 			HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
-		
+
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result.put("msg", boardService.modify(id, newBoard, token));
-			return result;
+			int mem_id = jwtManager.getIdFromToken(token);
+			int check = boardService.modify(id, newBoard, token);
+			if (check == 1) {
+				result.put("msg", "OK");
+				return result;
+			}
+			else {
+				result.put("msg", "No permission");
+				return result;
+			}
+				
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
@@ -206,9 +217,7 @@ public class BoardController {
 		}
 	}
 
-	
-	
-	//검색
+	// 검색
 	@GetMapping("/boards/search")
 	public @ResponseBody Map<String, Object> findByTitleConrain(
 			@RequestParam(value = "srctype", required = false, defaultValue = "title") String srctype,
@@ -236,9 +245,7 @@ public class BoardController {
 
 	}
 
-	
-	
-	//추천, 비추천
+	// 추천, 비추천
 	@PostMapping("/boards/{id}/like")
 	public ResponseEntity<?> writeBrdLike(@PathVariable int id, HttpServletRequest req) {
 
@@ -272,6 +279,40 @@ public class BoardController {
 			boardGoodServiceLogic.assessBrdBad(id, mem_id);
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (ExpiredJwtException e) {
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+
+		} catch (Exception e) {
+			result.put("msg", "ERROR");
+			e.printStackTrace();
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
+	}
+
+	@PostMapping("/boards/{id}/report")
+	public ResponseEntity<?> writeReport(@PathVariable int id, HttpServletRequest req,
+			@RequestBody BrdReport brdReport) {
+
+		String token = req.getHeader("Authorization");
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			int mem_id = jwtManager.getIdFromToken(token);
+			brdReport.setMemId(mem_id);
+			brdReport.setBrdId(id);
+			System.out.println(brdReport);
+			Optional<BrdReport> optbrdReport = boardService.findReport(id, mem_id);
+			if (!optbrdReport.isPresent()) {
+				boardService.report(brdReport);
+				result.put("msg", "OK");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+
+			} else {
+				result.put("msg", "reduplication");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+
 		} catch (ExpiredJwtException e) {
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);

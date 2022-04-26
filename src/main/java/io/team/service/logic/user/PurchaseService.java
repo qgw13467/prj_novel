@@ -1,6 +1,7 @@
 package io.team.service.logic.user;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,18 @@ public class PurchaseService {
 		
 		
 		return purchaseLists;
+	}
+	
+	public HashSet<PurchaseList> getPurchaseListAsSet(int mem_id) {
+		
+		ArrayList<PurchaseList> purchaseLists = new ArrayList<>();
+		HashSet<PurchaseList> purchaseListAsSet = new HashSet<>();
+		purchaseLists = purchaseListRepository.findByMemId(mem_id);
+		for (PurchaseList purchaseList : purchaseListAsSet) {
+			purchaseListAsSet.add(purchaseList);
+		}
+		
+		return purchaseListAsSet;
 	}
 	
 }
