@@ -44,12 +44,14 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
 		userServicLogic.lastlogin(user.getMemId());
 		String token = jwtManager.generateJwtToken(user);
+		String RefreshToken = jwtManager.generateJwtToken(user);
 		writeTokenResponse(response, token);
 
 //		response.setStatus(307);
 
 		RequestDispatcher rd = request.getRequestDispatcher("/oauth/redirect");
 		request.setCharacterEncoding("UTF-8");
+		request.setAttribute("RefreshToken", RefreshToken);
 		request.setAttribute("Authorization", token);
 		request.setAttribute("memNick", user.getMemNick());
 		request.setAttribute("memId", user.getMemId());

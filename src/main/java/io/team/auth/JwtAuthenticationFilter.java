@@ -101,7 +101,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			}
 
 			userServicLogic.lastlogin(user.getMemId());
-			String token = jwtManager.generateJwtToken(user);
+			String shortToken = jwtManager.generateJwtToken(user);
+			String longToken = jwtManager.generateRefreshJwtToken(user);
 //			System.out.println(token);
 			response.setCharacterEncoding("UTF-8");
 			response.setContentType("charset=utf-8");
@@ -117,7 +118,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			
 			
 			response.getWriter().print(result);
-			response.addHeader("Authorization", token);
+			response.addHeader("Authorization", shortToken);
+			response.addHeader("RefreshToken", longToken);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

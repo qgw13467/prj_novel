@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;
 import io.team.domain.NovelLink;
@@ -168,6 +171,55 @@ public class UserController {
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 
+	}
+	
+	@PutMapping("/users/refresh")
+	public ResponseEntity<?> refreshToken( HttpServletRequest req, HttpServletResponse res) {
+
+		Map<String, Object> result = new HashMap<String, Object>();
+
+		try {
+			String token = req.getHeader("Authorization");
+			int mem_id = jwtManager.getIdFromToken(token);
+			int check = jwtManager.isRefreshToken(token);
+			if(mem_id != check ) {
+				result.put("msg", "Not RefreshToken");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			User user = userServicLogic.findByMemId(mem_id);
+			String newToken = jwtManager.generateJwtToken(user);
+			res.addHeader("Authorization", newToken);
+			result.put("msg", "OK");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+			
+			
+		} catch (SecurityException e) {       
+			result = new HashMap<String, Object>();
+			result.put("msg", "Invalid JWT signature");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+        }catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+        }  catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", "ERROR");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
+		
+//		 catch (MalformedJwtException e) {
+//				result = new HashMap<String, Object>();
+//				result.put("msg", "Invalid JWT token");
+//				return new ResponseEntity<>(result, HttpStatus.OK);
+//	        } catch (UnsupportedJwtException e) {
+//	            result = new HashMap<String, Object>();
+//				result.put("msg", "Unsupported JWT token");
+//				return new ResponseEntity<>(result, HttpStatus.OK);
+//	        } catch (IllegalArgumentException e) {
+//	            result = new HashMap<String, Object>();
+//				result.put("msg", "JWT token compact of handler are invalid");
+//				return new ResponseEntity<>(result, HttpStatus.OK);
+//	        }
 	}
 	
 	@GetMapping("/users/purchase")

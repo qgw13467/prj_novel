@@ -17,9 +17,11 @@ public class OAuthController {
 
 	@GetMapping("/oauth/redirect")
 	public ResponseEntity<?> getOAuthToken(HttpServletRequest request, HttpServletResponse response) {
+
 		int mem_id = (int) request.getAttribute("memId");
 		int mem_point = (int) request.getAttribute("memPoint");
 		HashMap<String, Object> result = new HashMap<>();
+		result.put("RefreshToken", (String)request.getAttribute("RefreshToken"));
 		result.put("token", (String)request.getAttribute("Authorization"));
 		result.put("memNick", (String)request.getAttribute("memNick"));
 		result.put("memId", Integer.toString(mem_id));

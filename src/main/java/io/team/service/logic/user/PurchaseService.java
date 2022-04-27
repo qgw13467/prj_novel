@@ -16,7 +16,6 @@ public class PurchaseService {
 
 	private final PurchaseListRepository purchaseListRepository;
 
-
 	public ArrayList<PurchaseList> getPurchaseList(int mem_id) {
 
 		ArrayList<PurchaseList> purchaseLists = new ArrayList<>();
@@ -26,26 +25,14 @@ public class PurchaseService {
 		return purchaseLists;
 	}
 
-
-
 	public boolean isPurchased(int mem_id, int nv_id) {
-		int check = 0;
 		ArrayList<PurchaseList> purchaseLists = getPurchaseList(mem_id);
 		for (PurchaseList purchaseList : purchaseLists) {
-
 			if (purchaseList.getMemId() == mem_id && purchaseList.getNvId() == nv_id) {
-				System.out.println(purchaseList.getMemId());
-				System.out.println(purchaseList.getNvId());
-				check = 1;
-				break;
+				return true;
 			}
 		}
-
-		if (check == 0) {
-			return false;
-		} else {
-			return true;
-		}
+		return false;
 
 	}
 

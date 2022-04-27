@@ -20,13 +20,22 @@ public class JwtManager {
 	private String securityKey; // TODO 민감정보는 따로 분리하는 것이 좋다
 	
  
-	private final Long expiredTime = 1000 * 60 * 5L;
-
+	private final Long shortTokeneExpiredTime = 1000 * 60 * 5L;
+	private final Long longTokenExpiredTime = 1000 * 60 * 60 * 24 * 7L;
+	
 	public String generateJwtToken(User newUser) {
 		Date now = new Date();
 		return Jwts.builder().setSubject(newUser.getMemUserId()) // 보통 username
 				.setHeader(createHeader()).setClaims(createClaims(newUser)) // 클레임, 토큰에 포함될 정보
-				.setExpiration(new Date(now.getTime() + expiredTime)) // 만료일
+				.setExpiration(new Date(now.getTime() + shortTokeneExpiredTime)) // 만료일
+				.signWith(SignatureAlgorithm.HS256, securityKey).compact();
+	}
+	
+	public String generateRefreshJwtToken(User newUser) {
+		Date now = new Date();
+		return Jwts.builder().setSubject(newUser.getMemUserId()) // 보통 username
+				.setHeader(createHeader()).setClaims(createLongClaims(newUser)) // 클레임, 토큰에 포함될 정보
+				.setExpiration(new Date(now.getTime() + longTokenExpiredTime)) // 만료일
 				.signWith(SignatureAlgorithm.HS256, securityKey).compact();
 	}
 
@@ -46,6 +55,16 @@ public class JwtManager {
 		claims.put("mem_nick", newUser.getMemNick());// 인가정보
 		return claims;
 	}
+	
+	private Map<String, Object> createLongClaims(User newUser) {
+		Map<String, Object> claims = new HashMap<>();
+		claims.put("mem_id", newUser.getMemId());
+		claims.put("mem_userid", newUser.getMemUserId());
+		claims.put("mem_email", newUser.getMemEmail());
+		claims.put("mem_nick", newUser.getMemNick());
+		claims.put("RefreshToken", newUser.getMemId());
+		return claims;
+	}
 
 	public Claims getClaims(String token) {
 		return Jwts.parser().setSigningKey(securityKey).parseClaimsJws(token).getBody();
@@ -53,6 +72,15 @@ public class JwtManager {
 
 	public int getIdFromToken(String token) {
 		return (int) getClaims(token).get("mem_id");
+	}
+	
+	public int isRefreshToken(String token) {
+
+		if(!getClaims(token).containsKey("RefreshToken")) {
+			
+			return -1;
+		}
+		return (int) getClaims(token).get("RefreshToken");
 	}
 
 	public String getUserIdFromToken(String token) {
