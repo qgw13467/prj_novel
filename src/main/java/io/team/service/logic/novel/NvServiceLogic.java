@@ -5,9 +5,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import io.team.Repository.NvCoverMapper;
-import io.team.Repository.NvLinkMapper;
-import io.team.Repository.NvReportRepository;
+
+import io.team.Repository.Novel.NvCoverMapper;
+import io.team.Repository.Novel.NvLinkMapper;
+import io.team.Repository.Novel.NvReportRepository;
 import io.team.domain.BrdReport;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;

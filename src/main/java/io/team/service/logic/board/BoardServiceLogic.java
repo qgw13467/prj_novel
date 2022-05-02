@@ -3,12 +3,15 @@ package io.team.service.logic.board;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
-import io.team.Repository.BrdReportRepository;
+
+import io.team.Repository.Board.BrdReportRepository;
 import io.team.domain.Board;
 import io.team.domain.BrdReport;
+import io.team.domain.dto.BoardDTO;
 import io.team.jwt.JwtManager;
 import io.team.mapper.BoardMapper;
 import io.team.service.WriteService;
+import io.team.service.logic.S3Servicelogic;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -18,6 +21,7 @@ public class BoardServiceLogic implements WriteService<Board> {
 	private final JwtManager jwtManager;
 	private final BoardMapper boardMapper;
 	private final BrdReportRepository brdReportRepository;
+	private final S3Servicelogic s3Servicelogic;
 	
 	@Override
 	public int register(Board newBoard, String token) {
@@ -38,6 +42,22 @@ public class BoardServiceLogic implements WriteService<Board> {
 		boardMapper.count_hit(id);
 		return boardMapper.read(id);
 	}
+	
+
+	public BoardDTO findDTO(int id) {
+		boardMapper.count_hit(id);
+		Board board = boardMapper.read(id);
+		ArrayList<String> imgUrls = s3Servicelogic.findByEventId(Integer.parseInt(board.getImgUrl()));
+		BoardDTO boardDTO = BoardDTO.boardDTOfromBoard(board);
+		if(board.getImgUrl().equals("0")) {	
+			return boardDTO;
+		}else {
+			boardDTO.setImgUrls(imgUrls);
+			return boardDTO;
+		}
+		
+	}
+
 
 	@Override
 	public int modify(int brd_id, Board newBoard, String token) {

@@ -21,11 +21,14 @@ public interface BrdCmtMapper {
 
 	int delete(int brd_cmt_id);
 	
-	int like(int brd_cmt_id, int mem_id);
+
+	int like(int brd_cmt_id);
+	int likeMinus(int brd_cmt_id);
 	
-	int dislike(int brd_cmt_id, int mem_id);
+	int dislike(int brd_cmt_id);
+	int dislikeMinus(int brd_cmt_id);
 	
-	int report(int brd_cmt_id, int mem_id);
+	int report(int brd_cmt_id);
 	
 	int cmtcount(int brd_id);
 	

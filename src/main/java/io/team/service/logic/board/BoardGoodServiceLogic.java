@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.team.Repository.BrdGoodRepository;
+import io.team.Repository.Board.BrdGoodRepository;
 import io.team.domain.BrdGood;
 import io.team.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +23,11 @@ public class BoardGoodServiceLogic {
 
 		BrdGood brdGood = brdGoodRepository.findByBrdIdAndMemId(brd_id, mem_id);
 		if (brdGood == null) {
-			brdGood = new BrdGood();
-			brdGood.setBrdId(brd_id);
-			brdGood.setMemId(mem_id);
-			brdGood.setState(1);
-			brdGood.setDatetime(null);
+			brdGood = BrdGood.builder()
+					.brdId(brd_id)
+					.memId(mem_id)
+					.state(1)
+					.build();
 			brdGoodRepository.save(brdGood);
 			boardMapper.like(brd_id);
 		} else if (brdGood.getState() == -1) {
@@ -56,10 +56,11 @@ public class BoardGoodServiceLogic {
 
 		BrdGood brdGood = brdGoodRepository.findByBrdIdAndMemId(brd_id, mem_id);
 		if (brdGood == null) {
-			brdGood = new BrdGood();
-			brdGood.setBrdId(brd_id);
-			brdGood.setMemId(mem_id);
-			brdGood.setState(-1);
+			brdGood = BrdGood.builder()
+					.brdId(brd_id)
+					.memId(mem_id)
+					.state(-1)
+					.build();
 			brdGoodRepository.save(brdGood);
 			boardMapper.dislike(brd_id);
 		} else if (brdGood.getState() == 1) {

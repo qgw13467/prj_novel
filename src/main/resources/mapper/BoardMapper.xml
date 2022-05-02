@@ -8,11 +8,11 @@
 	<insert id="create">
 		insert into board (mem_id, img_url,
 		mem_nickname,brd_title,
-		brd_contents, brd_state, brd_datetime,
+		brd_contents, brd_state, brd_datetime, brd_updatetime,
 		brd_img,brd_file)
 		values
 		(#{mem_id},#{img_url},#{mem_nickname},#{brd_title},
-		#{brd_contents},#{brd_state},NOW(),#{brd_img},#{brd_file})
+		#{brd_contents},#{brd_state},NOW(),NOW(),#{brd_img},#{brd_file})
 	</insert>
 
 	<select id="read" resultType="io.team.domain.Board">

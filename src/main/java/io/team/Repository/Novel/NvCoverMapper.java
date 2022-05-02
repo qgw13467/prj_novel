@@ -1,4 +1,4 @@
-package io.team.Repository;
+package io.team.Repository.Novel;
 
 import io.team.domain.NovelCover;
 

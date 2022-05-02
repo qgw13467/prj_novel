@@ -3,6 +3,7 @@ package io.team.service.logic;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
+import io.team.Repository.Board.ImgIdsRepository;
+import io.team.domain.ImgIds;
 import io.team.jwt.JwtManager;
 import io.team.mapper.FileMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,27 +31,24 @@ public class S3Servicelogic {
 	
 	private final AmazonS3Client  amazonS3Client;
 	
-	@Autowired
-	FileMapper fileMapper;
+	private final FileMapper fileMapper;
 	
-	@Autowired
-	JwtManager jwtManager;
+	private final ImgIdsRepository imgIdsRepository;
 	
 	@Value("${cloud.aws.s3.bucket}")
 	public String bucket; // S3 버킷 이름
 
-	public int upload(MultipartFile multipartFile, String originFileName, String token) throws IOException {
+	public int upload(MultipartFile multipartFile, String originFileName, int mem_id) throws IOException {
 		
 		File uploadFile = convert(multipartFile);
 			
-		return upload(uploadFile, originFileName, token);
+		return upload(uploadFile, originFileName, mem_id);
 
 	}
 
 	// S3로 파일 업로드하기
-	private int upload(File uploadFile, String originFileName, String token) {
+	private int upload(File uploadFile, String originFileName, int mem_id) {
 		
-		int mem_id = jwtManager.getIdFromToken(token);
 		String fileName = "files/" + UUID.randomUUID() + uploadFile.getName(); // S3에 저장된 파일 이름
 		String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드
 		fileMapper.uploadFile(mem_id, originFileName,fileName, uploadImageUrl);
@@ -93,7 +93,31 @@ public class S3Servicelogic {
 		String reusult= fileMapper.findUrlById(id);
 		return reusult;
 	}
+	
+	//한번에 올린 이미지의 아이디들을 저장하는 테이블에 처음올라간 이미지를 통해 나머지 이미지들 저장
+	public int saveImgIds(ArrayList<Integer> imgIds) {
+		
+		for (Integer integer : imgIds) {
+			ImgIds imgId = ImgIds.builder()
+					.eventId(imgIds.get(0))
+					.imgId(integer)
+					.build();
+			imgIdsRepository.save(imgId);
+		}
 
+		return 0;
+	}
+	
+	public ArrayList<String> findByEventId(int eventId){
+		ArrayList<String> imgUrls = new ArrayList<>();
+		ArrayList<ImgIds> imgIds = imgIdsRepository.findByEventId(eventId);
+		for (ImgIds imgId : imgIds) {
+			imgUrls.add(fileMapper.findUrlById(imgId.getImgId()));
+		}
+		
+		return imgUrls;
+	}
+	
 	
 	/*
 	 * public String upload(MultipartFile multipartFile, String fileName, String

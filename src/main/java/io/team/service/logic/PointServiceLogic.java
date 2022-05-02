@@ -37,23 +37,17 @@ public class PointServiceLogic {
 	
 	public int attend(int mem_id, PointPurpose pointPurpose, int pnt_spend, String mem_lastlogin_datetime) {
 
-		try {
-			mem_lastlogin_datetime = mem_lastlogin_datetime.substring(0, 10);
-			String nowDate = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss").format(new Date());
-			nowDate = nowDate.substring(0, 10);
-			if (!mem_lastlogin_datetime.equals(nowDate)) {
-				Point newPoint = new Point(mem_id, pointPurpose, pnt_spend);
-				pointRepository.save(newPoint);
-				userServicLogic.changePoint(mem_id, newPoint.getPntSpend());
-				return 1;
-				
-			} else {
-				return -1;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return -2;
+		mem_lastlogin_datetime = mem_lastlogin_datetime.substring(0, 10);
+		String nowDate = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss").format(new Date());
+		nowDate = nowDate.substring(0, 10);
+		if (!mem_lastlogin_datetime.equals(nowDate)) {
+			Point newPoint = new Point(mem_id, pointPurpose, pnt_spend);
+			pointRepository.save(newPoint);
+			userServicLogic.changePoint(mem_id, newPoint.getPntSpend());
+			return 1;
+			
+		} else {
+			return -1;
 		}
 	}
 
@@ -78,27 +72,21 @@ public class PointServiceLogic {
 	// 소설 읽을시 포인트  포인트 없을 때, 포인트 없을 때 소설 넘어감, 구매한 물건 다시 구매됨
 	public int readNovel(PointPurpose pointPurpose, int pnt_spend, int nv_id, int writer_id, int checkMem_id) {
 		
-		try {
-			User user = userServicLogic.findByMemId(checkMem_id);
-			if (user.getMemPoint() < pnt_spend) {
-				return -1;
-			}
-
-			if (!purchaseListRepository.existsByMemIdAndNvId(checkMem_id, nv_id)) {
-				PurchaseList newpurchaseList = new PurchaseList(checkMem_id, nv_id);
-				purchaseListRepository.save(newpurchaseList);
-				Point newPoint = new Point(checkMem_id, pointPurpose, pnt_spend);
-				pointRepository.save(newPoint);
-				userServicLogic.changePoint(checkMem_id, -newPoint.getPntSpend());
-				userServicLogic.changePoint(writer_id, newPoint.getPntSpend());
-			}
-
-
-			
-			return 1;
-		} catch (Exception e) {
-			return -2;
+		User user = userServicLogic.findByMemId(checkMem_id);
+		if (user.getMemPoint() < pnt_spend) {
+			return -1;
 		}
+
+		if (!purchaseListRepository.existsByMemIdAndNvId(checkMem_id, nv_id)) {
+			PurchaseList newpurchaseList = new PurchaseList(checkMem_id, nv_id);
+			purchaseListRepository.save(newpurchaseList);
+			Point newPoint = new Point(checkMem_id, pointPurpose, pnt_spend);
+			pointRepository.save(newPoint);
+			userServicLogic.changePoint(checkMem_id, -newPoint.getPntSpend());
+			userServicLogic.changePoint(writer_id, newPoint.getPntSpend());
+		}
+
+		return 1;
 	}
 
 	/*

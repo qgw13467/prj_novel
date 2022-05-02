@@ -6,8 +6,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,158 +21,126 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import io.team.domain.Board;
 import io.team.domain.BrdCmt;
+import io.team.domain.BrdCmtReport;
 import io.team.domain.BrdReport;
-import io.team.domain.dto.BoardDTO;
 import io.team.jwt.JwtManager;
-import io.team.service.logic.board.BoardGoodServiceLogic;
-import io.team.service.logic.board.BoardServiceLogic;
+import io.team.service.logic.board.BrdCmtGoodService;
 import io.team.service.logic.board.BrdCmtServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class BoardController {
-
-	private final BoardServiceLogic boardService;
-
-	private final BoardGoodServiceLogic boardGoodServiceLogic;
-
-	private final JwtManager jwtManager;
+public class BoardCmtController {
 	
-	//게시판 목록 가져오기
-	@GetMapping("/boards")
-	public @ResponseBody Map<String, Object> getAllBoards(
-			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum,
-			@RequestParam(value = "pagecount", required = false, defaultValue = "10") String pagecount) {
+	private final BrdCmtServiceLogic brdCmtServiceLogic;
+	private final BrdCmtGoodService brdCmtGoodService;
+	private final JwtManager jwtManager;
 
-		ArrayList<Board> boards = boardService.getList(Integer.parseInt(pagenum), Integer.parseInt(pagecount));
+	
+	@GetMapping("/boards/{id}/cmts")
+	public @ResponseBody Map<String, Object> getCmts(@PathVariable int id,
+			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum) {
 
+		ArrayList<BrdCmt> cmts = brdCmtServiceLogic.getCmtList(id, Integer.parseInt(pagenum));
 		Map<String, Object> result = new HashMap<String, Object>();
-		int page = boardService.getPageNum();
-		result.put("boards", boards);
+		int page = brdCmtServiceLogic.getPageNum(id);
+
+		ArrayList<ArrayList<BrdCmt>> cmtsArray = new ArrayList<ArrayList<BrdCmt>>();
+
+		for (BrdCmt cmt : cmts) {
+			ArrayList<BrdCmt> tempArrayList = new ArrayList<BrdCmt>();
+			tempArrayList.add(cmt);
+			ArrayList<BrdCmt> replies = brdCmtServiceLogic.read_replies(cmt.getBrdCmtId());
+			tempArrayList.addAll(replies);
+			cmtsArray.add(tempArrayList);
+		}
+
+		result.put("comments", cmtsArray);
 		result.put("pagenum", page);
+
 		return result;
 	}
 	
-	//게시물 하나 보기
-	@GetMapping("/boards/{id}")
-	public @ResponseBody BoardDTO read(@PathVariable int id) {
-		return boardService.findDTO(id);
-	}
-
-	//게시물 작성
-	@PostMapping("/boards")
-	public @ResponseBody Map<String, Object> write(@RequestBody Board newBoard, HttpServletRequest req) {
-		String token = req.getHeader("Authorization");
-
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			int mem_id = jwtManager.getIdFromToken(token);
-			newBoard.setMemId(mem_id);
-			boardService.register(newBoard, token);
-			result.put("msg", "OK");
-			return result;
-		} catch (ExpiredJwtException e) {
-			result = new HashMap<String, Object>();
-			result.put("msg", "JWT expiration");
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("msg", "ERROR");
-			return result;
-		}
-	}
-	
-	//게시물 수정
-	@PutMapping("/boards/{id}")
-	public @ResponseBody Map<String, Object> update(@PathVariable int id, @RequestBody Board newBoard,
+	@Transactional
+	@PostMapping("/boards/{id}/cmts")
+	public @ResponseBody Map<String, Object> writeCmt(@PathVariable int id, @RequestBody BrdCmt newCmt,
 			HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
-			int check = boardService.modify(id, newBoard, token);
-			if (check == 1) {
-				result.put("msg", "OK");
-				return result;
-			}
-			else {
-				result.put("msg", "No permission");
-				return result;
-			}
-				
-		} catch (ExpiredJwtException e) {
-			result = new HashMap<String, Object>();
-			result.put("msg", "JWT expiration");
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("msg", "ERROR");
-			return result;
-		}
-	}
+			newCmt.setBrdId(id);
+			newCmt.setMemId(mem_id);
 
-	//게시물 삭제
-	@DeleteMapping("/boards/{id}")
-	public @ResponseBody Map<String, Object> delete(@PathVariable int id, HttpServletRequest req) {
-		String token = req.getHeader("Authorization");
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			result.put("msg", boardService.remove(id, token));
+			brdCmtServiceLogic.register(newCmt, token);
+			result.put("msg", "OK");
 			return result;
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
 			return result;
 		} catch (Exception e) {
-			e.printStackTrace();
 			result.put("msg", "ERROR");
+			e.printStackTrace();
 			return result;
 		}
 	}
-
 	
-
-	// 검색
-	@GetMapping("/boards/search")
-	public @ResponseBody Map<String, Object> findByTitleConrain(
-			@RequestParam(value = "srctype", required = false, defaultValue = "title") String srctype,
-			@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
-			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum,
-			@RequestParam(value = "rownum", required = false, defaultValue = "10") String rownum) {
-
-		if (srctype.equals("title")) {
-			ArrayList<Board> boards = boardService.findByTitleContain(keyword, Integer.parseInt(pagenum),
-					Integer.parseInt(rownum));
-			Map<String, Object> result = new HashMap<String, Object>();
-			int page = boardService.getTitleContainNum(keyword);
-			result.put("boards", boards);
-			result.put("pagenum", page);
+	@Transactional
+	@PutMapping("/boards/{id}/cmts/{brd_cmt_id}")
+	public @ResponseBody Map<String, Object> updateCmt(@PathVariable int brd_cmt_id, @RequestBody BrdCmt newCmt,
+			HttpServletRequest req) {
+		String token = req.getHeader("Authorization");
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			int mem_id = jwtManager.getIdFromToken(token);
+			newCmt.setMemId(mem_id);
+			brdCmtServiceLogic.modify(brd_cmt_id, newCmt, token);
+			result.put("msg", "OK");
 			return result;
-		} else {
-			ArrayList<Board> boards = boardService.findByContentsContain(keyword, Integer.parseInt(pagenum),
-					Integer.parseInt(rownum));
-			Map<String, Object> result = new HashMap<String, Object>();
-			int page = boardService.getContentsContainNum(keyword);
-			result.put("boards", boards);
-			result.put("pagenum", page);
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", "ERROR");
 			return result;
 		}
-
 	}
-
+	
+	@Transactional
+	@DeleteMapping("/boards/{id}/cmts/{brd_cmt_id}")
+	public @ResponseBody Map<String, Object> deleteCmt(@PathVariable int brd_cmt_id, HttpServletRequest req) {
+		String token = req.getHeader("Authorization");
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			brdCmtServiceLogic.remove(brd_cmt_id, token);
+			result.put("msg", "OK");
+			return result;
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", "ERROR");
+			return result;
+		}
+	}
+	
 	// 추천, 비추천
-	@PostMapping("/boards/{id}/like")
-	public ResponseEntity<?> writeBrdLike(@PathVariable int id, HttpServletRequest req) {
+	@Transactional
+	@PostMapping("/boards/{id1}/cmts/{id2}/like")
+	public ResponseEntity<?> writeBrdLike(@PathVariable int id1, @PathVariable int id2, HttpServletRequest req) {
 
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
-			boardGoodServiceLogic.assessBrdGood(id, mem_id);
+			brdCmtGoodService.assessBrdCmtGood(id2, mem_id);
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
@@ -183,9 +153,10 @@ public class BoardController {
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 	}
-
-	@PostMapping("/boards/{id}/dislike")
-	public ResponseEntity<?> writeBrdDislike(@PathVariable int id, HttpServletRequest req) {
+	
+	@Transactional
+	@PostMapping("/boards/{id1}/cmts/{id2}/dislike")
+	public ResponseEntity<?> writeBrdDislike(@PathVariable int id1, @PathVariable int id2, HttpServletRequest req) {
 
 		String token = req.getHeader("Authorization");
 
@@ -193,7 +164,7 @@ public class BoardController {
 		try {
 
 			int mem_id = jwtManager.getIdFromToken(token);
-			boardGoodServiceLogic.assessBrdBad(id, mem_id);
+			brdCmtGoodService.assessBrdCmtBad(id2, mem_id);
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
@@ -206,21 +177,22 @@ public class BoardController {
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 	}
-
-	@PostMapping("/boards/{id}/report")
-	public ResponseEntity<?> writeReport(@PathVariable int id, HttpServletRequest req,
-			@RequestBody BrdReport brdReport) {
+	
+	@Transactional
+	@PostMapping("/boards/{id1}/cmts/{id2}/report")
+	public ResponseEntity<?> writeReport(@PathVariable int id1, @PathVariable int id2, HttpServletRequest req,
+			@RequestBody BrdCmtReport brdCmtReport) {
 
 		String token = req.getHeader("Authorization");
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
-			brdReport.setMemId(mem_id);
-			brdReport.setBrdId(id);
-			Optional<BrdReport> optbrdReport = boardService.findReport(id, mem_id);
-			if (!optbrdReport.isPresent()) {
-				boardService.report(brdReport);
+			brdCmtReport.setMemId(mem_id);
+			brdCmtReport.setBrdCmtId(id2);
+			Optional<BrdCmtReport> optbrdCmtReport = brdCmtServiceLogic.findCmtReport(id2, mem_id);
+			if (!optbrdCmtReport.isPresent()) {
+				brdCmtServiceLogic.report(brdCmtReport);
 				result.put("msg", "OK");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 
@@ -239,5 +211,4 @@ public class BoardController {
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 	}
-
 }

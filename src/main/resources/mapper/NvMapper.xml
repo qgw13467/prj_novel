@@ -13,10 +13,10 @@
 		img_url,
 		nv_writer,nv_title,
 		nv_contents,
-		nv_state, nv_datetime, nv_point)
+		nv_state, nv_datetime, nv_updatetime, nv_point)
 		VALUES
 		(#{memId},#{imgUrl},#{nvWriter},#{nvTitle},
-		#{nvContents},#{nvState},NOW(),#{nvPoint})
+		#{nvContents},#{nvState},NOW(),NOW(),#{nvPoint})
 	</insert>
 
 

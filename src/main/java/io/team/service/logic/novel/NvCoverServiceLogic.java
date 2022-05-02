@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import io.team.Repository.NvCoverMapper;
+import io.team.Repository.Novel.NvCoverMapper;
 import io.team.domain.NovelCover;
 import io.team.jwt.JwtManager;
 import io.team.service.WriteService;

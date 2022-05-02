@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import org.springframework.stereotype.Repository;
 
 
-public interface CmtService<T> {
+public interface CmtService<T, T2> {
 	
 	int register(T newCmt, String token);
 
@@ -12,11 +12,7 @@ public interface CmtService<T> {
 
 	int remove(int id, String token);
 	
-	int like(int id, String token);
-	
-	int dislike(int id, String token);
-	
-	int report(int id, String token);
+	int report(T2 obj);
 	
 	ArrayList<T> getCmtList(int id, int pagenum);
 	

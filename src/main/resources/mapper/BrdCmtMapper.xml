@@ -7,7 +7,8 @@
 	<insert id="create">
 		INSERT INTO brd_comment (brd_id, mem_id,
 		brd_cmt_reply,mem_nickname,
-		brd_cmt_contents, brd_cmt_datetime,brd_cmt_updatetime,
+		brd_cmt_contents,
+		brd_cmt_datetime,brd_cmt_updatetime,
 		brd_cmt_state)
 		VALUES
 		(#{brd_id},#{mem_id},#{brd_cmt_reply},
@@ -69,6 +70,45 @@
 		update brd_comment set
 		brd_cmt_replynum =
 		brd_cmt_replynum +1
+		where
+		brd_cmt_id = #{brd_cmt_id}
+	</update>
+
+	<update id="like">
+		update brd_comment SET
+		brd_cmt_like = brd_cmt_like + 1
+		where
+		brd_cmt_id = #{brd_cmt_id}
+	</update>
+
+	<update id="likeMinus">
+		update brd_comment SET
+		brd_cmt_like = brd_cmt_like - 1
+		where
+		brd_cmt_id =
+		#{brd_cmt_id}
+	</update>
+
+	<update id="dislike">
+		update brd_comment SET
+		brd_cmt_dislike =
+		brd_cmt_dislike + 1
+		where
+		brd_cmt_id = #{brd_cmt_id}
+	</update>
+
+	<update id="dislikeMinus">
+		update brd_comment SET
+		brd_cmt_dislike =
+		brd_cmt_dislike - 1
+		where
+		brd_cmt_id = #{brd_cmt_id}
+	</update>
+
+	<update id="report">
+		update brd_comment SET
+		brd_cmt_blame =
+		brd_cmt_blame + 1
 		where
 		brd_cmt_id = #{brd_cmt_id}
 	</update>

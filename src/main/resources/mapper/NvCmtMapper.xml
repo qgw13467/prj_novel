@@ -7,7 +7,8 @@
 	<insert id="create">
 		insert into novel_comment (nv_id, mem_id,
 		nv_cmt_reply,mem_nickname,
-		nv_cmt_contents, nv_cmt_datetime,nv_cmt_updatetime, 
+		nv_cmt_contents,
+		nv_cmt_datetime,nv_cmt_updatetime,
 		nv_cmt_state)
 		values
 		(#{nv_id},#{mem_id},#{nv_cmt_reply},
@@ -73,4 +74,43 @@
 		where
 		nv_cmt_id = #{nv_cmt_id}
 	</update>
+
+	<update id="like">
+		update novel_comment SET
+		nv_cmt_like = nv_cmt_like + 1
+		where
+		nv_cmt_id = #{nv_cmt_id}
+	</update>
+
+	<update id="likeMinus">
+		update novel_comment SET
+		nv_cmt_like = nv_cmt_like - 1
+		where
+		nv_cmt_id = #{nv_cmt_id}
+	</update>
+
+	<update id="dislike">
+		update novel_comment SET
+		nv_cmt_dislike =
+		nv_cmt_dislike + 1
+		where
+		nv_cmt_id = #{nv_cmt_id}
+	</update>
+
+	<update id="dislikeMinus">
+		update novel_comment SET
+		nv_cmt_dislike =
+		nv_cmt_dislike - 1
+		where
+		nv_cmt_id = #{nv_cmt_id}
+	</update>
+
+
+	<update id="report">
+		UPDATE novel_comment SET
+		nv_cmt_blame = nv_cmt_blame + 1
+		WHERE
+		nv_cmt_id = #{nv_cmt_id}
+	</update>
+
 </mapper>

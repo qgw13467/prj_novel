@@ -28,8 +28,11 @@ import io.team.domain.NovelCmt;
 import io.team.domain.NovelCover;
 import io.team.domain.NovelReport;
 import io.team.domain.Enum.PointPurpose;
+import io.team.domain.dto.BoardDTO;
+import io.team.domain.dto.NovelDTO;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.PointServiceLogic;
+import io.team.service.logic.S3Servicelogic;
 import io.team.service.logic.kafka.KafkaProducer;
 import io.team.service.logic.novel.NvCmtServiceLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
@@ -42,19 +45,14 @@ import lombok.RequiredArgsConstructor;
 public class NovelController {
 
 	private final NvServiceLogic nvServiceLogic;
-
 	private final NvCoverServiceLogic nvCoverServiceLogic;
-
-	private final NvCmtServiceLogic nvCmtServiceLogic;
-
 	private final PointServiceLogic pointServiceLogic;
-
 	private final JwtManager jwtManager;
-
 	private final KafkaProducer kafkaProducer;	
-
 	private final PurchaseService purchaseService;	
+	private final S3Servicelogic s3Servicelogic;
 	
+	//소설의 전체 에시포드 보기
 	@GetMapping("/novels/detail")
 	public @ResponseBody Map<String, Object> getAllNovels(
 			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum,
@@ -69,50 +67,53 @@ public class NovelController {
 
 		return result;
 	}
-
+	
+	//소서르이 한 에피소드 보기
 	@GetMapping("/novels/detail/{titleId}")
 	public ResponseEntity<?> read(@PathVariable int titleId, @RequestParam(value = "nv-id") int nv_id,
 			HttpServletRequest req) {
 
 		String token = req.getHeader("Authorization");
-		NovelCover novelCover = nvCoverServiceLogic.find(titleId);
-
-		int hitcount = novelCover.getNvcHit();
-		novelCover.setNvcHit(hitcount + 1);
-
-		nvCoverServiceLogic.modify(titleId, novelCover, null);
-		nvServiceLogic.countCheck(nv_id);
 		Novel novel = new Novel();
+		Map<String, Object> result = new HashMap<String, Object>();
 
 		try {
 
-			Map<String, Object> result = new HashMap<String, Object>();
-
+			
 			novel = nvServiceLogic.find(nv_id);
 			int checkMem_id = jwtManager.getIdFromToken(token);
 
 			int check = pointServiceLogic.readNovel(PointPurpose.READNOVEL, novel.getNvPoint(), nv_id, novel.getMemId(),
 					checkMem_id);
-
-			switch (check) {
-			case -1:
+			
+			//포인트부족
+			if(check == -1) {
 				result.put("msg", "point lack");
 				return new ResponseEntity<>(result, HttpStatus.OK);
-			case -2:
-				throw new Exception();
-			default:
-				break;
 			}
+			
+			//커버 조회수++1
+			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
+			int hitcount = novelCover.getNvcHit();
+			novelCover.setNvcHit(hitcount + 1);
+			nvCoverServiceLogic.modify(titleId, novelCover, token);
+			//소설 조회수++1
+			nvServiceLogic.countCheck(nv_id);
 
-			return new ResponseEntity<>(novel, HttpStatus.OK);
+			NovelDTO novelDTO = NovelDTO.novelDTOfromNovel(novel);
+			ArrayList<String> imgUrls = s3Servicelogic.findByEventId(Integer.parseInt(novel.getImgUrl()));
+			
+			if(!novel.getImgUrl().equals("0")) {
+				novelDTO.setImgUrls(imgUrls);
+			}
+			
+			return new ResponseEntity<>(novelDTO, HttpStatus.OK);
 
 		} catch (ExpiredJwtException e) {
-			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 
 		} catch (Exception e) {
-			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
@@ -144,7 +145,7 @@ public class NovelController {
 				NovelCover novelCover = nvCoverServiceLogic.find(titleId);
 				novelCover.setNvId(nv_id);
 				check += nvCoverServiceLogic.modify(titleId, novelCover, token);
-				result.put("msg", check);
+				result.put("msg", "OK");
 
 			} else { // 1화가 아니면 부모자식테이블, 모든에피소드테이블에 등록
 				System.out.println(novel);
@@ -220,90 +221,7 @@ public class NovelController {
 		}
 	}
 
-	// 댓글작성
-
-	@GetMapping("/novels/detail/{titleId}/cmts")
-	public @ResponseBody Map<String, Object> getCmts(@PathVariable int titleId, @RequestParam(value = "nv-id") int nvId,
-			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum) {
-
-		ArrayList<NovelCmt> cmts = nvCmtServiceLogic.getCmtList(nvId, Integer.parseInt(pagenum));
-
-		Map<String, Object> result = new HashMap<String, Object>();
-		int page = nvCmtServiceLogic.getPageNum(nvId);
-
-		ArrayList<ArrayList<NovelCmt>> cmtsArray = new ArrayList<ArrayList<NovelCmt>>();
-
-		for (NovelCmt cmt : cmts) {
-			ArrayList<NovelCmt> tempArrayList = new ArrayList<NovelCmt>();
-			tempArrayList.add(cmt);
-			ArrayList<NovelCmt> replies = nvCmtServiceLogic.read_replies(cmt.getNvCmtId());
-			tempArrayList.addAll(replies);
-			cmtsArray.add(tempArrayList);
-		}
-
-		result.put("comments", cmtsArray);
-		result.put("pagenum", page);
-
-		return result;
-	}
-
-	@PostMapping("/novels/detail/{titleId}/cmts")
-	public @ResponseBody Map<String, Object> writeCmt(@PathVariable int titleId, @RequestBody NovelCmt newCmt,
-			HttpServletRequest req) {
-		String token = req.getHeader("Authorization");
-
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			int memId = jwtManager.getIdFromToken(token);
-			newCmt.setMemId(memId);
-			result.put("msg", nvCmtServiceLogic.register(newCmt, token));
-			return result;
-		} catch (ExpiredJwtException e) {
-			result.put("msg", "JWT expiration");
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("msg", "ERROR");
-			return result;
-		}
-	}
-
-	@PutMapping("/novels/detail/{titleId}/cmts")
-	public @ResponseBody Map<String, Object> updateCmt( @RequestBody NovelCmt newCmt,
-			HttpServletRequest req) {
-		String token = req.getHeader("Authorization");
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			int memId = jwtManager.getIdFromToken(token);
-			newCmt.setMemId(memId);
-			result.put("msg", nvCmtServiceLogic.modify(newCmt.getNvCmtId(), newCmt, token));
-			return result;
-		} catch (ExpiredJwtException e) {
-			result.put("msg", "JWT expiration");
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("msg", "ERROR");
-			return result;
-		}
-	}
-
-	@DeleteMapping("/novels/detail/{titleId}/cmts")
-	public @ResponseBody Map<String, Object> deleteCmt( @RequestParam(value = "nv-cmt-id") int nvCmtId, HttpServletRequest req) {
-		String token = req.getHeader("Authorization");
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			result.put("msg", nvCmtServiceLogic.remove(nvCmtId, token));
-			return result;
-		} catch (ExpiredJwtException e) {
-			result.put("msg", "JWT expiration");
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("msg", "ERROR");
-			return result;
-		}
-	}
+	
 	
 	@PostMapping("/novels/{id}/report")
 	public ResponseEntity<?> writeReport(@PathVariable int id, HttpServletRequest req,

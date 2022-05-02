@@ -21,11 +21,13 @@ public interface NvCmtMapper {
 
 	int delete(int nv_cmt_id);
 	
-	int like(int nv_cmt_id, int mem_id);
+	int like(int nv_cmt_id);
+	int likeMinus(int nv_cmt_id);
 	
-	int dislike(int nv_cmt_id, int mem_id);
+	int dislike(int nv_cmt_id);
+	int dislikeMinus(int nv_cmt_id);
 	
-	int report(int nv_cmt_id, int mem_id);
+	int report(int nv_cmt_id);
 	
 	int cmtcount(int nv_id);
 	

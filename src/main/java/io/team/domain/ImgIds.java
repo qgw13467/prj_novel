@@ -1,13 +1,11 @@
 package io.team.domain;
 
-import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.hibernate.annotations.CreationTimestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,18 +15,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "brd_good")
-public class BrdGood{
+@Entity(name = "img_ids")
+public class ImgIds {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	private int brdId;
+	private int eventId;
 	
-	private int memId;
-	
-	private int state;
-	
-	@CreationTimestamp
-	private LocalDateTime datetime = LocalDateTime.now();
+	private int imgId;
 }

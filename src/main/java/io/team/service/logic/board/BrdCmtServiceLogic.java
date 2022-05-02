@@ -1,25 +1,31 @@
 package io.team.service.logic.board;
 
 import java.util.ArrayList;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.team.Repository.Board.BrdCmtReportRepository;
 import io.team.domain.BrdCmt;
+import io.team.domain.BrdCmtReport;
+import io.team.domain.BrdReport;
 import io.team.jwt.JwtManager;
 import io.team.mapper.BrdCmtMapper;
 import io.team.service.CmtService;
+import lombok.RequiredArgsConstructor;
 
 
 @Service
-public class BrdCmtServiceLogic implements CmtService<BrdCmt> {
+@RequiredArgsConstructor
+public class BrdCmtServiceLogic implements CmtService<BrdCmt, BrdCmtReport> {
 
-	@Autowired
-	JwtManager jwtManager;
 
-	@Autowired
-	BrdCmtMapper brdCmtMapper;
+	private final JwtManager jwtManager;
+
+	private final BrdCmtMapper brdCmtMapper;
 	
-
+	private final BrdCmtReportRepository brdCmtReportRepository;
 
 	@Override
 	public int register(BrdCmt newCmt, String token) {
@@ -98,23 +104,26 @@ public class BrdCmtServiceLogic implements CmtService<BrdCmt> {
 		} else return result;
 	}
 	
-	@Override
-	public int like(int id, String token) {
-		// TODO Auto-generated method stub
-		return 0;
+
+	public Optional<BrdCmtReport> findCmtReport(int brd_id, int mem_id) {
+		Optional<BrdCmtReport> optBrdReport = Optional.ofNullable( brdCmtReportRepository.findByBrdCmtIdAndMemId(brd_id, mem_id));
+		return optBrdReport;
 	}
 
 	@Override
-	public int dislike(int id, String token) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int report(BrdCmtReport brdCmtReport) {
+		brdCmtReportRepository.save(brdCmtReport);
+		
+		return brdCmtMapper.report(brdCmtReport.getBrdCmtId());
 	}
 
-	@Override
-	public int report(int id, String token) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
+
+
+
+
+
+
 
 
 
