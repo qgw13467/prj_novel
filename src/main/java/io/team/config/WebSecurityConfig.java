@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
 import io.team.auth.JwtAuthenticationFilter;
 import io.team.filter.MyFilter01;
 import io.team.handler.OAuth2AuthenticationSuccessHandler;
@@ -44,9 +46,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.addFilter(corsConfig.corsFilter());
 		http.addFilter(new JwtAuthenticationFilter(authenticationManager(), pointServiceLogic, userMapper, jwtManager,
 				userServicLogic));
+//		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+		http.csrf().disable();
 		http.headers().xssProtection().and().contentSecurityPolicy("script-src 'self'");
 		http.httpBasic().disable() // security에서 기본으로 생성하는 login페이지 사용 안 함
-				.csrf().disable() // csrf 사용 안 함 == REST API 사용하기 때문에
+				 // csrf 사용 안 함 == REST API 사용하기 때문에
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT인증사용하므로 세션 사용 함
 				.and().formLogin().disable().authorizeRequests()
 //				.antMatchers("/user/test").hasRole("ADMIN")

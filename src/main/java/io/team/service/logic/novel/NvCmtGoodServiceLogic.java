@@ -39,6 +39,7 @@ public class NvCmtGoodServiceLogic {
 			nvCmtGood.setDatetime(LocalDateTime.now());
 			nvCmtGoodRepository.save(nvCmtGood);
 			nvCmtMapper.likeMinus(nv_cmt_id);
+			return -1;
 		} else if (nvCmtGood.getState() == 0) {
 			nvCmtGood.setState(1);
 			nvCmtGood.setDatetime(LocalDateTime.now());
@@ -46,7 +47,7 @@ public class NvCmtGoodServiceLogic {
 			nvCmtMapper.like(nv_cmt_id);
 		}
 
-		return nvCmtGood.getState();
+		return 1;
 	}
 
 	@Transactional
@@ -73,6 +74,7 @@ public class NvCmtGoodServiceLogic {
 			nvCmtGood.setDatetime(LocalDateTime.now());
 			nvCmtGoodRepository.save(nvCmtGood);
 			nvCmtMapper.dislikeMinus(nv_cmt_id);
+			return -1;
 		} else if (nvCmtGood.getState() == 0) {
 			nvCmtGood.setState(-1);
 			nvCmtGood.setDatetime(LocalDateTime.now());
@@ -80,6 +82,6 @@ public class NvCmtGoodServiceLogic {
 			nvCmtMapper.dislike(nv_cmt_id);
 		}
 
-		return nvCmtGood.getState();
+		return 1;
 	}
 }

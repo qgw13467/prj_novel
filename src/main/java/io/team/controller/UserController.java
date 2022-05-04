@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;
 import io.team.domain.NovelLink;
@@ -93,8 +91,8 @@ public class UserController {
 		String pwd = newUser.getMemPassword();
 		String encPwd = bCryptPasswordEncoder.encode(pwd);
 		newUser.setMemPassword(encPwd);
-
-		map.put("msg", userServicLogic.register(newUser));
+		userServicLogic.register(newUser);
+		map.put("msg", "OK" );
 		return map;
 	}
 
@@ -107,7 +105,8 @@ public class UserController {
 			String token = req.getHeader("Authorization");
 			int mem_id = jwtManager.getIdFromToken(token);
 			newUser.setMemId(mem_id);
-			result.put("msg", userServicLogic.modify(newUser, token));
+			userServicLogic.modify(newUser, token);
+			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
@@ -131,13 +130,20 @@ public class UserController {
 			String pwd = newUser.getMemPassword();
 			String encPwd = bCryptPasswordEncoder.encode(pwd);
 			newUser.setMemPassword(encPwd);
-			result.put("msg", userServicLogic.modify(mem_id, encPwd, token));
+			int check = userServicLogic.modify(mem_id, encPwd, token);
+			if(check == -1) {
+				result.put("msg", "same as the previous ");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			
+			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
@@ -150,9 +156,11 @@ public class UserController {
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result.put("msg", userServicLogic.remove(newUser, token));
+			userServicLogic.remove(newUser, token);
+			result.put("msg", "OK");
 			return result;
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return result;
 		}

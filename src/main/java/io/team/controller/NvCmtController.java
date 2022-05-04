@@ -131,7 +131,11 @@ public class NvCmtController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
-			nvCmtGoodServiceLogic.assessNvCmtGood(id2, mem_id);
+			int check = nvCmtGoodServiceLogic.assessNvCmtGood(id2, mem_id);
+			if(check == -1) {
+				result.put("msg", "cancel");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
@@ -154,7 +158,11 @@ public class NvCmtController {
 		try {
 
 			int mem_id = jwtManager.getIdFromToken(token);
-			nvCmtGoodServiceLogic.assessNvCmtBad(id2, mem_id);
+			int check = nvCmtGoodServiceLogic.assessNvCmtBad(id2, mem_id);
+			if(check == -1) {
+				result.put("msg", "cancel");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {

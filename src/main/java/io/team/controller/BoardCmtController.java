@@ -140,7 +140,12 @@ public class BoardCmtController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
-			brdCmtGoodService.assessBrdCmtGood(id2, mem_id);
+			
+			int check = brdCmtGoodService.assessBrdCmtGood(id2, mem_id);
+			if(check == -1) {
+				result.put("msg", "cancel");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
@@ -164,7 +169,11 @@ public class BoardCmtController {
 		try {
 
 			int mem_id = jwtManager.getIdFromToken(token);
-			brdCmtGoodService.assessBrdCmtBad(id2, mem_id);
+			int check = brdCmtGoodService.assessBrdCmtBad(id2, mem_id);
+			if(check == -1) {
+				result.put("msg", "cancel");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {

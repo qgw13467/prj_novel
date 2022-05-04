@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import io.team.domain.User;
 import io.team.jwt.JwtManager;
@@ -16,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServicLogic implements UserService {
 
 	private final JwtManager jwtManager;
-
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final UserMapper userMapper;
 
 	SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -103,6 +105,11 @@ public class UserServicLogic implements UserService {
 
 	@Override
 	public int modify(int id, String pwd, String token) {
+		User user= userMapper.findByMemid(id);
+		if(!bCryptPasswordEncoder.matches(user.getMemPassword(), pwd)) {
+			return -1;
+		}
+		
 		return userMapper.updatepwd(id, pwd);
 	}
 

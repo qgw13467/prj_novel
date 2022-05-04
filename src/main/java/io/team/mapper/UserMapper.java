@@ -32,7 +32,7 @@ public interface UserMapper {
 
 	int updateToken(String token, int mem_id);
 
-	int updatepwd(int mem_id, String mem_pasaword);
+	int updatepwd(int mem_id, String mem_password);
 
 	int delete(String mem_userid, String mem_password);
 

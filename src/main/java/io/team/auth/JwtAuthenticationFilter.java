@@ -82,6 +82,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			HashMap<String, String> result = new HashMap<>();
 			result.put("\"msg\"", "\"id or password missmatch\"");
 			response.getWriter().print(result);
+			response.setStatus(401);
 			response.addHeader("msg", "id or password missmatch");
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block

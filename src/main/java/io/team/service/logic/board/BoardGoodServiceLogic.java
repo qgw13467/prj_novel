@@ -41,6 +41,7 @@ public class BoardGoodServiceLogic {
 			brdGood.setDatetime(LocalDateTime.now());
 			brdGoodRepository.save(brdGood);
 			boardMapper.likeMinus(brd_id);
+			return -1;
 		} else if (brdGood.getState() == 0) {
 			brdGood.setState(1);
 			brdGood.setDatetime(LocalDateTime.now());
@@ -48,7 +49,7 @@ public class BoardGoodServiceLogic {
 			boardMapper.like(brd_id);
 		}
 
-		return brdGood.getState();
+		return 1;
 	}
 
 	@Transactional
@@ -74,6 +75,7 @@ public class BoardGoodServiceLogic {
 			brdGood.setDatetime(LocalDateTime.now());
 			brdGoodRepository.save(brdGood);
 			boardMapper.dislikeMinus(brd_id);
+			return -1;
 		} else if (brdGood.getState() == 0) {
 			brdGood.setState(-1);
 			brdGood.setDatetime(LocalDateTime.now());
@@ -81,6 +83,6 @@ public class BoardGoodServiceLogic {
 			boardMapper.dislike(brd_id);
 		}
 
-		return brdGood.getState();
+		return 1;
 	}
 }

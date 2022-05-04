@@ -40,6 +40,7 @@ public class BrdCmtGoodService {
 			brdCmtGood.setDatetime(LocalDateTime.now());
 			brdCmtGoodRepository.save(brdCmtGood);
 			brdCmtMapper.likeMinus(brd_cmt_id);
+			return -1;
 		} else if (brdCmtGood.getState() == 0) {
 			brdCmtGood.setState(1);
 			brdCmtGood.setDatetime(LocalDateTime.now());
@@ -47,7 +48,7 @@ public class BrdCmtGoodService {
 			brdCmtMapper.like(brd_cmt_id);
 		}
 
-		return brdCmtGood.getState();
+		return 1;
 	}
 
 	@Transactional
@@ -74,6 +75,7 @@ public class BrdCmtGoodService {
 			brdCmtGood.setDatetime(LocalDateTime.now());
 			brdCmtGoodRepository.save(brdCmtGood);
 			brdCmtMapper.dislikeMinus(brd_cmt_id);
+			return -1;
 		} else if (brdCmtGood.getState() == 0) {
 			brdCmtGood.setState(-1);
 			brdCmtGood.setDatetime(LocalDateTime.now());
@@ -81,6 +83,6 @@ public class BrdCmtGoodService {
 			brdCmtMapper.dislike(brd_cmt_id);
 		}
 
-		return brdCmtGood.getState();
+		return 1;
 	}
 }
