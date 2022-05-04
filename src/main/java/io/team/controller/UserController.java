@@ -129,9 +129,8 @@ public class UserController {
 			int mem_id = jwtManager.getIdFromToken(token);
 			String pwd = newUser.getMemPassword();
 			String encPwd = bCryptPasswordEncoder.encode(pwd);
-			newUser.setMemPassword(encPwd);
-			int check = userServicLogic.modify(mem_id, encPwd, token);
-			if(check == -1) {
+			int check = userServicLogic.modify(mem_id, encPwd, pwd);
+			if(check == -2) {
 				result.put("msg", "same as the previous ");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}

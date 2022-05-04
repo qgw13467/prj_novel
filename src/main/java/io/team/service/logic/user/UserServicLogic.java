@@ -104,13 +104,13 @@ public class UserServicLogic implements UserService {
 	}
 
 	@Override
-	public int modify(int id, String pwd, String token) {
+	public int modify(int id, String encPwd, String pwd) {
 		User user= userMapper.findByMemid(id);
-		if(!bCryptPasswordEncoder.matches(user.getMemPassword(), pwd)) {
-			return -1;
+		if(bCryptPasswordEncoder.matches(pwd, user.getMemPassword())) {
+			return -2;
 		}
 		
-		return userMapper.updatepwd(id, pwd);
+		return userMapper.updatepwd(id, encPwd);
 	}
 
 	public int updateToken(String token, int mem_id) {
