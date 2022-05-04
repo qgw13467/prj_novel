@@ -66,14 +66,9 @@
 		UPDATE user SET
 		mem_email = #{mem_email},
 		mem_nick = #{mem_nick},
-		mem_point = #{mem_point},
-		mem_state = #{mem_state},
-		mem_following_nvnum = #{mem_following_nvnum},
-		mem_following_wrnum = #{mem_following_wrnum},
-		mem_followed = #{mem_followed},
 		mem_icon = #{mem_icon}
 		WHERE
-		mem_userid = #{mem_userid};
+		mem_id = #{mem_id};
 
 	</update>
 	<update id="updatepwd">

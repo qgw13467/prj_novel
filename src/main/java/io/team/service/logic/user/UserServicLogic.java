@@ -14,13 +14,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserServicLogic implements UserService {
-	
+
 	private final JwtManager jwtManager;
 
 	private final UserMapper userMapper;
-	
-	
-	
+
 	SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	Calendar time = Calendar.getInstance();
 	String format_time1 = format1.format(time.getTime());
@@ -80,27 +78,25 @@ public class UserServicLogic implements UserService {
 
 		try {
 			User user = userMapper.findByMemUserId(userid);
-			
+
 			return user;
 		} catch (Exception e) {
 			return new User();
 		}
 	}
-	
-	public ArrayList<String> findTokenByMemid(ArrayList<Integer> memids){
+
+	public ArrayList<String> findTokenByMemid(ArrayList<Integer> memids) {
 		ArrayList<String> result = new ArrayList<>();
-		
+
 		result = userMapper.findTokenByMemid(memids);
-		
+
 		return result;
 	}
-	
+
 	@Override
 	public int modify(User newUser, String token) {
-		System.out.println(newUser);
-		int result = userMapper.update(newUser.getMemUserId(), newUser.getMemEmail(),
-				newUser.getMemNick(), newUser.getMemPoint(), newUser.getState(), newUser.getMemFollowingNvnum(),
-				newUser.getMemFollowingWrnum(), newUser.getMemFollowed(), newUser.getMemIcon());
+		int result = userMapper.update(newUser.getMemId(), newUser.getMemEmail(), newUser.getMemNick(),
+				newUser.getMemIcon());
 		return result;
 
 	}
@@ -109,7 +105,7 @@ public class UserServicLogic implements UserService {
 	public int modify(int id, String pwd, String token) {
 		return userMapper.updatepwd(id, pwd);
 	}
-	
+
 	public int updateToken(String token, int mem_id) {
 
 		int result = userMapper.updateToken(token, mem_id);
@@ -143,7 +139,7 @@ public class UserServicLogic implements UserService {
 			return result;
 		}
 	}
-	
+
 	public int getPoint(int mem_id) {
 		int result = -1;
 		try {
@@ -154,7 +150,5 @@ public class UserServicLogic implements UserService {
 			return result;
 		}
 	}
-	
-
 
 }

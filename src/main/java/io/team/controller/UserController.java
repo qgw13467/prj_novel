@@ -76,6 +76,15 @@ public class UserController {
 //		}
 //		
 //	}
+	
+	@GetMapping("/login/failure")
+	public ResponseEntity<?> getOAuthToken(HttpServletRequest request, HttpServletResponse response) {
+
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("msg",  (String)request.getAttribute("msg"));
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
 	@PostMapping("/join")
 	public HashMap register(@RequestBody User newUser) {
@@ -97,7 +106,7 @@ public class UserController {
 		try {
 			String token = req.getHeader("Authorization");
 			int mem_id = jwtManager.getIdFromToken(token);
-
+			newUser.setMemId(mem_id);
 			result.put("msg", userServicLogic.modify(newUser, token));
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {

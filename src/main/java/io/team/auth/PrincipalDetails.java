@@ -13,22 +13,29 @@ import io.team.domain.User;
 import lombok.Data;
 
 @Data
-public class PrincipalDetails implements UserDetails, OAuth2User{
-	
+public class PrincipalDetails implements UserDetails, OAuth2User {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private User user;
 	private Map<String, Object> attributes;
 	
+	//관리자와 일반 사용자
+	private Collection<? extends GrantedAuthority> authorities;
+
 	public PrincipalDetails(User user) {
 		this.user = user;
 	}
-	
-	public PrincipalDetails(User user,Map<String, Object> attributes) {
+
+	public PrincipalDetails(User user, Map<String, Object> attributes) {
 		this.user = user;
 		this.attributes = attributes;
 	}
 
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() { 
+	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
 
 		authorities.add(new SimpleGrantedAuthority("USER"));
@@ -37,8 +44,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
 	}
 
 	@Override
-	public String getPassword() { 
-		
+	public String getPassword() {
 		return user.getMemPassword();
 	}
 
@@ -69,12 +75,12 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
 
 	@Override
 	public Map<String, Object> getAttributes() {
-		
+
 		return attributes;
 	}
 
 	@Override
 	public String getName() {
-		return (String)attributes.get("name");
+		return (String) attributes.get("name");
 	}
 }
