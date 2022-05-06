@@ -59,6 +59,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 		request.setAttribute("memIcon", user.getMemIcon());
 		request.setAttribute("memLastloginDatetime", user.getMemLastloginDatetime());
 		request.setAttribute("memPoint", user.getMemPoint());
+		request.setAttribute("memEmail", user.getMemEmail());
 		rd.forward(request, response);
 
 

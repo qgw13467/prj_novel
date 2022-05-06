@@ -29,6 +29,7 @@ public class OAuthController {
 		result.put("memIcon", (String)request.getAttribute("memIcon"));
 		result.put("memLastloginDatetime", (String)request.getAttribute("memLastloginDatetime"));
 		result.put("memPoint", Integer.toString(mem_point));
+		result.put("memEmail", (String)request.getAttribute("memEmail"));
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	

@@ -35,15 +35,21 @@ public class S3Controller {
 			HttpServletRequest req) throws IOException {
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
-
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
 			ArrayList<Integer> img_ids = new ArrayList<Integer>();
 			for (MultipartFile multipartFile : multipartFiles) {
+
 				img_ids.add(s3Service.upload(multipartFile, multipartFile.getOriginalFilename(), mem_id));
+				if(multipartFiles.size()==1) {
+					
+					String img_url = s3Service.findUrlById(img_ids.get(0));
+					result.put("imgUrl", img_url);
+				}
 			}
 			s3Service.saveImgIds(img_ids);
-
+			
+			
 			result.put("msg", img_ids.get(0));
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
@@ -59,9 +65,9 @@ public class S3Controller {
 	@GetMapping("/imgs/{id}")
 	public @ResponseBody Map<String, Object> getImgUrl(@PathVariable int id) throws IOException {
 
-		String img_url = s3Service.findUrlById(id);
+		String imgUrl = s3Service.findUrlById(id);
 		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("img_url", img_url);
+		result.put("imgUrl", imgUrl);
 		return result;
 	}
 }

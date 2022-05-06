@@ -128,6 +128,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			response.addCookie(new Cookie("memId", URLEncoder.encode(Integer.toString(user.getMemId()), "utf-8")));
 			response.addCookie(new Cookie("memUserid", URLEncoder.encode(user.getMemUserId(), "utf-8")));
 			response.addCookie(new Cookie("memIcon", URLEncoder.encode(user.getMemIcon(), "utf-8")));
+			response.addCookie(new Cookie("memEmail", URLEncoder.encode(user.getMemEmail(), "utf-8")));
 			response.addCookie(
 					new Cookie("memPoint", URLEncoder.encode(Integer.toString(user.getMemPoint()), "utf-8")));
 			String date = URLEncoder.encode(user.getMemLastloginDatetime(), "utf-8");

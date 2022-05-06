@@ -90,8 +90,7 @@ public class S3Servicelogic {
 	}
 	
 	public String findUrlById(int id) {
-		String reusult= fileMapper.findUrlById(id);
-		return reusult;
+		return fileMapper.findUrlById(id);
 	}
 	
 	//한번에 올린 이미지의 아이디들을 저장하는 테이블에 처음올라간 이미지를 통해 나머지 이미지들 저장

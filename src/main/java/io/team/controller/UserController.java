@@ -74,15 +74,7 @@ public class UserController {
 //		}
 //		
 //	}
-	
-	@GetMapping("/login/failure")
-	public ResponseEntity<?> getOAuthToken(HttpServletRequest request, HttpServletResponse response) {
 
-		HashMap<String, Object> result = new HashMap<>();
-		result.put("msg",  (String)request.getAttribute("msg"));
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
 
 	@PostMapping("/join")
 	public HashMap register(@RequestBody User newUser) {
