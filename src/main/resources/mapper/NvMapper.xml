@@ -95,4 +95,21 @@
 		nv_id = #{nv_id}
 	</update>
 
+
+
+	<update id="plusCmtCount">
+		update novel set
+		nv_comment_count=nv_comment_count+1
+		where
+		nv_id =
+		#{nv_id}
+	</update>
+	
+	<update id="minusCmtCount">
+		update novel set
+		nv_comment_count=nv_comment_count-1
+		where
+		nv_id =
+		#{nv_id}
+	</update>
 </mapper>

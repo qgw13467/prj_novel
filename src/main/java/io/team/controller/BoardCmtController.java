@@ -1,6 +1,8 @@
 package io.team.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import io.team.domain.BrdCmt;
 import io.team.domain.BrdCmtReport;
 import io.team.domain.BrdReport;
 import io.team.jwt.JwtManager;
+import io.team.service.logic.board.BoardServiceLogic;
 import io.team.service.logic.board.BrdCmtGoodService;
 import io.team.service.logic.board.BrdCmtServiceLogic;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BoardCmtController {
 	
+	private final BoardServiceLogic boardServiceLogic;
 	private final BrdCmtServiceLogic brdCmtServiceLogic;
 	private final BrdCmtGoodService brdCmtGoodService;
 	private final JwtManager jwtManager;
@@ -52,6 +56,11 @@ public class BoardCmtController {
 			ArrayList<BrdCmt> tempArrayList = new ArrayList<BrdCmt>();
 			tempArrayList.add(cmt);
 			ArrayList<BrdCmt> replies = brdCmtServiceLogic.read_replies(cmt.getBrdCmtId());
+			
+			//아이디 내림차순 정렬
+			replies.sort(Comparator.comparing(BrdCmt::getBrdCmtId).reversed());
+//			replies.sort((BrdCmt a1, BrdCmt a2)-> a1.getBrdId().compareTo(a2.getBrdId()));		
+			
 			tempArrayList.addAll(replies);
 			cmtsArray.add(tempArrayList);
 		}
@@ -73,8 +82,10 @@ public class BoardCmtController {
 			int mem_id = jwtManager.getIdFromToken(token);
 			newCmt.setBrdId(id);
 			newCmt.setMemId(mem_id);
-
+			//댓글 등록, 댓굴개수 갱신
 			brdCmtServiceLogic.register(newCmt, token);
+			boardServiceLogic.plusCmtCount(id);
+			
 			result.put("msg", "OK");
 			return result;
 		} catch (ExpiredJwtException e) {
@@ -118,6 +129,7 @@ public class BoardCmtController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			brdCmtServiceLogic.remove(brd_cmt_id, token);
+			
 			result.put("msg", "OK");
 			return result;
 		} catch (ExpiredJwtException e) {

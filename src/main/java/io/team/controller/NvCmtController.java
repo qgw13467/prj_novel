@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import io.team.domain.NovelCmtReport;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.novel.NvCmtGoodServiceLogic;
 import io.team.service.logic.novel.NvCmtServiceLogic;
+import io.team.service.logic.novel.NvServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,6 +36,7 @@ public class NvCmtController {
 	private final JwtManager jwtManager;
 	private final NvCmtServiceLogic nvCmtServiceLogic;
 	private final NvCmtGoodServiceLogic nvCmtGoodServiceLogic;
+	private final NvServiceLogic nvServiceLogics;
 	
 	@GetMapping("/novels/detail/{titleId}/cmts")
 	public @ResponseBody Map<String, Object> getCmts(@PathVariable int titleId, @RequestParam(value = "nv-id") int nvId,
@@ -61,6 +64,7 @@ public class NvCmtController {
 	}
 
 	@PostMapping("/novels/detail/{titleId}/cmts")
+	@Transactional
 	public @ResponseBody Map<String, Object> writeCmt(@PathVariable int titleId, @RequestBody NovelCmt newCmt,
 			HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
@@ -70,6 +74,8 @@ public class NvCmtController {
 			int memId = jwtManager.getIdFromToken(token);
 			newCmt.setMemId(memId);
 			nvCmtServiceLogic.register(newCmt, token);
+			nvServiceLogics.plusCmtCount(newCmt.getNvId());
+			
 			result.put("msg", "OK");
 			return result;
 		} catch (ExpiredJwtException e) {

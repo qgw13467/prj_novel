@@ -157,5 +157,13 @@ public class BoardServiceLogic implements WriteService<Board> {
 		Optional<BrdReport> optBrdReport = Optional.ofNullable( brdReportRepository.findFirstByBrdIdAndMemId(brd_id, mem_id));
 		return optBrdReport;
 	}
+	
+	public int plusCmtCount(int brd_id) {
+		return boardMapper.plusCmtCount(brd_id);
+	}
+	
+	public int minusCmtCount(int brd_id) {
+		return boardMapper.minusCmtCount(brd_id);
+	}
 
 }

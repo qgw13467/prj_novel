@@ -127,7 +127,16 @@ public class NvServiceLogic implements WriteService<Novel> {
 			return -1;
 		}
 	}
-
+	
+	public int plusCmtCount(int nvId) {
+		return  novelMapper.plusCmtCount(nvId);
+	}
+	
+	public int minusCmtCount(int nvId) {
+		return  novelMapper.minusCmtCount(nvId);
+	}
+	
+	
 	@Override
 	public ArrayList<Novel> getList(int pagenum, int rownum) {
 		return novelMapper.getNovels((pagenum - 1) * rownum, rownum);

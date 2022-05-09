@@ -33,7 +33,7 @@ public class NovelCover {
 	private int nvcHit;
 	private int nvcReviewpoint;
 	private int nvcReviewcount;
-
+	private int nvcSubscribeCount;
 	
 	public NovelCover (HashMap<String, String> map) {
 		this.imgUrl=map.get("imgUrl");

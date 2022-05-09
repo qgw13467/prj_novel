@@ -136,4 +136,20 @@
 		brd_id = #{brd_id}
 	</update>
 	
+	
+	<update id="plusCmtCount">
+		update board set
+		brd_comment_count=brd_comment_count+1
+		where
+		brd_id =
+		#{brd_id}
+	</update>
+	
+	<update id="minusCmtCount">
+		update board set
+		brd_comment_count=brd_comment_count-1
+		where
+		brd_id =
+		#{brd_id}
+	</update>
 </mapper>

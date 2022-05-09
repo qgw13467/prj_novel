@@ -30,5 +30,7 @@ public interface NvMapper {
 	int getNextNovel();
 
 	int report(int nv_id, int mem_id);
-
+	
+	int plusCmtCount(int nv_id);
+	int minusCmtCount(int nv_id);
 }

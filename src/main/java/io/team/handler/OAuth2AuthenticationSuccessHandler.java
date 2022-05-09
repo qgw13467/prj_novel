@@ -44,7 +44,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
 		userServicLogic.lastlogin(user.getMemId());
 		String token = jwtManager.generateJwtToken(user);
-		String RefreshToken = jwtManager.generateJwtToken(user);
+		String RefreshToken = jwtManager.generateRefreshJwtToken(user);
 		writeTokenResponse(response, token);
 
 //		response.setStatus(307);

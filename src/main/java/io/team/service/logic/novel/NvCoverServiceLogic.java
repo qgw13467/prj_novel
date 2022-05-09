@@ -59,7 +59,15 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 		NovelCover tempCover = nvCoverMapper.findFirstByNvId(id);
 		return tempCover;
 	}
-
+	
+	public int plusSubscribeCountByNvcId(int nvcId) {
+		return nvCoverMapper.plusSubscribeCount(nvcId);
+	}
+	
+	public int minusSubscribeCountByNvcId(int nvcId) {
+		return nvCoverMapper.minusSubscribeCount(nvcId);
+	}
+	
 	//수정
 	@Override
 	public int modify(int id, NovelCover obj, String token) {

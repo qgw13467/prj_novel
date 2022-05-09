@@ -39,5 +39,7 @@ public interface BoardMapper {
 	int report(int brd_id);
 	
 	
+	int plusCmtCount(int brd_id);
+	int minusCmtCount(int brd_id);
 
 }

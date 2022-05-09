@@ -28,6 +28,6 @@ public class User {
 	private int memFollowingWrnum;
 	private int memFollowed;
 	private String memIcon;
-	private int memIsAdmin;
+	private String role;
 	private String token;
 }
