@@ -28,7 +28,7 @@ public class FcmService {
 	private String jsonWinPath;
 	
 
-	public void send_FCMtoken(String token, String title, String content) {
+	public void send_FCMtoken(String token, String titleId,String title, String content) {
 
 		String jsonPath;
 		String os = System.getProperty("os.name").toLowerCase();
@@ -55,7 +55,7 @@ public class FcmService {
 
 			Message msg = Message.builder().setAndroidConfig(AndroidConfig.builder().setTtl(3600 * 1000) // 1 hour in
 
-					.setPriority(AndroidConfig.Priority.NORMAL).putData("title", title).putData("body", content)
+					.setPriority(AndroidConfig.Priority.NORMAL).putData("title", title).putData("body", content).putData("titleId", titleId)
 //					.setNotification(AndroidNotification.builder().setTitle(title).setBody(content)
 //							.setIcon("stock_ticker_update").setColor("#f45342").build())
 					.build()).setToken(token).build();

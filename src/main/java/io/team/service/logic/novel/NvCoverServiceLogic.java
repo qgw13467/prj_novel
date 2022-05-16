@@ -23,20 +23,11 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 	@Override
 	public int register(NovelCover novelCover, String token) {
 
-		if (novelCover.getNvId() == 0) {
-			novelCover.setNvId(getPageNum());
-		}
-
-		try {
-			int result = 0;
-			NovelCover tempNvCover = nvCoverMapper.save(novelCover);
-			result= tempNvCover.getNvcId();
-			
-			return result;
-		} catch (Exception e) {
-			return -1;
-			
-		}
+		int result = 0;
+		NovelCover tempNvCover = nvCoverMapper.save(novelCover);
+		result= tempNvCover.getNvcId();
+		
+		return result;
 	}
 	
 	//페이지로 목록가져오기

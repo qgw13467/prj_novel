@@ -126,18 +126,26 @@ public class NvCoverController {
 	@GetMapping("/novels/{id}")
 	public ResponseEntity<?> findByNvCover(@PathVariable int id, Pageable pageable) {
 
+		// 아이디로 소설커버 가져옴
 		NovelCover novelCover = nvCoverServiceLogic.find(id);
-		int hitcount = novelCover.getNvcHit();
-		novelCover.setNvcHit(hitcount + 1);
+
+		// 큐에 1화 저장
 		Queue<Integer> queue = new LinkedList<Integer>();
 		queue.add(novelCover.getNvId());
+		
+		//소설에 포함되는 에피소드
 		HashSet<Integer> node = new HashSet<Integer>();
+		//삭제된 에피소드의 아이디
+		HashSet<Integer> deletedNvid = new HashSet<>();
 		HashMap<Integer, ArrayList<Integer>> novelLinkMap = new LinkedHashMap<Integer, ArrayList<Integer>>();
 		HashMap<String, Object> result = new HashMap<>();
 
+		// 공통의 1화를 가진 소설 에피소드들 로딩
 		ArrayList<NovelLink> novelLinks = nvServiceLogic.findLinks(novelCover.getNvId());
 		ArrayList<Novel> novelList = new ArrayList<>();
 
+		// 포함된 소설의 아이디 셋이 저장(중복 제거)
+		node.add(novelCover.getNvId());
 		for (NovelLink novelLink : novelLinks) {
 			node.add(novelLink.getNvlParents());
 			node.add(novelLink.getNvlChildnode());
@@ -145,14 +153,24 @@ public class NvCoverController {
 
 		for (Integer key : node) {
 			Novel tempNovel = nvServiceLogic.findInfo(key);
+
+			if (tempNovel.getNvState() == 1) {
+				deletedNvid.add(tempNovel.getNvId());
+				continue;
+			}
 			novelList.add(tempNovel);
 		}
-
+		//======================================================삭제 에피소드의 관계 수정할 것
 		while (!queue.isEmpty()) {
 			int parent = queue.poll();
 			ArrayList<Integer> tempList = new ArrayList<>();
 			for (NovelLink novelLink : novelLinks) {
 				if (novelLink.getNvlParents() == parent) {
+					
+					//링크에서 자식 에피소드가 삭제되었다면 ?
+					if(deletedNvid.contains(novelLink.getNvlChildnode())) {
+						continue;
+					}
 					tempList.add(novelLink.getNvlChildnode());
 					queue.add(novelLink.getNvlChildnode());
 
@@ -177,13 +195,12 @@ public class NvCoverController {
 		HashMap<String, String> novelCoverHashMap = (HashMap<String, String>) map.get("novelCover");
 		NovelCover novelCover = new NovelCover(novelCoverHashMap);
 		novelCover.setNvId(0);
-		System.out.println(novelCover);
 
 		tagList = (ArrayList<String>) map.get("tag");
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
 			int nvCoverId = nvCoverServiceLogic.register(novelCover, token);
-			
+
 			for (String string : tagList) {
 				nvtagServiecLogic.register(nvCoverId, string);
 			}

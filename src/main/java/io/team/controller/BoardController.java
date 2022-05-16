@@ -23,10 +23,12 @@ import io.team.domain.Board;
 import io.team.domain.BrdCmt;
 import io.team.domain.BrdReport;
 import io.team.domain.dto.BoardDTO;
+import io.team.domain.dto.UserInfoDTO;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.board.BoardGoodServiceLogic;
 import io.team.service.logic.board.BoardServiceLogic;
 import io.team.service.logic.board.BrdCmtServiceLogic;
+import io.team.service.logic.user.UserServicLogic;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
 	private final BoardServiceLogic boardService;
-
+	private final UserServicLogic userServicLogic;
 	private final BoardGoodServiceLogic boardGoodServiceLogic;
 
 	private final JwtManager jwtManager;
@@ -56,8 +58,15 @@ public class BoardController {
 	
 	//게시물 하나 보기
 	@GetMapping("/boards/{id}")
-	public @ResponseBody BoardDTO read(@PathVariable int id) {
-		return boardService.findDTO(id);
+	public ResponseEntity<?> read(@PathVariable int id) {
+		Map<String, Object> result = new HashMap<>();
+		BoardDTO boardDTO =	boardService.findDTO(id);
+		
+		UserInfoDTO userInfoDTO = UserInfoDTO.userInfoDTOfromUser(userServicLogic.findByMemId(boardDTO.getMemId()));
+		
+		result.put("board", boardDTO);
+		result.put("user", userInfoDTO);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	//게시물 작성

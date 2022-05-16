@@ -29,7 +29,7 @@
 	<select id="readInfo" resultType="io.team.domain.Novel">
 		SELECT nv_id, mem_id, img_url,
 		nv_writer, nv_title, nv_hit, nv_comment_count,
-		nv_reviewpoint,
+		nv_reviewpoint, nv_state,
 		nv_reviewcount, nv_datetime, nv_point
 		FROM novel where
 		nv_id =

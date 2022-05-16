@@ -53,6 +53,7 @@ public class JwtManager {
 		claims.put("mem_userid", newUser.getMemUserId()); // username
 		claims.put("mem_email", newUser.getMemEmail());
 		claims.put("mem_nick", newUser.getMemNick());// 인가정보
+		claims.put("role", newUser.getRole());
 		return claims;
 	}
 	

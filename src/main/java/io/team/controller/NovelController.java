@@ -30,6 +30,7 @@ import io.team.domain.NovelReport;
 import io.team.domain.Enum.PointPurpose;
 import io.team.domain.dto.BoardDTO;
 import io.team.domain.dto.NovelDTO;
+import io.team.domain.dto.UserInfoDTO;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.PointServiceLogic;
 import io.team.service.logic.S3Servicelogic;
@@ -38,6 +39,7 @@ import io.team.service.logic.novel.NvCmtServiceLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import io.team.service.logic.novel.NvServiceLogic;
 import io.team.service.logic.user.PurchaseService;
+import io.team.service.logic.user.UserServicLogic;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -51,6 +53,7 @@ public class NovelController {
 	private final KafkaProducer kafkaProducer;	
 	private final PurchaseService purchaseService;	
 	private final S3Servicelogic s3Servicelogic;
+	private final UserServicLogic userServicLogic;
 	
 	//소설의 전체 에시포드 보기
 	@GetMapping("/novels/detail")
@@ -107,13 +110,18 @@ public class NovelController {
 				novelDTO.setImgUrls(imgUrls);
 			}
 			
-			return new ResponseEntity<>(novelDTO, HttpStatus.OK);
+			UserInfoDTO userInfoDTO = UserInfoDTO.userInfoDTOfromUser(userServicLogic.findByMemId(novelDTO.getMemId()));
+			
+			result.put("novel", novelDTO);
+			result.put("user", userInfoDTO);
+			return new ResponseEntity<>(result, HttpStatus.OK);
 
 		} catch (ExpiredJwtException e) {
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
@@ -139,26 +147,36 @@ public class NovelController {
 				hashMap.put("nvPoint", "10");
 			}
 			Novel novel = new Novel(hashMap);
-			if (Integer.parseInt((String) map.get("parent")) == 0) { // 1화를 처음작성하면 표지생성
+			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
+			int parent = Integer.parseInt((String)map.get("parent"));
+			if (novelCover.getNvId() == 0) { // 1화를 처음작성하면 표지생성
 				
 				int nv_id = nvServiceLogic.register(novel, token);
-				NovelCover novelCover = nvCoverServiceLogic.find(titleId);
 				novelCover.setNvId(nv_id);
 				check += nvCoverServiceLogic.modify(titleId, novelCover, token);
 				result.put("msg", "OK");
 
 			} else { // 1화가 아니면 부모자식테이블, 모든에피소드테이블에 등록
-				System.out.println(novel);
+				if(parent == 0) {
+					result.put("msg", "exist");
+					return new ResponseEntity<>(result, HttpStatus.OK);
+				}
+				
+				int firstNvid = nvServiceLogic.findFirstNvid(parent);
+				NovelCover parentNovelCover = nvCoverServiceLogic.findByNvid(firstNvid);
+				if(parentNovelCover.getNvcId() != titleId) {
+					result.put("msg", "parent episodes not included");
+					return new ResponseEntity<>(result, HttpStatus.OK);
+				}
+				
 				check += nvServiceLogic.register(novel, token, Integer.parseInt((String) map.get("parent")), titleId);
-				result.put("msg", check);
+				result.put("msg", "OK");
 			}
 
 			// 소설 작성시 구독 사용자에게 푸시알림
-
-			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
 			String title = "구독 알림";
 			String contents = "구독하신 소설 " + novelCover.getNvcTitle() + "의 최신화가 나왔습니다";
-
+			
 			HashMap<String, String> msg = new HashMap<>();
 			msg.put("titleId", Integer.toString(titleId));
 			msg.put("title", title);

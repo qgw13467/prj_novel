@@ -95,6 +95,7 @@ public class NvServiceLogic implements WriteService<Novel> {
 
 		return result;
 	}
+	
 
 	@Override
 	public int modify(int id, Novel newNovel, String token) {

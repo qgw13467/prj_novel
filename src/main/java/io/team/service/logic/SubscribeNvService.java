@@ -85,7 +85,7 @@ public class SubscribeNvService {
 
 				if (user.getToken().equals(""))
 					continue;
-				fcmService.send_FCMtoken(user.getToken(), title, contents);
+				fcmService.send_FCMtoken(user.getToken(), Integer.toString(nvc_id), title, contents);
 
 			}
 
