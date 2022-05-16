@@ -21,7 +21,7 @@ public class WebMvcConfig1 implements WebMvcConfigurer {
     // Form data
     @Bean
     public FilterRegistrationBean<XssEscapeServletFilter> getXssEscapeServletFilterRegistrationBean() {
-        FilterRegistrationBean<XssEscapeServletFilter> registrationBean =  new FilterRegistrationBean<XssEscapeServletFilter>();
+        FilterRegistrationBean<XssEscapeServletFilter> registrationBean = new FilterRegistrationBean<XssEscapeServletFilter>();
         registrationBean.setFilter(new XssEscapeServletFilter());
         registrationBean.setOrder(1);
         registrationBean.addUrlPatterns("/*"); //filter를 거칠 url patterns
