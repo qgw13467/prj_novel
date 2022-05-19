@@ -3,11 +3,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.team.mapper.UserMapper">
-	<select id="checkIdOverlap" resultType="_int">
+	<select id="checkIdReduplication" resultType="_int">
 		SELECT COUNT(*) FROM user
 		where
 		mem_userid =
-		#{mem_userid} OR
+		#{mem_userid}
+	</select>
+	
+	<select id="checkNickReduplication" resultType="_int">
+		SELECT COUNT(*) FROM user
+		where
 		mem_nick =
 		#{mem_nick}
 	</select>

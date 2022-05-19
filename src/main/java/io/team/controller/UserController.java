@@ -83,8 +83,8 @@ public class UserController {
 		String pwd = newUser.getMemPassword();
 		String encPwd = bCryptPasswordEncoder.encode(pwd);
 		newUser.setMemPassword(encPwd);
-		userServicLogic.register(newUser);
-		map.put("msg", "OK" );
+		String resultString = userServicLogic.register(newUser);
+		map.put("msg", resultString );
 		return map;
 	}
 

@@ -28,8 +28,11 @@ public class UserServicLogic implements UserService {
 	@Override
 	public String register(User newUser) {
 
-		if (userMapper.checkIdOverlap(newUser.getMemUserId(), newUser.getMemNick()) != 0) {
-			return "ERROR";
+		if (userMapper.checkIdReduplication(newUser.getMemUserId()) != 0) {
+			return "id reduplication";
+		}
+		else if(userMapper.checkNickReduplication(newUser.getMemNick())!=0){
+			return "nickname reduplication";
 		}
 		userMapper.create(newUser.getMemUserId(), newUser.getMemPassword(), format_time1, newUser.getMemEmail(),
 				newUser.getMemNick(), format_time1, format_time1, newUser.getMemIcon());
