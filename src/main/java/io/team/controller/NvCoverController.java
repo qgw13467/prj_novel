@@ -128,21 +128,35 @@ public class NvCoverController {
 
 		// 아이디로 소설커버 가져옴
 		NovelCover novelCover = nvCoverServiceLogic.find(id);
-
-		// 큐에 1화 저장
-		Queue<Integer> queue = new LinkedList<Integer>();
-		queue.add(novelCover.getNvId());
-		
 		//소설에 포함되는 에피소드
 		HashSet<Integer> node = new HashSet<Integer>();
 		//삭제된 에피소드의 아이디
 		HashSet<Integer> deletedNvid = new HashSet<>();
 		HashMap<Integer, ArrayList<Integer>> novelLinkMap = new LinkedHashMap<Integer, ArrayList<Integer>>();
 		HashMap<String, Object> result = new HashMap<>();
+		
 
 		// 공통의 1화를 가진 소설 에피소드들 로딩
 		ArrayList<NovelLink> novelLinks = nvServiceLogic.findLinks(novelCover.getNvId());
 		ArrayList<Novel> novelList = new ArrayList<>();
+		
+		// 큐에 1화 저장
+		Queue<Integer> queue = new LinkedList<Integer>();
+		queue.add(novelCover.getNvId());
+		
+		
+		//1화도 작성되지 않은 커버 바로 반환
+		if(novelCover.getNvId() == 0) {
+			result.put("episode", novelLinkMap);
+			result.put("NovelInfo", novelList);
+			result.put("NovelCover", novelCover);
+
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
+		
+		
+
+
 
 		// 포함된 소설의 아이디 셋이 저장(중복 제거)
 		node.add(novelCover.getNvId());
