@@ -100,6 +100,10 @@ public class UserServicLogic implements UserService {
 
 	@Override
 	public int modify(User newUser, String token) {
+		if(userMapper.checkNickReduplication(newUser.getMemNick())!=0){
+			return -1;
+		}
+		
 		int result = userMapper.update(newUser.getMemId(), newUser.getMemEmail(), newUser.getMemNick(),
 				newUser.getMemIcon());
 		return result;

@@ -97,8 +97,14 @@ public class UserController {
 			String token = req.getHeader("Authorization");
 			int mem_id = jwtManager.getIdFromToken(token);
 			newUser.setMemId(mem_id);
-			userServicLogic.modify(newUser, token);
-			result.put("msg", "OK");
+			int checkNick = userServicLogic.modify(newUser, token);
+			
+			if(checkNick == -1) {
+				result.put("msg", "nickname reduplication");
+			}else {
+				result.put("msg", "OK");
+			}
+			
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
