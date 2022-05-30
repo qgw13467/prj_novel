@@ -35,13 +35,12 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class BoardCmtController {
-	
+
 	private final BoardServiceLogic boardServiceLogic;
 	private final BrdCmtServiceLogic brdCmtServiceLogic;
 	private final BrdCmtGoodService brdCmtGoodService;
 	private final JwtManager jwtManager;
 
-	
 	@GetMapping("/boards/{id}/cmts")
 	public @ResponseBody Map<String, Object> getCmts(@PathVariable int id,
 			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum) {
@@ -56,11 +55,11 @@ public class BoardCmtController {
 			ArrayList<BrdCmt> tempArrayList = new ArrayList<BrdCmt>();
 			tempArrayList.add(cmt);
 			ArrayList<BrdCmt> replies = brdCmtServiceLogic.read_replies(cmt.getBrdCmtId());
-			
-			//아이디 내림차순 정렬
+
+			// 아이디 내림차순 정렬
 			replies.sort(Comparator.comparing(BrdCmt::getBrdCmtId).reversed());
 //			replies.sort((BrdCmt a1, BrdCmt a2)-> a1.getBrdId().compareTo(a2.getBrdId()));		
-			
+
 			tempArrayList.addAll(replies);
 			cmtsArray.add(tempArrayList);
 		}
@@ -70,7 +69,7 @@ public class BoardCmtController {
 
 		return result;
 	}
-	
+
 	@Transactional
 	@PostMapping("/boards/{id}/cmts")
 	public @ResponseBody Map<String, Object> writeCmt(@PathVariable int id, @RequestBody BrdCmt newCmt,
@@ -82,10 +81,10 @@ public class BoardCmtController {
 			int mem_id = jwtManager.getIdFromToken(token);
 			newCmt.setBrdId(id);
 			newCmt.setMemId(mem_id);
-			//댓글 등록, 댓굴개수 갱신
+			// 댓글 등록, 댓굴개수 갱신
 			brdCmtServiceLogic.register(newCmt, token);
 			boardServiceLogic.plusCmtCount(id);
-			
+
 			result.put("msg", "OK");
 			return result;
 		} catch (ExpiredJwtException e) {
@@ -98,7 +97,7 @@ public class BoardCmtController {
 			return result;
 		}
 	}
-	
+
 	@Transactional
 	@PutMapping("/boards/{id}/cmts/{brd_cmt_id}")
 	public @ResponseBody Map<String, Object> updateCmt(@PathVariable int brd_cmt_id, @RequestBody BrdCmt newCmt,
@@ -121,13 +120,14 @@ public class BoardCmtController {
 			return result;
 		}
 	}
-	
+
 	@Transactional
 	@DeleteMapping("/boards/{id}/cmts/{brd_cmt_id}")
 	public @ResponseBody Map<String, Object> deleteCmt(@PathVariable int brd_cmt_id, HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+			
 			brdCmtServiceLogic.remove(brd_cmt_id, token);
 			
 			result.put("msg", "OK");
@@ -142,7 +142,7 @@ public class BoardCmtController {
 			return result;
 		}
 	}
-	
+
 	// 추천, 비추천
 	@Transactional
 	@PostMapping("/boards/{id1}/cmts/{id2}/like")
@@ -152,9 +152,9 @@ public class BoardCmtController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			int mem_id = jwtManager.getIdFromToken(token);
-			
+
 			int check = brdCmtGoodService.assessBrdCmtGood(id2, mem_id);
-			if(check == -1) {
+			if (check == -1) {
 				result.put("msg", "cancel");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
@@ -170,7 +170,7 @@ public class BoardCmtController {
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 	}
-	
+
 	@Transactional
 	@PostMapping("/boards/{id1}/cmts/{id2}/dislike")
 	public ResponseEntity<?> writeBrdDislike(@PathVariable int id1, @PathVariable int id2, HttpServletRequest req) {
@@ -182,7 +182,7 @@ public class BoardCmtController {
 
 			int mem_id = jwtManager.getIdFromToken(token);
 			int check = brdCmtGoodService.assessBrdCmtBad(id2, mem_id);
-			if(check == -1) {
+			if (check == -1) {
 				result.put("msg", "cancel");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
@@ -198,7 +198,7 @@ public class BoardCmtController {
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 	}
-	
+
 	@Transactional
 	@PostMapping("/boards/{id1}/cmts/{id2}/report")
 	public ResponseEntity<?> writeReport(@PathVariable int id1, @PathVariable int id2, HttpServletRequest req,

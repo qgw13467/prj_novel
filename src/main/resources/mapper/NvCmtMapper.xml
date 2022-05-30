@@ -74,6 +74,13 @@
 		where
 		nv_cmt_id = #{nv_cmt_id}
 	</update>
+	<update id="cmt_reply_minus">
+		update novel_comment set
+		nv_cmt_replynum =
+		nv_cmt_replynum - 1
+		where
+		nv_cmt_id = #{nv_cmt_id}
+	</update>
 
 	<update id="like">
 		update novel_comment SET

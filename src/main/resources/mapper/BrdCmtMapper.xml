@@ -73,6 +73,14 @@
 		where
 		brd_cmt_id = #{brd_cmt_id}
 	</update>
+	
+	<update id="cmt_reply_minus">
+		update brd_comment set
+		brd_cmt_replynum =
+		brd_cmt_replynum - 1
+		where
+		brd_cmt_id = #{brd_cmt_id}
+	</update>
 
 	<update id="like">
 		update brd_comment SET

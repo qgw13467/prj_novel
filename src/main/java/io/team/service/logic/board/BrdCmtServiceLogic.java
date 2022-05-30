@@ -49,6 +49,11 @@ public class BrdCmtServiceLogic implements CmtService<BrdCmt, BrdCmtReport> {
 		int pagecount = 10;
 		return brdCmtMapper.read_cmts(brd_id, (pagenum - 1) * pagecount, pagecount);
 	}
+	
+	public Optional<BrdCmt> findCmt(int brd_cmt_id) {
+		Optional<BrdCmt> optBrdCmt = Optional.ofNullable(brdCmtMapper.read(brd_cmt_id));
+		return optBrdCmt;
+	}
 
 
 	@Override
@@ -79,6 +84,9 @@ public class BrdCmtServiceLogic implements CmtService<BrdCmt, BrdCmtReport> {
 
 		if (brdCmt.getMemId() == mem_id) {
 			int result = brdCmtMapper.delete(id);
+			if(brdCmt.getBrdCmtReply() != 0) {
+				cmt_reply_minus(brdCmt.getBrdCmtReply());
+			}
 			return result;
 		} else {
 			return -1;
@@ -88,6 +96,12 @@ public class BrdCmtServiceLogic implements CmtService<BrdCmt, BrdCmtReport> {
 	@Override
 	public int cmt_reply_count(int brd_cmt_id) {
 		int result = brdCmtMapper.cmt_reply_count(brd_cmt_id);
+		return result;
+		
+	}
+	
+	public int cmt_reply_minus(int brd_cmt_id) {
+		int result = brdCmtMapper.cmt_reply_minus(brd_cmt_id);
 		return result;
 		
 	}
@@ -116,6 +130,8 @@ public class BrdCmtServiceLogic implements CmtService<BrdCmt, BrdCmtReport> {
 		
 		return brdCmtMapper.report(brdCmtReport.getBrdCmtId());
 	}
+	
+
 
 
 

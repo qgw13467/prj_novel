@@ -64,8 +64,10 @@ public class NvCmtServiceLogic implements CmtService<NovelCmt, NovelCmtReport>{
 		NovelCmt nvCmt = nvCmtMapper.read(nvCmtId);
 
 		if (nvCmt.getMemId() == memId) {
-			nvCmt.setNvCmtState(1);
 			int result = nvCmtMapper.delete(nvCmtId);
+			if(nvCmt.getNvCmtReply() != 0) {
+				cmt_reply_minus(nvCmt.getNvCmtReply());
+			}
 			return result;
 		} else {
 			return -1;
@@ -103,6 +105,11 @@ public class NvCmtServiceLogic implements CmtService<NovelCmt, NovelCmtReport>{
 		int result = nvCmtMapper.cmt_reply_count(nv_cmt_id);
 		return result;
 		
+	}
+	
+	public int cmt_reply_minus(int nv_cmt_id) {
+		int result = nvCmtMapper.cmt_reply_minus(nv_cmt_id);
+		return result;
 	}
 	
 	public Optional<NovelCmtReport> findCmtReport(int nv_cmt_id, int mem_id) {

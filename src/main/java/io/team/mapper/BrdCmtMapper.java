@@ -33,4 +33,6 @@ public interface BrdCmtMapper {
 	int cmtcount(int brd_id);
 	
 	int cmt_reply_count(int brd_cmt_id);
+	
+	int cmt_reply_minus(int brd_cmt_id);
 }

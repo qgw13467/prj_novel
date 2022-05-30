@@ -73,6 +73,7 @@ public class NvCmtController {
 		try {
 			int memId = jwtManager.getIdFromToken(token);
 			newCmt.setMemId(memId);
+			newCmt.setNvId(titleId);
 			nvCmtServiceLogic.register(newCmt, token);
 			nvServiceLogics.plusCmtCount(newCmt.getNvId());
 			

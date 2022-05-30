@@ -32,4 +32,5 @@ public interface NvCmtMapper {
 	int cmtcount(int nv_id);
 	
 	int cmt_reply_count(int nv_cmt_id);
+	int cmt_reply_minus(int nv_cmt_id);
 }
