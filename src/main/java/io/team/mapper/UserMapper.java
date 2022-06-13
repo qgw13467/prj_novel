@@ -10,8 +10,8 @@ import io.team.domain.User;
 public interface UserMapper {
 
 	int checkIdReduplication(String mem_userid);
+	int checkNickMemIdReduplication(String mem_nick, int mem_id);
 	int checkNickReduplication(String mem_nick);
-	
 	int create(String mem_userid, String mem_password, String mem_changepwd, String mem_email, String mem_nick,
 			String mem_regist_datetime, String mem_lastlogin_datetime, String mem_icon);
 
@@ -20,7 +20,9 @@ public interface UserMapper {
 	User findByMemUserId(String mem_userid);
 
 	User findByMemid(int mem_id);
-
+	
+	String findNicknameByMemid(int meme_id);
+	
 	ArrayList<String> findTokenByMemid(ArrayList<Integer> item);
 
 	int lastlogin(int mem_id);

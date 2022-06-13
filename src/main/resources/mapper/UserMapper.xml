@@ -4,15 +4,27 @@
 
 <mapper namespace="io.team.mapper.UserMapper">
 	<select id="checkIdReduplication" resultType="_int">
-		SELECT COUNT(*) FROM user
+		SELECT COUNT(*)
+		FROM user
 		where
 		mem_userid =
 		#{mem_userid}
 	</select>
-	
+
+	<select id="checkNickMemIdReduplication" resultType="_int">
+		SELECT
+		COUNT(*) FROM user
+		WHERE
+		mem_nick =
+		#{mem_nick}
+		AND
+		mem_id != #{mem_id}
+	</select>
+
 	<select id="checkNickReduplication" resultType="_int">
-		SELECT COUNT(*) FROM user
-		where
+		SELECT
+		COUNT(*) FROM user
+		WHERE
 		mem_nick =
 		#{mem_nick}
 	</select>
@@ -47,6 +59,13 @@
 		mem_id = #{mem_id} LIMIT 1
 	</select>
 
+	<select id="findNicknameByMemid" resultType="string">
+		SELECT mem_nick FROM
+		user
+		WHERE
+		mem_id = #{mem_id} LIMIT 1
+	</select>
+
 
 	<select id="findTokenByMemid" resultType="String">
 		SELECT token FROM user
@@ -64,13 +83,15 @@
 		update user set
 		token = #{token}
 		where
-		mem_id =#{mem_id};
+		mem_id
+		=#{mem_id};
 	</update>
 
 	<update id="update">
 		UPDATE user SET
 		mem_email = #{mem_email},
-		mem_nick = #{mem_nick},
+		mem_nick =
+		#{mem_nick},
 		mem_icon = #{mem_icon}
 		WHERE
 		mem_id = #{mem_id};
@@ -100,10 +121,11 @@
 		mem_id = #{mem_id}
 	</update>
 
-	<select id="getPoint" resultType="Integer" >
-		SELECT mem_point FROM user
+	<select id="getPoint" resultType="Integer">
+		SELECT mem_point FROM
+		user
 		where
 		mem_id = #{mem_id} LIMIT 1
 	</select>
-	
+
 </mapper>
