@@ -13,7 +13,7 @@ import io.team.domain.NovelCover;
 import io.team.domain.SubscribeNovel;
 import io.team.domain.User;
 import io.team.service.logic.novel.NvCoverServiceLogic;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,7 +26,7 @@ public class SubscribeNvService {
 
 	private final FcmService fcmService;
 
-	private final UserServicLogic userServicLogic;
+	private final UserServiceLogic userServicLogic;
 	
 	//구독 
 	public int subscribeNv(int mem_id, int nvc_id) {

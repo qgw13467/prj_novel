@@ -13,7 +13,7 @@ import io.team.domain.User;
 import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.novel.NvServiceLogic;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 
 @Service
 public class PointServiceLogic {
@@ -25,7 +25,7 @@ public class PointServiceLogic {
 	PointRepository pointRepository;
 
 	@Autowired
-	UserServicLogic userServicLogic;
+	UserServiceLogic userServicLogic;
 
 	@Autowired
 	NvServiceLogic nvServiceLogic;

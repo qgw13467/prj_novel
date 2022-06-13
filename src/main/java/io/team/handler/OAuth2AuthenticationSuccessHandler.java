@@ -16,7 +16,7 @@ import io.team.domain.User;
 import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.PointServiceLogic;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
 	private final JwtManager jwtManager;
 	private final PointServiceLogic pointServiceLogic;
-	private final UserServicLogic userServicLogic;
+	private final UserServiceLogic userServicLogic;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,

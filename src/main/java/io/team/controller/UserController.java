@@ -28,14 +28,14 @@ import io.team.jwt.JwtManager;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import io.team.service.logic.novel.NvServiceLogic;
 import io.team.service.logic.user.PurchaseService;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
-	private final UserServicLogic userServicLogic;
+	private final UserServiceLogic userServicLogic;
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 

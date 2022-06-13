@@ -25,7 +25,7 @@ import io.team.domain.Enum.PointPurpose;
 import io.team.jwt.JwtManager;
 import io.team.mapper.UserMapper;
 import io.team.service.logic.PointServiceLogic;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private final PointServiceLogic pointServiceLogic;
 	private final UserMapper userMapper;
 	private final JwtManager jwtManager;
-	private final UserServicLogic userServicLogic;
+	private final UserServiceLogic userServicLogic;
 
 	// 로그인 요청하면 로그인 시도를 위해 실행되는 함수
 	@Override

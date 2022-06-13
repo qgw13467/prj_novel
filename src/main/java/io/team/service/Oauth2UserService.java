@@ -10,14 +10,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import io.team.auth.PrincipalDetails;
 import io.team.domain.User;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class Oauth2UserService extends DefaultOAuth2UserService {
 	
-	private final UserServicLogic userServicLogic;
+	private final UserServiceLogic userServicLogic;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	

@@ -12,7 +12,7 @@ import io.team.jwt.JwtManager;
 import io.team.mapper.UserMapper;
 import io.team.service.Oauth2UserService;
 import io.team.service.logic.PointServiceLogic;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity
@@ -24,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private final UserMapper userMapper;
 	private final JwtManager jwtManager;
 	private final PointServiceLogic pointServiceLogic;
-	private final UserServicLogic userServicLogic;
+	private final UserServiceLogic userServicLogic;
 	private final Oauth2UserService oauth2UserService;
 	private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 

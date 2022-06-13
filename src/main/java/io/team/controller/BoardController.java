@@ -28,7 +28,7 @@ import io.team.jwt.JwtManager;
 import io.team.service.logic.board.BoardGoodServiceLogic;
 import io.team.service.logic.board.BoardServiceLogic;
 import io.team.service.logic.board.BrdCmtServiceLogic;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
 	private final BoardServiceLogic boardService;
-	private final UserServicLogic userServicLogic;
+	private final UserServiceLogic userServicLogic;
 	private final BoardGoodServiceLogic boardGoodServiceLogic;
 
 	private final JwtManager jwtManager;

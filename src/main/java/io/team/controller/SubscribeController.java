@@ -22,7 +22,7 @@ import io.team.jwt.JwtManager;
 import io.team.service.UserService;
 import io.team.service.logic.SubscribeNvService;
 import io.team.service.logic.novel.NvCoverServiceLogic;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,7 +31,7 @@ public class SubscribeController {
 
 	private final SubscribeNvService subscribeNvService;
 	private final JwtManager jwtManager;
-	private final UserServicLogic userServicLogic;
+	private final UserServiceLogic userServicLogic;
 	private final NvCoverServiceLogic nvCoverServiceLogic;
 	//구독 목록
 	@GetMapping("/nvc")
