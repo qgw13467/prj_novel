@@ -39,7 +39,7 @@ import io.team.service.logic.novel.NvCmtServiceLogic;
 import io.team.service.logic.novel.NvCoverServiceLogic;
 import io.team.service.logic.novel.NvServiceLogic;
 import io.team.service.logic.user.PurchaseService;
-import io.team.service.logic.user.UserServicLogic;
+import io.team.service.logic.user.UserServiceLogic;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -50,12 +50,12 @@ public class NovelController {
 	private final NvCoverServiceLogic nvCoverServiceLogic;
 	private final PointServiceLogic pointServiceLogic;
 	private final JwtManager jwtManager;
-	private final KafkaProducer kafkaProducer;	
-	private final PurchaseService purchaseService;	
+	private final KafkaProducer kafkaProducer;
+	private final PurchaseService purchaseService;
 	private final S3Servicelogic s3Servicelogic;
-	private final UserServicLogic userServicLogic;
-	
-	//소설의 전체 에시포드 보기
+	private final UserServiceLogic userServicLogic;
+
+	// 소설의 전체 에시포드 보기
 	@GetMapping("/novels/detail")
 	public @ResponseBody Map<String, Object> getAllNovels(
 			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum,
@@ -70,8 +70,8 @@ public class NovelController {
 
 		return result;
 	}
-	
-	//소서르이 한 에피소드 보기
+
+	// 소설의 한 에피소드 보기
 	@GetMapping("/novels/detail/{titleId}")
 	public ResponseEntity<?> read(@PathVariable int titleId, @RequestParam(value = "nv-id") int nv_id,
 			HttpServletRequest req) {
@@ -82,36 +82,35 @@ public class NovelController {
 
 		try {
 
-			
 			novel = nvServiceLogic.find(nv_id);
 			int checkMem_id = jwtManager.getIdFromToken(token);
 
 			int check = pointServiceLogic.readNovel(PointPurpose.READNOVEL, novel.getNvPoint(), nv_id, novel.getMemId(),
 					checkMem_id);
-			
-			//포인트부족
-			if(check == -1) {
+
+			// 포인트부족
+			if (check == -1) {
 				result.put("msg", "point lack");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
-			
-			//커버 조회수++1
+
+			// 커버 조회수++1
 			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
 			int hitcount = novelCover.getNvcHit();
 			novelCover.setNvcHit(hitcount + 1);
 			nvCoverServiceLogic.modify(titleId, novelCover, token);
-			//소설 조회수++1
+			// 소설 조회수++1
 			nvServiceLogic.countCheck(nv_id);
 
 			NovelDTO novelDTO = NovelDTO.novelDTOfromNovel(novel);
 			ArrayList<String> imgUrls = s3Servicelogic.findByEventId(Integer.parseInt(novel.getImgUrl()));
-			
-			if(!novel.getImgUrl().equals("0")) {
+
+			if (!novel.getImgUrl().equals("0")) {
 				novelDTO.setImgUrls(imgUrls);
 			}
-			
+
 			UserInfoDTO userInfoDTO = UserInfoDTO.userInfoDTOfromUser(userServicLogic.findByMemId(novelDTO.getMemId()));
-			
+
 			result.put("novel", novelDTO);
 			result.put("user", userInfoDTO);
 			return new ResponseEntity<>(result, HttpStatus.OK);
@@ -127,48 +126,47 @@ public class NovelController {
 		}
 
 	}
-	
 
 	@Transactional
 	@PostMapping("/novels/detail/{titleId}")
 	public ResponseEntity<?> write(@PathVariable int titleId, @RequestBody HashMap<String, Object> map,
 			HttpServletRequest req, HttpServletResponse res) {
-		
+
 		Map<String, Object> result = new HashMap<String, Object>();
 		String token = req.getHeader("Authorization");
 		int check = 0;
 
 		try {
 			int memId = jwtManager.getIdFromToken(token);
-			
+
 			HashMap<String, String> hashMap = (HashMap<String, String>) map.get("novel");
-			hashMap.put("memId",Integer.toString(memId));
-			if (!hashMap.containsKey("nvPoint")) {
+			hashMap.put("memId", Integer.toString(memId));
+			if (!hashMap.containsKey("nvPoint") || Integer.parseInt(hashMap.get("nvPoint")) == 0) {
 				hashMap.put("nvPoint", "10");
 			}
 			Novel novel = new Novel(hashMap);
 			NovelCover novelCover = nvCoverServiceLogic.find(titleId);
-			int parent = Integer.parseInt((String)map.get("parent"));
+			int parent = Integer.parseInt((String) map.get("parent"));
 			if (novelCover.getNvId() == 0) { // 1화를 처음작성하면 표지생성
-				
+
 				int nv_id = nvServiceLogic.register(novel, token);
 				novelCover.setNvId(nv_id);
 				check += nvCoverServiceLogic.modify(titleId, novelCover, token);
 				result.put("msg", "OK");
 
 			} else { // 1화가 아니면 부모자식테이블, 모든에피소드테이블에 등록
-				if(parent == 0) {
+				if (parent == 0) {
 					result.put("msg", "exist");
 					return new ResponseEntity<>(result, HttpStatus.OK);
 				}
-				
+
 				int firstNvid = nvServiceLogic.findFirstNvid(parent);
 				NovelCover parentNovelCover = nvCoverServiceLogic.findByNvid(firstNvid);
-				if(parentNovelCover.getNvcId() != titleId) {
+				if (parentNovelCover.getNvcId() != titleId) {
 					result.put("msg", "parent episodes not included");
 					return new ResponseEntity<>(result, HttpStatus.OK);
 				}
-				
+
 				check += nvServiceLogic.register(novel, token, Integer.parseInt((String) map.get("parent")), titleId);
 				result.put("msg", "OK");
 			}
@@ -176,7 +174,7 @@ public class NovelController {
 			// 소설 작성시 구독 사용자에게 푸시알림
 			String title = "구독 알림";
 			String contents = "구독하신 소설 " + novelCover.getNvcTitle() + "의 최신화가 나왔습니다";
-			
+
 			HashMap<String, String> msg = new HashMap<>();
 			msg.put("titleId", Integer.toString(titleId));
 			msg.put("title", title);
@@ -204,13 +202,23 @@ public class NovelController {
 	}
 
 	@PutMapping("/novels/detail/{titleId}")
-	public @ResponseBody Map<String, Object> update(@PathVariable int titleId, @RequestParam(value = "nv_id") int nv_id,
+	public @ResponseBody Map<String, Object> update(@PathVariable int titleId, @RequestParam(value = "nv-id") int nv_id,
 			@RequestBody Novel newNovel, HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result.put("msg", nvServiceLogic.modify(nv_id, newNovel, token));
-			return result;
+			int memId = jwtManager.getIdFromToken(token);
+			newNovel.setMemId(memId);
+			newNovel.setNvId(nv_id);
+			int state = nvServiceLogic.modify(newNovel.getNvId(), newNovel, token);
+			if(state ==1) {
+				result.put("msg", "OK");
+				return result;
+			}
+			else {
+				 throw new Exception();
+			}
+			
 		} catch (ExpiredJwtException e) {
 			result.put("msg", "JWT expiration");
 			return result;
@@ -227,8 +235,16 @@ public class NovelController {
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result.put("msg", nvServiceLogic.remove(nv_id, token));
-			return result;
+			int state =nvServiceLogic.remove(nv_id, token);
+			
+			if(state ==1) {
+				result.put("msg", "OK");
+				return result;
+			}
+			else {
+				result.put("msg", "not your episode");
+				return result;
+			}
 		} catch (ExpiredJwtException e) {
 			result.put("msg", "JWT expiration");
 			return result;
@@ -239,8 +255,6 @@ public class NovelController {
 		}
 	}
 
-	
-	
 	@PostMapping("/novels/{id}/report")
 	public ResponseEntity<?> writeReport(@PathVariable int id, HttpServletRequest req,
 			@RequestBody NovelReport novelReport) {
@@ -253,12 +267,12 @@ public class NovelController {
 			novelReport.setMemId(mem_id);
 			novelReport.setNvId(id);
 			Optional<NovelReport> optNovelReport = nvServiceLogic.findReport(id, mem_id);
-			
-			if(!purchaseService.isPurchased(mem_id, id)) {
+
+			if (!purchaseService.isPurchased(mem_id, id)) {
 				result.put("msg", "Not purchase");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
-			
+
 			if (!optNovelReport.isPresent()) {
 				nvServiceLogic.report(novelReport);
 				result.put("msg", "OK");
@@ -268,8 +282,6 @@ public class NovelController {
 				result.put("msg", "reduplication");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
-			
-
 
 		} catch (ExpiredJwtException e) {
 			result.put("msg", "JWT expiration");

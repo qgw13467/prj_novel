@@ -42,7 +42,7 @@ public class NvServiceLogic implements WriteService<Novel> {
 
 	@Autowired
 	TagMapper tagMapper;
-	
+
 	private final NvReportRepository nvReportRepository;
 
 	@Override
@@ -95,7 +95,6 @@ public class NvServiceLogic implements WriteService<Novel> {
 
 		return result;
 	}
-	
 
 	@Override
 	public int modify(int id, Novel newNovel, String token) {
@@ -103,13 +102,21 @@ public class NvServiceLogic implements WriteService<Novel> {
 
 		Novel novel = novelMapper.read(id);
 		int mem_id = jwtManager.getIdFromToken(token);
+		
 		if (novel.getMemId() == mem_id) {
 			int result = novelMapper.update(newNovel.getNvId(), newNovel.getImgUrl(), newNovel.getNvWriter(),
 					newNovel.getNvTitle(), newNovel.getNvContents(), newNovel.getNvState());
 
 			return result;
 
-		} else {
+		} else if(novel.getNvState() ==1) {
+			int result = novelMapper.update(newNovel.getNvId(), newNovel.getImgUrl(), newNovel.getNvWriter(),
+					newNovel.getNvTitle(), newNovel.getNvContents(), newNovel.getNvState());
+
+			return result;
+		}
+		
+		else {
 			return -1;
 		}
 	}
@@ -128,16 +135,15 @@ public class NvServiceLogic implements WriteService<Novel> {
 			return -1;
 		}
 	}
-	
+
 	public int plusCmtCount(int nvId) {
-		return  novelMapper.plusCmtCount(nvId);
+		return novelMapper.plusCmtCount(nvId);
 	}
-	
+
 	public int minusCmtCount(int nvId) {
-		return  novelMapper.minusCmtCount(nvId);
+		return novelMapper.minusCmtCount(nvId);
 	}
-	
-	
+
 	@Override
 	public ArrayList<Novel> getList(int pagenum, int rownum) {
 		return novelMapper.getNovels((pagenum - 1) * rownum, rownum);
@@ -150,14 +156,15 @@ public class NvServiceLogic implements WriteService<Novel> {
 	public int deleteReview(int id, int point) {
 		return novelMapper.review(id, point);
 	}
-	
+
 	public NovelReport report(NovelReport novelReport) {
-		
+
 		return nvReportRepository.save(novelReport);
 	}
-	
+
 	public Optional<NovelReport> findReport(int nv_id, int mem_id) {
-		Optional<NovelReport> optNovelReport = Optional.ofNullable( nvReportRepository.findFirstByNvIdAndMemId(nv_id, mem_id));
+		Optional<NovelReport> optNovelReport = Optional
+				.ofNullable(nvReportRepository.findFirstByNvIdAndMemId(nv_id, mem_id));
 		return optNovelReport;
 	}
 
