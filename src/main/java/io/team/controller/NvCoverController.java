@@ -139,13 +139,12 @@ public class NvCoverController {
 		// 공통의 1화를 가진 소설 에피소드들 로딩
 		ArrayList<NovelLink> novelLinks = nvServiceLogic.findLinks(novelCover.getNvId());
 		ArrayList<Novel> novelList = new ArrayList<>();
-		
 		// 큐에 1화 저장
 		Queue<Integer> queue = new LinkedList<Integer>();
 		queue.add(novelCover.getNvId());
 		
 		
-		//1화도 작성되지 않은 커버 바로 반환
+		//1화가 작성되지 않은 커버는 바로 반환
 		if(novelCover.getNvId() == 0) {
 			result.put("episode", novelLinkMap);
 			result.put("NovelInfo", novelList);
@@ -154,9 +153,6 @@ public class NvCoverController {
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 		
-		
-
-
 
 		// 포함된 소설의 아이디 셋이 저장(중복 제거)
 		node.add(novelCover.getNvId());
@@ -169,8 +165,18 @@ public class NvCoverController {
 			Novel tempNovel = nvServiceLogic.findInfo(key);
 
 			if (tempNovel.getNvState() == 1) {
-				deletedNvid.add(tempNovel.getNvId());
-				continue;
+				ArrayList<NovelLink> childrenNovelLinks = nvServiceLogic.findByNvlParents(tempNovel.getNvId());
+				
+				if(childrenNovelLinks.size() != 0) {
+					tempNovel.setNvTitle("삭제된 에피소드");
+					tempNovel.setNvContents("삭제된 에피소드 입니다. 누구나 해당 에피소드를 수정할 수 있습니다");
+					novelList.add(tempNovel);
+					continue;
+				}
+				else {
+					deletedNvid.add(tempNovel.getNvId());
+				}
+
 			}
 			novelList.add(tempNovel);
 		}

@@ -82,6 +82,10 @@ public class NvServiceLogic implements WriteService<Novel> {
 	public ArrayList<NovelLink> findLinks(int nv_id) {
 		return nvLinkMapper.findByNvId(nv_id);
 	}
+	
+	public ArrayList<NovelLink> findByNvlParents(int nv_id) {
+		return nvLinkMapper.findByNvlParents(nv_id);
+	}
 
 	public int findFirstNvid(int nv_id) {
 

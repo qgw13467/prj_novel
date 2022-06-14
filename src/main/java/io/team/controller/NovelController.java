@@ -55,21 +55,21 @@ public class NovelController {
 	private final S3Servicelogic s3Servicelogic;
 	private final UserServiceLogic userServicLogic;
 
-	// 소설의 전체 에시포드 보기
-	@GetMapping("/novels/detail")
-	public @ResponseBody Map<String, Object> getAllNovels(
-			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum,
-			@RequestParam(value = "rownum", required = false, defaultValue = "10") String rownum) {
-
-		ArrayList<Novel> boards = nvServiceLogic.getList(Integer.parseInt(pagenum), Integer.parseInt(rownum));
-		int page = nvServiceLogic.getPageNum();
-
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("boards", boards);
-		result.put("pagenum", page);
-
-		return result;
-	}
+//	// 소설의 전체 에시포드 보기
+//	@GetMapping("/novels/detail")
+//	public @ResponseBody Map<String, Object> getAllNovels(
+//			@RequestParam(value = "page", required = false, defaultValue = "1") String pagenum,
+//			@RequestParam(value = "rownum", required = false, defaultValue = "10") String rownum) {
+//
+//		ArrayList<Novel> boards = nvServiceLogic.getList(Integer.parseInt(pagenum), Integer.parseInt(rownum));
+//		int page = nvServiceLogic.getPageNum();
+//
+//		Map<String, Object> result = new HashMap<String, Object>();
+//		result.put("boards", boards);
+//		result.put("pagenum", page);
+//
+//		return result;
+//	}
 
 	// 소설의 한 에피소드 보기
 	@GetMapping("/novels/detail/{titleId}")
