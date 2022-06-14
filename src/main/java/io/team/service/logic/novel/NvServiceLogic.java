@@ -108,13 +108,13 @@ public class NvServiceLogic implements WriteService<Novel> {
 		int mem_id = jwtManager.getIdFromToken(token);
 		
 		if (novel.getMemId() == mem_id) {
-			int result = novelMapper.update(newNovel.getNvId(), newNovel.getImgUrl(), newNovel.getNvWriter(),
+			int result = novelMapper.update(newNovel.getNvId(), newNovel.getMemId(), newNovel.getImgUrl(), newNovel.getNvWriter(),
 					newNovel.getNvTitle(), newNovel.getNvContents(), newNovel.getNvState());
 
 			return result;
 
-		} else if(novel.getNvState() ==1) {
-			int result = novelMapper.update(newNovel.getNvId(), newNovel.getImgUrl(), newNovel.getNvWriter(),
+		} else if(novel.getNvState() == 1) {
+			int result = novelMapper.update(newNovel.getNvId(), newNovel.getMemId(), newNovel.getImgUrl(), newNovel.getNvWriter(),
 					newNovel.getNvTitle(), newNovel.getNvContents(), newNovel.getNvState());
 
 			return result;

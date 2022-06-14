@@ -40,6 +40,7 @@
 		UPDATE
 		novel
 		SET
+		mem_id = #{mem_id},
 		img_url = #{img_url},
 		nv_writer =
 		#{nv_writer},

@@ -90,7 +90,9 @@ public class NovelController {
 				novel.setNvContents("삭제된 에피소드 입니다. 누구나 해당 에피소드를 수정할 수 있습니다");
 				novel.setImgUrl("0");
 				NovelDTO novelDTO = NovelDTO.novelDTOfromNovel(novel);
+				ArrayList<String> imgUrls = s3Servicelogic.findByEventId(Integer.parseInt(novel.getImgUrl()));
 
+				novelDTO.setImgUrls(imgUrls);
 
 				result.put("novel", novelDTO);
 				return new ResponseEntity<>(result, HttpStatus.OK);
@@ -116,9 +118,7 @@ public class NovelController {
 			NovelDTO novelDTO = NovelDTO.novelDTOfromNovel(novel);
 			ArrayList<String> imgUrls = s3Servicelogic.findByEventId(Integer.parseInt(novel.getImgUrl()));
 
-			if (!novel.getImgUrl().equals("0")) {
-				novelDTO.setImgUrls(imgUrls);
-			}
+			novelDTO.setImgUrls(imgUrls);
 
 			UserInfoDTO userInfoDTO = UserInfoDTO.userInfoDTOfromUser(userServicLogic.findByMemId(novelDTO.getMemId()));
 
@@ -226,7 +226,8 @@ public class NovelController {
 				return result;
 			}
 			else {
-				 throw new Exception();
+				result.put("msg", "not your episode");
+				return result;
 			}
 			
 		} catch (ExpiredJwtException e) {
