@@ -40,6 +40,7 @@ public class NovelDTO {
 				.nvCommentCount(novel.getNvCommentCount())
 				.nvReviewpoint(novel.getNvReviewpoint())
 				.nvReviewcount(novel.getNvCommentCount())
+				.nvState(novel.getNvState())
 				.nvDatetime(novel.getNvDatetime())
 				.nvUpdatetime(novel.getNvUpdatetime())
 				.nvPoint(novel.getNvPoint())

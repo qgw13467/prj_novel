@@ -84,7 +84,18 @@ public class NovelController {
 
 			novel = nvServiceLogic.find(nv_id);
 			int checkMem_id = jwtManager.getIdFromToken(token);
+			
+			if(novel.getNvState() == 1 ) {
+				novel.setNvTitle("삭제된 에피소드");
+				novel.setNvContents("삭제된 에피소드 입니다. 누구나 해당 에피소드를 수정할 수 있습니다");
+				novel.setImgUrl("0");
+				NovelDTO novelDTO = NovelDTO.novelDTOfromNovel(novel);
 
+
+				result.put("novel", novelDTO);
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			
 			int check = pointServiceLogic.readNovel(PointPurpose.READNOVEL, novel.getNvPoint(), nv_id, novel.getMemId(),
 					checkMem_id);
 
@@ -99,7 +110,7 @@ public class NovelController {
 			int hitcount = novelCover.getNvcHit();
 			novelCover.setNvcHit(hitcount + 1);
 			nvCoverServiceLogic.modify(titleId, novelCover, token);
-			// 소설 조회수++1
+			// 에피소드 조회수++1
 			nvServiceLogic.countCheck(nv_id);
 
 			NovelDTO novelDTO = NovelDTO.novelDTOfromNovel(novel);
@@ -182,8 +193,7 @@ public class NovelController {
 			JSONObject json = new JSONObject(msg);
 
 			kafkaProducer.sendMessage(json.toJSONString());
-			// subscribeNvService.pushSubscribeNv(titleId, title, contents);
-			//
+
 
 			pointServiceLogic.writeNovel(novel.getMemId(), PointPurpose.WRITENOVEL, 50, token);
 			return new ResponseEntity<>(result, HttpStatus.OK);
