@@ -52,7 +52,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			ObjectMapper omo = new ObjectMapper();
 
 			User user = omo.readValue(request.getInputStream(), User.class);
-
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
 					user.getMemUserId(), user.getMemPassword());
 			
@@ -103,6 +102,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try {
 
 			user = userMapper.read(principalDetails.getUsername(), principalDetails.getPassword());
+			System.out.println(user);
+			if(user.getMemState() == 1) {
+				result.put("\"msg\"", "\"id or password missmatch\"");
+				response.getWriter().print(result);
+				response.setStatus(401);
+				response.addHeader("msg", "id or password missmatch");
+				return;
+			}
+			
+			
 			map = userServicLogic.find(user);
 
 			result.put("\"msg\"", "\"OK\"");

@@ -109,9 +109,7 @@
 		update user set
 		mem_state = 1
 		where mem_userid =
-		#{mem_userid} AND
-		mem_password=
-		#{mem_password}
+		#{mem_userid}
 	</update>
 
 	<update id="changePoint">

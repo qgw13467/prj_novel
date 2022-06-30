@@ -74,7 +74,7 @@ public class MsgController {
 //			final Page<MessageReceiveDTO> page = new PageImpl<>(messageReceiveDTOs.subList(start, end), pageable,
 //					messageReceiveDTOs.size());
 
-			result.put("msg", page);
+			result.put("items", page);
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
@@ -125,7 +125,7 @@ public class MsgController {
 //			final Page<MessageSendDTO> page = new PageImpl<>(messageSendDTOs.subList(start, end), pageable,
 //					messageSendDTOs.size());
 
-			result.put("msg", page);
+			result.put("items", page);
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
@@ -156,13 +156,13 @@ public class MsgController {
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			} else if (message.getReceiverId() == mem_id) {
 				// result.put("msg", MessageReceiveDTO.messageReceiveDOTfomMessage(message));
-				result.put("msg", message);
+				result.put("items", message);
 				message.setIsRead(1);
 				msgServiceLogic.sendMsg(message);
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			} else if (message.getSenderId() == mem_id) {
 				// result.put("msg", MessageSendDTO.messageSendDOTfomMessage(message));
-				result.put("msg", message);
+				result.put("items", message);
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			} else {
 				result.put("msg", "not your message");

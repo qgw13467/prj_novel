@@ -37,7 +37,7 @@ public interface UserMapper {
 
 	int updatepwd(int mem_id, String mem_password);
 
-	int delete(String mem_userid, String mem_password);
+	int delete(String mem_userid);
 
 	ArrayList<User> selectAll();
 

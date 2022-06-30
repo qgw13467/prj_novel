@@ -21,7 +21,7 @@ public class User {
 	private String memEmail;
 	private String memNick;
 	private int memPoint;
-	private int state;
+	private int memState;
 	private String memRegistDatetime;
 	private String memLastloginDatetime;
 	private int memFollowingNvnum;

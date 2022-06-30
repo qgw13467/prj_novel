@@ -75,7 +75,6 @@ public class UserController {
 //		
 //	}
 
-
 	@PostMapping("/join")
 	public HashMap register(@RequestBody User newUser) {
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -84,7 +83,7 @@ public class UserController {
 		String encPwd = bCryptPasswordEncoder.encode(pwd);
 		newUser.setMemPassword(encPwd);
 		String resultString = userServicLogic.register(newUser);
-		map.put("msg", resultString );
+		map.put("msg", resultString);
 		return map;
 	}
 
@@ -98,13 +97,13 @@ public class UserController {
 			int mem_id = jwtManager.getIdFromToken(token);
 			newUser.setMemId(mem_id);
 			int checkNick = userServicLogic.modify(newUser, token);
-			
-			if(checkNick == -1) {
+
+			if (checkNick == -1) {
 				result.put("msg", "nickname reduplication");
-			}else {
+			} else {
 				result.put("msg", "OK");
 			}
-			
+
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
@@ -128,11 +127,11 @@ public class UserController {
 			String pwd = newUser.getMemPassword();
 			String encPwd = bCryptPasswordEncoder.encode(pwd);
 			int check = userServicLogic.modify(mem_id, encPwd, pwd);
-			if(check == -2) {
+			if (check == -2) {
 				result.put("msg", "same as the previous ");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
-			
+
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {
@@ -148,22 +147,30 @@ public class UserController {
 	}
 
 	@DeleteMapping("/users")
-	public Map<String, Object> remove(@RequestBody User newUser, HttpServletRequest req) {
+	public ResponseEntity<?> remove(@RequestBody User newUser, HttpServletRequest req) {
 
-		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			userServicLogic.remove(newUser, token);
+			String token = req.getHeader("Authorization");
+			String mem_userIdString = jwtManager.getUserIdFromToken(token);
+			if( mem_userIdString.equals(newUser.getMemUserId()) && userServicLogic.remove(newUser, token)<= 0) {
+				result.put("msg", "id or password missmatch");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
 			result.put("msg", "OK");
-			return result;
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (ExpiredJwtException e) {
+			result = new HashMap<String, Object>();
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("msg", "ERROR");
-			return result;
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
 
 	}
-	
+
 	@PutMapping("/users/token")
 	public ResponseEntity<?> updateToken(@RequestBody HashMap<String, String> map, HttpServletRequest req) {
 
@@ -186,9 +193,9 @@ public class UserController {
 		}
 
 	}
-	
+
 	@PutMapping("/users/refresh")
-	public ResponseEntity<?> refreshToken( HttpServletRequest req, HttpServletResponse res) {
+	public ResponseEntity<?> refreshToken(HttpServletRequest req, HttpServletResponse res) {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 
@@ -196,7 +203,7 @@ public class UserController {
 			String token = req.getHeader("Authorization");
 			int mem_id = jwtManager.getIdFromToken(token);
 			int check = jwtManager.isRefreshToken(token);
-			if(mem_id != check ) {
+			if (mem_id != check) {
 				result.put("msg", "Not RefreshToken");
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
@@ -205,22 +212,21 @@ public class UserController {
 			res.addHeader("Authorization", newToken);
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
-			
-			
-		} catch (SecurityException e) {       
+
+		} catch (SecurityException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "Invalid JWT signature");
 			return new ResponseEntity<>(result, HttpStatus.OK);
-        }catch (ExpiredJwtException e) {
+		} catch (ExpiredJwtException e) {
 			result = new HashMap<String, Object>();
 			result.put("msg", "JWT expiration");
 			return new ResponseEntity<>(result, HttpStatus.OK);
-        }  catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("msg", "ERROR");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
-		
+
 //		 catch (MalformedJwtException e) {
 //				result = new HashMap<String, Object>();
 //				result.put("msg", "Invalid JWT token");
@@ -235,7 +241,7 @@ public class UserController {
 //				return new ResponseEntity<>(result, HttpStatus.OK);
 //	        }
 	}
-	
+
 	@GetMapping("/users/purchase")
 	public ResponseEntity<?> getPurchaseList(HttpServletRequest req) {
 
