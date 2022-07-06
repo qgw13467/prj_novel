@@ -2,22 +2,31 @@ package io.team.service.logic.novel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import io.team.Repository.Board.BrdCmtReportRepository;
 import io.team.Repository.Novel.NvCoverMapper;
+import io.team.Repository.Novel.NvCoverReportRepository;
+import io.team.domain.BrdCmtReport;
 import io.team.domain.NovelCover;
+import io.team.domain.NovelCoverReport;
 import io.team.jwt.JwtManager;
+import io.team.mapper.BrdCmtMapper;
 import io.team.service.WriteService;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class NvCoverServiceLogic implements WriteService<NovelCover> {
 
-	@Autowired
-	NvCoverMapper nvCoverMapper;
+	
+	private final NvCoverMapper nvCoverMapper;
+	private final NvCoverReportRepository nvCoverReportRepository;
 
 	//새 소설커버 등록
 	@Override
@@ -96,7 +105,16 @@ public class NvCoverServiceLogic implements WriteService<NovelCover> {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	public Optional<NovelCoverReport> findReport(int nvcId, int memId) {
+		return nvCoverReportRepository.findByNvcIdAndMemId(nvcId, memId);
+	}
+	
+	
+	public NovelCoverReport report(NovelCoverReport novelCoverReport) {
+		return nvCoverReportRepository.save(novelCoverReport);
+	}
 
-
+	
 
 }

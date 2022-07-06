@@ -110,12 +110,12 @@ public class NvCmtController {
 	}
 
 	@DeleteMapping("/novels/detail/{titleId}/cmts")
-	public @ResponseBody Map<String, Object> deleteCmt( @PathVariable int titleId,
+	public @ResponseBody Map<String, Object> deleteCmt( @PathVariable int titleId, @RequestParam(value = "nv-cmt-id") int nv_cmt_id, 
 			HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			nvCmtServiceLogic.remove(titleId, token);
+			nvCmtServiceLogic.remove(nv_cmt_id, token);
 			result.put("msg", "OK");
 			return result;
 		} catch (ExpiredJwtException e) {

@@ -147,16 +147,15 @@ public class UserController {
 	}
 
 	@DeleteMapping("/users")
-	public ResponseEntity<?> remove(@RequestBody User newUser, HttpServletRequest req) {
+	public ResponseEntity<?> remove( HttpServletRequest req) {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			String token = req.getHeader("Authorization");
 			String mem_userIdString = jwtManager.getUserIdFromToken(token);
-			if( mem_userIdString.equals(newUser.getMemUserId()) && userServicLogic.remove(newUser, token)<= 0) {
-				result.put("msg", "id or password missmatch");
-				return new ResponseEntity<>(result, HttpStatus.OK);
-			}
+			User newUser = new User();
+			newUser.setMemUserId(mem_userIdString);
+			userServicLogic.remove(newUser, token);
 			result.put("msg", "OK");
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (ExpiredJwtException e) {

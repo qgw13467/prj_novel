@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.team.domain.Novel;
 import io.team.domain.NovelCover;
+import io.team.domain.NovelCoverReport;
 import io.team.domain.NovelLink;
+import io.team.domain.NovelReport;
 import io.team.jwt.JwtManager;
 import io.team.service.logic.SubscribeNvService;
 import io.team.service.logic.novel.NvCoverServiceLogic;
@@ -243,5 +246,40 @@ public class NvCoverController {
 		Page<NovelCover> novelCover = nvCoverServiceLogic.findByTitleContain(keyword, pageable);
 
 		return new ResponseEntity<>(novelCover, HttpStatus.OK);
+	}
+	
+	@PostMapping("/novels/{id}/reportcover")
+	public ResponseEntity<?> writeReport(@PathVariable int id, HttpServletRequest req,
+			@RequestBody NovelCoverReport novelCoverReport) {
+
+		String token = req.getHeader("Authorization");
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			int mem_id = jwtManager.getIdFromToken(token);
+			novelCoverReport.setMemId(mem_id);
+			novelCoverReport.setNvcId(id);
+			Optional<NovelCoverReport> optNovelCoverReport = nvCoverServiceLogic.findReport(id, mem_id);
+
+
+			if (!optNovelCoverReport.isPresent()) {
+				nvCoverServiceLogic.report(novelCoverReport);
+				result.put("msg", "OK");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+
+			} else {
+				result.put("msg", "reduplication");
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+
+		} catch (ExpiredJwtException e) {
+			result.put("msg", "JWT expiration");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+
+		} catch (Exception e) {
+			result.put("msg", "ERROR");
+			e.printStackTrace();
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
 	}
 }
